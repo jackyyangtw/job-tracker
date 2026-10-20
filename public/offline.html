@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>目前離線</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; box-sizing: border-box;
+         font-family: system-ui, -apple-system, 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+         background: #f2f5f4; color: #16201e; }
+  main { max-width: 420px; }
+  h1 { font-size: 20px; margin: 0 0 8px; }
+  p { margin: 0 0 16px; line-height: 1.6; color: #485854; }
+  button { font: inherit; padding: 8px 16px; border-radius: 8px; border: 0; background: #0e6b62; color: #fff; cursor: pointer; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #0d1413; color: #e4eeeb; }
+    p { color: #aabbb6; }
+    button { background: #4cc3b3; color: #06201c; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>目前離線</h1>
+  <p>這個頁面還沒有被快取。連上網路後重新整理，之後就能在離線時查看你最近一次同步的資料。</p>
+  <button type="button" onclick="location.reload()">重新整理</button>
+</main>
+</body>
+</html>

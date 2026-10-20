@@ -1,0 +1,131 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* Palette: graphite-green neutrals, one deep teal accent, six status hues used only for state.
+   Token names follow shadcn/ui so its components pick them up. */
+:root {
+  --background: #f2f5f4;
+  --foreground: #16201e;
+  --card: #ffffff;
+  --card-foreground: #16201e;
+  --popover: #ffffff;
+  --popover-foreground: #16201e;
+  --primary: #0e6b62;
+  --primary-foreground: #ffffff;
+  --secondary: #e8eeec;
+  --secondary-foreground: #16201e;
+  --muted: #e8eeec;
+  --muted-foreground: #5d6d68;
+  --accent: #e8eeec;
+  --accent-foreground: #16201e;
+  --destructive: #b3261e;
+  --border: #d3dcd9;
+  --input: #d3dcd9;
+  --ring: #0e6b62;
+  --radius: 0.625rem;
+
+  --warn: #a85a06;
+  --c-wishlist: #55668a;
+  --c-applied: #2563a8;
+  --c-interview: #9a5600;
+  --c-offer: #16794c;
+  --c-rejected: #a8353f;
+  --c-withdrawn: #66726d;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0d1413;
+    --foreground: #e4eeeb;
+    --card: #151f1d;
+    --card-foreground: #e4eeeb;
+    --popover: #151f1d;
+    --popover-foreground: #e4eeeb;
+    --primary: #4cc3b3;
+    --primary-foreground: #06201c;
+    --secondary: #1b2a27;
+    --secondary-foreground: #e4eeeb;
+    --muted: #1b2a27;
+    --muted-foreground: #8fa09b;
+    --accent: #1b2a27;
+    --accent-foreground: #e4eeeb;
+    --destructive: #f2877f;
+    --border: #2a3b37;
+    --input: #2a3b37;
+    --ring: #4cc3b3;
+
+    --warn: #e2a65a;
+    --c-wishlist: #8fa3c7;
+    --c-applied: #6fa8ee;
+    --c-interview: #e0a458;
+    --c-offer: #58c98f;
+    --c-rejected: #ea8a96;
+    --c-withdrawn: #9aa6a1;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-warn: var(--warn);
+  --color-status-wishlist: var(--c-wishlist);
+  --color-status-applied: var(--c-applied);
+  --color-status-interview: var(--c-interview);
+  --color-status-offer: var(--c-offer);
+  --color-status-rejected: var(--c-rejected);
+  --color-status-withdrawn: var(--c-withdrawn);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: var(--font-noto), system-ui, -apple-system, 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  --font-mono: var(--font-plex), ui-monospace, Menlo, Consolas, monospace;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html,
+  body {
+    margin: 0;
+  }
+  body {
+    @apply bg-background text-foreground font-sans text-sm leading-[1.55];
+    padding-block: calc(20px + env(safe-area-inset-top, 0px)) calc(48px + env(safe-area-inset-bottom, 0px));
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}

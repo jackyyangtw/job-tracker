@@ -1,0 +1,11 @@
+import { defineConfig, globalIgnores } from 'eslint/config';
+import nextVitals from 'eslint-config-next/core-web-vitals';
+import nextTs from 'eslint-config-next/typescript';
+
+// Next.js 16 removed `next lint`; run ESLint directly (`pnpm lint`).
+// eslint-config-next already bundles eslint-plugin-react-hooks, including the React Compiler rules.
+export default defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts', 'public/sw.js']),
+]);
