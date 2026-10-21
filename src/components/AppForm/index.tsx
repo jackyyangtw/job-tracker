@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/compone
 import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Textarea } from '@/components/ui/textarea';
+import { extractUrl } from '@/lib/mapping';
 import { SOURCES, STATUS_LIST, type Application, type Source, type Status } from '@/lib/types';
 import DiscardConfirm from './DiscardConfirm';
 import Field from './Field';
@@ -102,12 +103,18 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
               <Input
                 id="f-url"
                 value={v.url}
-                type="url"
                 inputMode="url"
                 spellCheck={false}
                 autoComplete="off"
                 placeholder="貼上 104、Cake 或 LinkedIn 網址，來源會自動判斷"
                 onChange={(e) => setUrl(e.target.value)}
+                // Mobile Safari does not always hand the whole pasted message to onChange, so read the clipboard directly.
+                onPaste={(e) => {
+                  const text = e.clipboardData.getData('text');
+                  if (extractUrl(text) === text.trim()) return;
+                  e.preventDefault();
+                  setUrl(text);
+                }}
               />
             </Field>
             <Field label="來源" id="f-source">
