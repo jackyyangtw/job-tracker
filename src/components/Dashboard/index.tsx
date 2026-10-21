@@ -12,6 +12,7 @@ import { useApplications } from '@/hooks/useApplications';
 import { useApplicationsRealtime } from '@/hooks/useApplicationsRealtime';
 import { useImportApplications } from '@/hooks/useImportApplications';
 import { useRemoveApplication } from '@/hooks/useRemoveApplication';
+import { useStaleDaysSync } from '@/hooks/useStaleDaysSync';
 import { useUpsertApplication } from '@/hooks/useUpsertApplication';
 import { addDays, todayStr } from '@/lib/dates';
 import { copyText, downloadFile, followUpMessage, toCsv, toJson } from '@/lib/exporters';
@@ -32,6 +33,7 @@ export default function Dashboard({ session }: { session: Session }) {
   const { apps, loaded, offline } = useApplications(userId);
   useApplicationsRealtime(userId);
   useUrlFilters();
+  const changeStaleDays = useStaleDaysSync(userId);
   const upsert = useUpsertApplication(userId);
   const remove = useRemoveApplication(userId);
   const importMany = useImportApplications(userId);
@@ -148,7 +150,7 @@ export default function Dashboard({ session }: { session: Session }) {
       <Tiles apps={shown} staleDays={staleDays} />
       <Reminders apps={shown} staleDays={staleDays} onFollowed={followed} onCopy={(id) => void copyMessage(id)} onEdit={openForm} />
 
-      <Filters />
+      <Filters onStaleDaysChange={changeStaleDays} />
 
       <main>
         {!loaded ? (

@@ -4,13 +4,13 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { SOURCES } from '@/lib/types';
 import { useTrackerStore } from '@/store/useTrackerStore';
 
-/** 檢視切換、搜尋框，以及來源與提醒天數的下拉選單。狀態存在 tracker store。 */
-export default function Filters() {
+/** 檢視切換、搜尋框，以及來源與提醒天數的下拉選單。狀態存在 tracker store；提醒天數另外同步到資料庫。 */
+export default function Filters({ onStaleDaysChange }: { onStaleDaysChange: (days: number) => void }) {
   const view = useTrackerStore((s) => s.view);
   const staleDays = useTrackerStore((s) => s.staleDays);
   const source = useTrackerStore((s) => s.source);
   const query = useTrackerStore((s) => s.query);
-  const { setView, setQuery, setSource, setStaleDays } = useTrackerStore.getState();
+  const { setView, setQuery, setSource } = useTrackerStore.getState();
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -42,7 +42,7 @@ export default function Filters() {
       </NativeSelect>
       <label className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
         超過
-        <NativeSelect aria-label="幾天沒消息就提醒" value={staleDays} onChange={(e) => setStaleDays(Number(e.target.value))}>
+        <NativeSelect aria-label="幾天沒消息就提醒" value={staleDays} onChange={(e) => onStaleDaysChange(Number(e.target.value))}>
           {[7, 10, 14, 21, 30].map((n) => (
             <option key={n} value={n}>
               {n}
