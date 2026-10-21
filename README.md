@@ -8,7 +8,7 @@
 
 - 看板／列表兩種檢視，搜尋與依來源篩選
 - 貼上 104、Cake、LinkedIn 連結會自動判斷來源；貼上整段分享訊息時只會留下連結
-- 提醒：超過 N 天沒消息、或跟進日到了；一鍵複製跟進訊息、一鍵「已跟進」
+- 提醒：超過 N 天沒消息（設定跨裝置同步）、或跟進日到了；一鍵複製跟進訊息、一鍵「已跟進」
 - 回應率統計（各來源、各履歷版本）
 - Google 登入；每個帳號只能讀寫自己的資料（Row Level Security）
 - 跨裝置即時同步（Supabase Realtime），回到前景或恢復連線時自動補抓
@@ -46,7 +46,7 @@ corepack enable
 ### 1. 建立 Supabase 專案並建立資料表
 
 1. 到 [supabase.com](https://supabase.com) 建立專案。
-2. 開啟 **SQL Editor**，依序把 `supabase/migrations/` 裡的 `0001_init.sql`、`0002_harden.sql` 各自整份貼上執行（先 0001 再 0002）。
+2. 開啟 **SQL Editor**，依序把 `supabase/migrations/` 裡的 `0001_init.sql`、`0002_harden.sql`、`0003_user_settings.sql` 各自整份貼上執行（依編號順序）。
    它會建立 `applications` 表、四條 RLS 政策（只能存取自己的資料）、`updated_at` 觸發器，並開啟 Realtime。
 3. 在 **Table Editor** 確認 `applications` 旁邊顯示 RLS 已啟用。
 

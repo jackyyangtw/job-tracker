@@ -26,7 +26,7 @@
   - Vercel：Node.js 環境，`web-push` 套件成熟，程式與專案放一起。免費版排程每天最多一次，且只保證在指定的那個小時內執行。
   - Supabase：離資料近，但 Deno 環境的推播套件相容性需另外測試。
 - [ ] **提醒時間**：（每天台灣時間 09:00，即 UTC `0 1 * * *`）
-- [ ] **「超過 N 天」的 N**：（同步到資料庫）。目前只存在瀏覽器的 localStorage，伺服器看不到；不同步的話推播只能固定用 14 天。
+- [x] **「超過 N 天」的 N**：已同步到資料庫的 `user_settings.stale_days`（`0003_user_settings.sql`），伺服器可直接讀取。
 - [ ] **鎖定畫面的內容**：（只顯示筆數，例如「有 3 筆投遞該跟進了」）。顯示公司名稱較實用，但鎖定畫面上別人看得到。
 
 #### 整體流程
@@ -41,13 +41,12 @@
 [Service Worker] 收到推播 → 顯示通知、更新圖示角標 → 點通知開啟 App
 ```
 
-#### 資料表（`supabase/migrations/0003_push.sql`）
+#### 資料表（`supabase/migrations/0004_push.sql`）
 
 - `push_subscriptions`：每台裝置一筆
   - `id`、`user_id`（預設 `auth.uid()`，刪除使用者時一併刪除）、`endpoint`（唯一）、`p256dh`、`auth`、`user_agent`（辨識是哪台裝置）、`created_at`
-- `user_settings`：每位使用者一筆
-  - `user_id`（主鍵）、`stale_days`（限定 7／10／14／21／30，預設 14）、`notify_enabled`、`last_notified_on`（避免同一天重複發送）、`updated_at`
-- 兩張表都要：開 RLS 並只允許 `auth.uid() = user_id`、`revoke all ... from anon`
+  - 開 RLS 並只允許 `auth.uid() = user_id`、`revoke all ... from anon`
+- `user_settings`：已存在（`0003_user_settings.sql`，含 `stale_days`），推播時再加欄位：`notify_enabled`、`last_notified_on`（避免同一天重複發送）
 
 #### 環境變數
 
@@ -66,7 +65,6 @@
 - 「通知」開關：放在頁首選單。只在支援推播時顯示；iPhone 若不是從主畫面開啟，改顯示「請先加入主畫面」。
 - 開啟：由使用者點擊觸發 → `Notification.requestPermission()` → `pushManager.subscribe()` → upsert 到 `push_subscriptions`。
 - 關閉：`subscription.unsubscribe()` 並刪除該筆資料。
-- 修改「超過 N 天」時，同步寫入 `user_settings`（Zustand 仍保留本機副本）。
 - **登出前要先刪除這台裝置的訂閱**，否則共用裝置的下一個人會收到前一個人的提醒。
 - Service Worker 目前只在正式建置時註冊，本機測試要用 `pnpm build && pnpm start`。
 
@@ -90,8 +88,8 @@
 
 - [ ] 決定上面的「待決定」事項
 - [ ] 產生 VAPID 金鑰、設定環境變數（Vercel 與本機）
-- [ ] migration `0003_push.sql`，在 Supabase 執行並用 SQL 驗證 RLS
-- [ ] `stale_days` 同步到 `user_settings`
+- [ ] migration `0004_push.sql`，在 Supabase 執行並用 SQL 驗證 RLS
+- [x] `stale_days` 同步到 `user_settings`
 - [ ] 前端通知開關（訂閱、取消、登出時清除）
 - [ ] `sw.js` 的 `push` 與 `notificationclick`
 - [ ] 排程 API 與 `vercel.json` 的 crons
