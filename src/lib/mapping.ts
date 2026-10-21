@@ -26,6 +26,26 @@ export function safeUrl(input: unknown): string {
   }
 }
 
+/**
+ * Pulls the first http(s) link out of pasted share text, e.g. the message the 104 app copies:
+ * "我在104工作快找上發現了一個超適合你的內容…
+https://www.104.com.tw/job/8wgp3?jobsource=ios_share".
+ * Returns the input unchanged when it contains no link, so typing a URL by hand still works.
+ */
+export function extractUrl(text: string): string {
+  const m = text.match(/https?:\/\/[!-~]+/i);
+  if (!m) return text;
+  const url = m[0].replace(/[.,;:!?)\]}'"]+$/, '');
+  try {
+    const { hostname, pathname } = new URL(url);
+    // 104 share links carry tracking parameters (?jobsource=ios_share); the job page works without them.
+    if (/(^|\.)104\.com\.tw$/.test(hostname) && pathname.startsWith('/job/')) return url.split(/[?#]/)[0];
+  } catch {
+    // Half-typed URL: keep it as is.
+  }
+  return url;
+}
+
 export function detectSource(url: string): Source {
   let host = '';
   try {

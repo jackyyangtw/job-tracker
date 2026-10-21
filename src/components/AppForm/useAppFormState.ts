@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { addDays, todayStr } from '@/lib/dates';
-import { detectSource, safeUrl } from '@/lib/mapping';
+import { detectSource, extractUrl, safeUrl } from '@/lib/mapping';
 import type { Application, Source, Status } from '@/lib/types';
 
 interface Values {
@@ -38,7 +38,9 @@ export function useAppFormState(initial: Application | null) {
 
   const set = <K extends keyof Values>(key: K, value: Values[K]) => setValues((v) => ({ ...v, [key]: value }));
 
-  function setUrl(url: string) {
+  function setUrl(raw: string) {
+    // Pasting a whole share message is fine: only the link in it is kept.
+    const url = extractUrl(raw);
     const detected = detectSource(url);
     setValues((v) => ({ ...v, url, source: detected && !sourceTouched.current ? detected : v.source }));
   }
