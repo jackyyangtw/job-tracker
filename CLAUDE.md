@@ -19,6 +19,7 @@
 - **UI 狀態**用 Zustand（`src/store/useTrackerStore.ts`），只放檢視模式、篩選等；不要把投遞資料放進去。
 - **離線**：IndexedDB（Dexie）先顯示快取，Supabase 回應後覆蓋（`src/lib/cache.ts`）。
 - 資料存取由瀏覽器直接用 `supabase-js`，**沒有自己的後端／ORM**；權限完全靠 Row Level Security（`supabase/migrations/`）。
+- 唯一的伺服器端程式是 `src/app/api/job-preview/route.ts`：貼上 104 職缺連結時，代為查詢公司與職稱（104 的非官方 JSON 介面，隨時可能失效，失敗一律靜默略過）。新增任何 API 都必須先驗證登入，且上游網址要自己組，不可直接用使用者給的網址（避免 SSRF）。
 - `src/lib/mapping.ts` 負責資料庫列（snake_case）與前端型別（camelCase）互轉。
 
 ## 元件拆分
