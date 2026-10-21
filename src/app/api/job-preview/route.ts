@@ -9,6 +9,10 @@ import { createClient } from '@/lib/supabase/server';
 // 安全性：只有登入的使用者能呼叫，且上游網址由這裡用驗證過的職缺代碼自行組出，
 // 不使用使用者提供的網址，因此無法被導向其他主機。
 
+// Vercel 預設把函式跑在美國（iad1），104 對那裡的請求回 403。改到香港機房試試看，
+// 離台灣近，也可能不在 104 的封鎖範圍內（不保證，需部署後確認）。
+export const preferredRegion = 'hkg1';
+
 const HEADERS = { 'Cache-Control': 'private, no-store' };
 const MAX_BYTES = 1_000_000;
 // 104 在 Cloudflare 後面，會拒絕與用戶端 TLS 特徵不相符的瀏覽器 User-Agent

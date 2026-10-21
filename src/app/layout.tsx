@@ -32,6 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="zh-Hant-TW" className={`${noto.variable} ${plex.variable}`}>
       <body>
         <Providers>{children}</Providers>
+        <footer className="mt-10 text-center font-mono text-[11px] text-muted-foreground">版本 {process.env.NEXT_PUBLIC_APP_VERSION}</footer>
         <Toaster />
         <RegisterSW />
       </body>

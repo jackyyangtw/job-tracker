@@ -12,6 +12,7 @@ import DiscardConfirm from './DiscardConfirm';
 import Field from './Field';
 import { useAppFormState } from './useAppFormState';
 import PreviewHint from './PreviewHint';
+import { useDebugLog } from './useDebugLog';
 import { useJobPreview } from './useJobPreview';
 
 interface Props {
@@ -25,6 +26,7 @@ interface Props {
 export default function AppForm({ initial, resumeOptions, onSave, onDelete, onClose }: Props) {
   const { values: v, set, setUrl, setSource, applyPreview, dirty, toApplication } = useAppFormState(initial);
   const preview = useJobPreview(applyPreview);
+  const debug = useDebugLog();
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [armed, setArmed] = useState(false);
@@ -115,12 +117,16 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
                 spellCheck={false}
                 autoComplete="off"
                 placeholder="貼上 104、Cake 或 LinkedIn 網址，來源會自動判斷"
-                onChange={(e) => setUrl(e.target.value)}
+                onChange={(e) => {
+                  debug.log(`change len=${e.target.value.length} -> ${extractUrl(e.target.value)}`);
+                  setUrl(e.target.value);
+                }}
                 onBlur={() => lookUp(v.url)}
                 // 手機版 Safari 不一定會把整段貼上的訊息交給 onChange，所以直接讀剪貼簿。
                 onPaste={(e) => {
                   const text = e.clipboardData.getData('text');
                   const url = extractUrl(text);
+                  debug.log(`paste types=${[...e.clipboardData.types].join(',')} len=${text.length} -> ${url}`);
                   // 先清理貼上的內容，查詢職缺放最後，查詢出任何問題都不會影響貼上。
                   if (url !== text.trim()) {
                     e.preventDefault();
@@ -130,6 +136,7 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
                 }}
               />
               <PreviewHint status={preview.status} />
+              {debug.enabled ? <pre className="text-[11px] whitespace-pre-wrap text-muted-foreground">{debug.lines.join('\n')}</pre> : null}
             </Field>
             <Field label="來源" id="f-source">
               <NativeSelect id="f-source" wrapperClassName="w-full" value={v.source} onChange={(e) => setSource(e.target.value as Source)}>
