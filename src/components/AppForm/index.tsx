@@ -113,14 +113,20 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
                   debug.log(`change len=${e.target.value.length} -> ${extractUrl(e.target.value)}`);
                   setUrl(e.target.value);
                 }}
-                // 手機版 Safari 不一定會把整段貼上的訊息交給 onChange，所以直接讀剪貼簿。
+                // 直接讀剪貼簿，不依賴 onChange。104 App「分享 → 拷貝」會把說明文字和網址存成剪貼簿裡的
+                // 不同項目，Safari 的純文字可能只有說明文字，所以網址格式（text/uri-list）也要一起找。
                 onPaste={(e) => {
-                  const text = e.clipboardData.getData('text');
-                  const url = extractUrl(text);
-                  debug.log(`paste types=${[...e.clipboardData.types].join(',')} len=${text.length} -> ${url}`);
-                  if (url !== text.trim()) {
+                  const data = e.clipboardData;
+                  const text = data.getData('text');
+                  const found = ['text/uri-list', 'text/plain']
+                    .map((type) => extractUrl(data.getData(type)))
+                    .find((candidate) => /^https?:\/\//i.test(candidate));
+                  debug.log(
+                    `paste ${[...data.types].map((t) => `${t}(${data.getData(t).length})`).join(', ')} -> ${found ?? '找不到網址'}`,
+                  );
+                  if (found && found !== text.trim()) {
                     e.preventDefault();
-                    setUrl(text);
+                    setUrl(found);
                   }
                 }}
               />
