@@ -5,7 +5,7 @@ import type { Session } from '@supabase/supabase-js';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import AppForm from '@/components/AppForm';
-import { Board, ListView } from '@/components/Board';
+import Board, { ListView } from '@/components/Board';
 import { Reminders, StatsPanels, Tiles } from '@/components/Panels';
 import { Button } from '@/components/ui/button';
 import { useApplications } from '@/hooks/useApplications';
