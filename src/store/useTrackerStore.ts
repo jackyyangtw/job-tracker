@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 
 export type View = 'board' | 'list';
 
@@ -22,25 +22,28 @@ interface UiState {
 }
 
 export const useTrackerStore = create<UiState>()(
-  persist(
-    (set) => ({
-      view: 'board',
-      staleDays: 14,
-      samplesDismissed: false,
-      source: '',
-      query: '',
+  devtools(
+    persist(
+      (set) => ({
+        view: 'board',
+        staleDays: 14,
+        samplesDismissed: false,
+        source: '',
+        query: '',
 
-      setView: (view) => set({ view }),
-      setStaleDays: (staleDays) => set({ staleDays }),
-      setSource: (source) => set({ source }),
-      setQuery: (query) => set({ query }),
-      dismissSamples: () => set({ samplesDismissed: true }),
-      resetFilters: () => set({ source: '', query: '' }),
-    }),
-    {
-      name: 'jobtracker.prefs',
-      storage: createJSONStorage(() => localStorage),
-      partialize: (s) => ({ view: s.view, staleDays: s.staleDays, samplesDismissed: s.samplesDismissed }),
-    },
+        setView: (view) => set({ view }, false, 'setView'),
+        setStaleDays: (staleDays) => set({ staleDays }, false, 'setStaleDays'),
+        setSource: (source) => set({ source }, false, 'setSource'),
+        setQuery: (query) => set({ query }, false, 'setQuery'),
+        dismissSamples: () => set({ samplesDismissed: true }, false, 'dismissSamples'),
+        resetFilters: () => set({ source: '', query: '' }, false, 'resetFilters'),
+      }),
+      {
+        name: 'jobtracker.prefs',
+        storage: createJSONStorage(() => localStorage),
+        partialize: (s) => ({ view: s.view, staleDays: s.staleDays, samplesDismissed: s.samplesDismissed }),
+      },
+    ),
+    { name: 'TrackerStore', enabled: process.env.NODE_ENV === 'development' },
   ),
 );

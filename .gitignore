@@ -9,3 +9,8 @@ tsconfig.tsbuildinfo
 .DS_Store
 *.log
 .vercel
+
+# AI agent skills / local Claude config
+.agents/
+.claude/
+skills-lock.json
