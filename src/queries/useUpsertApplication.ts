@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { mergeApplication } from '@/lib/applicationList';
 import { cachePut } from '@/lib/cache';
 import { toRow } from '@/lib/mapping';
-import { applicationsKey } from '@/lib/queryKeys';
+import { applicationsKey } from '@/queries/keys';
 import { getSupabase } from '@/lib/supabase/client';
 import type { Application } from '@/lib/types';
 import { isOffline, messageFor, UserFacingError } from '@/lib/userFacingError';

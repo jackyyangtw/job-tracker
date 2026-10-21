@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { EMPTY_APPLICATIONS } from '@/lib/applicationList';
 import { cacheReplace, cacheRead } from '@/lib/cache';
 import { fromRow } from '@/lib/mapping';
-import { applicationsCacheKey, applicationsKey } from '@/lib/queryKeys';
+import { applicationsCacheKey, applicationsKey } from '@/queries/keys';
 import { getSupabase } from '@/lib/supabase/client';
 import type { ApplicationRow } from '@/lib/types';
 

@@ -3,12 +3,12 @@
 import { useEffect } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
-import { useApplications } from '@/hooks/useApplications';
-import { useApplicationsRealtime } from '@/hooks/useApplicationsRealtime';
 import { useSession } from '@/hooks/useSession';
-import { useStaleDaysSync } from '@/hooks/useStaleDaysSync';
 import { flagsOf } from '@/lib/flags';
 import { sampleApps } from '@/lib/sample';
+import { useApplications } from '@/queries/useApplications';
+import { useApplicationsRealtime } from '@/queries/useApplicationsRealtime';
+import { useStaleDaysSync } from '@/queries/useStaleDaysSync';
 import { useTrackerStore } from '@/store/useTrackerStore';
 import { MobileTabBar, TopBar } from './Nav';
 import { ShellContext, type Shell } from './ShellContext';

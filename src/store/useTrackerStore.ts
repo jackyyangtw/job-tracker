@@ -3,7 +3,7 @@ import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 
 export type View = 'board' | 'list';
 
-// 只放前端／UI 狀態。伺服器狀態（投遞資料）放在 TanStack Query，見 src/hooks/。
+// 只放前端／UI 狀態。伺服器狀態（投遞資料）放在 TanStack Query，見 src/queries/。
 interface UiState {
   // 會持久化的偏好設定。
   view: View;

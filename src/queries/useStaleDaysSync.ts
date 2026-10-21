@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { userSettingsKey } from '@/lib/queryKeys';
+import { userSettingsKey } from '@/queries/keys';
 import { getSupabase } from '@/lib/supabase/client';
 import { useTrackerStore } from '@/store/useTrackerStore';
 

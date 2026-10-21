@@ -18,7 +18,7 @@
 ## 架構
 
 - **路由**：`/applications`（投遞）、`/statistics`（統計）、`/settings`（設定）放在 `src/app/(dashboard)/`，共用 `AppShell`（登入檢查、資料、Realtime、提醒天數同步、導覽列），頁面用 `useShell()` 取得資料；`/` 會導到 `/applications`。新增需要登入的頁面時放進 `(dashboard)`，並加進 `public/sw.js` 的 `SHELL_PAGES`。
-- **伺服器狀態**用 TanStack Query，hook 放在 `src/hooks/`（`useApplications`、`useUpsertApplication` 等），採樂觀更新，失敗要回復並 toast。
+- **伺服器狀態**用 TanStack Query，相關 hook 放在 `src/queries/`（`useApplications`、`useUpsertApplication` 等），query key 統一定義在 `src/queries/keys.ts`；寫入採樂觀更新，失敗要回復並 toast。
 - **UI 狀態**用 Zustand（`src/store/useTrackerStore.ts`），只放檢視模式、篩選等；不要把投遞資料放進去。
 - **離線**：IndexedDB（Dexie）先顯示快取，Supabase 回應後覆蓋（`src/lib/cache.ts`）。
 - 資料存取由瀏覽器直接用 `supabase-js`，**沒有自己的後端／ORM**；權限完全靠 Row Level Security（`supabase/migrations/`）。
@@ -28,7 +28,7 @@
 
 - 元件超過約 200 行就考慮拆分；這是警訊而不是硬上限，**以職責為準，不為湊行數而拆**。
 - 要拆時開一個與元件同名的資料夾：主元件放 `index.tsx` 並 `export default function 元件名`，子元件、專屬 hook 放在同一個資料夾（例如 `components/AppForm/`、`components/Dashboard/`）。
-- 專屬 hook 以 `use` 開頭，放在同一資料夾；跨元件共用的才放 `src/hooks/`。
+- 專屬 hook 以 `use` 開頭，放在同一資料夾；跨元件共用的才放 `src/hooks/`（用到 TanStack Query 的放 `src/queries/`）。
 - 外部以資料夾名稱 import（`@/components/AppForm`），不要直接 import 資料夾內的子檔案。
 
 ## 安全

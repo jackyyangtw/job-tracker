@@ -8,12 +8,12 @@ import { useShell } from '@/components/AppShell';
 import { Button } from '@/components/ui/button';
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import { NativeSelect } from '@/components/ui/native-select';
-import { useImportApplications } from '@/hooks/useImportApplications';
 import { todayStr } from '@/lib/dates';
 import { downloadFile, toCsv, toJson } from '@/lib/exporters';
 import { normalizeApp } from '@/lib/mapping';
 import { signOutAndClear } from '@/lib/signOut';
 import type { Application } from '@/lib/types';
+import { useImportApplications } from '@/queries/useImportApplications';
 import { useTrackerStore } from '@/store/useTrackerStore';
 
 const STALE_DAY_OPTIONS = [7, 10, 14, 21, 30];

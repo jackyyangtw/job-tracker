@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { toRow } from '@/lib/mapping';
-import { applicationsKey } from '@/lib/queryKeys';
+import { applicationsKey } from '@/queries/keys';
 import { getSupabase } from '@/lib/supabase/client';
 import type { Application } from '@/lib/types';
 import { isOffline, messageFor, UserFacingError } from '@/lib/userFacingError';

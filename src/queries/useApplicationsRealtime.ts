@@ -5,7 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { mergeApplication } from '@/lib/applicationList';
 import { cacheDelete, cachePut } from '@/lib/cache';
 import { fromRow } from '@/lib/mapping';
-import { applicationsKey } from '@/lib/queryKeys';
+import { applicationsKey } from '@/queries/keys';
 import { getSupabase } from '@/lib/supabase/client';
 import type { Application, ApplicationRow } from '@/lib/types';
 

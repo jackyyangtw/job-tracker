@@ -140,7 +140,8 @@ src/app/              頁面、layout、manifest、OAuth callback、globals.css�
 src/components/       畫面元件（Dashboard、Board、Panels、AppForm…）
 src/components/ui/    shadcn/ui 元件（button、dialog、dropdown-menu、toggle-group、sonner…）
 src/lib/              型別、日期、提醒規則、統計、資料轉換、匯出、離線快取（純函式為主）、cn()
-src/hooks/            TanStack Query：useApplications（讀取）、useApplicationsRealtime、useUpsertApplication、useRemoveApplication、useImportApplications
+src/queries/          TanStack Query：useApplications（讀取）、useApplicationsRealtime、useUpsertApplication、useRemoveApplication、useImportApplications、useStaleDaysSync，query key 在 keys.ts
+src/hooks/            其他共用 hook（useSession）
 src/store/            Zustand：只放 UI 狀態（檢視、篩選、提醒天數、偏好）
 src/proxy.ts          Next.js 16 的 proxy（舊稱 middleware），負責更新 Supabase 登入 cookie
 public/sw.js          Service Worker
