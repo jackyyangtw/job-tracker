@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import { addDays, todayStr } from '@/lib/dates';
 import { detectSource, extractUrl, safeUrl } from '@/lib/mapping';
-import type { JobPreview } from '@/lib/jobPreview';
 import type { Application, Source, Status } from '@/lib/types';
 
 interface Values {
@@ -46,15 +45,6 @@ export function useAppFormState(initial: Application | null) {
     setValues((v) => ({ ...v, url, source: detected && !sourceTouched.current ? detected : v.source }));
   }
 
-  /** 把查到的公司與職稱填進表單，但絕不覆蓋使用者已經輸入的內容。 */
-  function applyPreview(preview: JobPreview) {
-    setValues((v) => ({
-      ...v,
-      company: v.company.trim() ? v.company : preview.company,
-      title: v.title.trim() ? v.title : preview.title,
-    }));
-  }
-
   function setSource(source: Source) {
     sourceTouched.current = true;
     set('source', source);
@@ -81,5 +71,5 @@ export function useAppFormState(initial: Application | null) {
     };
   }
 
-  return { values, set, setUrl, setSource, applyPreview, dirty, toApplication };
+  return { values, set, setUrl, setSource, dirty, toApplication };
 }
