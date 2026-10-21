@@ -11,7 +11,6 @@ import { SOURCES, STATUS_LIST, type Application, type Source, type Status } from
 import DiscardConfirm from './DiscardConfirm';
 import Field from './Field';
 import { useAppFormState } from './useAppFormState';
-import { useDebugLog } from './useDebugLog';
 
 interface Props {
   initial: Application | null;
@@ -23,7 +22,6 @@ interface Props {
 
 export default function AppForm({ initial, resumeOptions, onSave, onDelete, onClose }: Props) {
   const { values: v, set, setUrl, setSource, dirty, toApplication } = useAppFormState(initial);
-  const debug = useDebugLog();
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [armed, setArmed] = useState(false);
@@ -109,10 +107,7 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
                 spellCheck={false}
                 autoComplete="off"
                 placeholder="貼上 104、Cake 或 LinkedIn 網址，來源會自動判斷"
-                onChange={(e) => {
-                  debug.log(`change len=${e.target.value.length} -> ${extractUrl(e.target.value)}`);
-                  setUrl(e.target.value);
-                }}
+                onChange={(e) => setUrl(e.target.value)}
                 // 直接讀剪貼簿，不依賴 onChange。104 App「分享 → 拷貝」會把說明文字和網址存成剪貼簿裡的
                 // 不同項目，Safari 的純文字可能只有說明文字，所以網址格式（text/uri-list）也要一起找。
                 onPaste={(e) => {
@@ -121,16 +116,12 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
                   const found = ['text/uri-list', 'text/plain']
                     .map((type) => extractUrl(data.getData(type)))
                     .find((candidate) => /^https?:\/\//i.test(candidate));
-                  debug.log(
-                    `paste ${[...data.types].map((t) => `${t}(${data.getData(t).length})`).join(', ')} -> ${found ?? '找不到網址'}`,
-                  );
                   if (found && found !== text.trim()) {
                     e.preventDefault();
                     setUrl(found);
                   }
                 }}
               />
-              {debug.enabled ? <pre className="text-[11px] whitespace-pre-wrap text-muted-foreground">{debug.lines.join('\n')}</pre> : null}
             </Field>
             <Field label="來源" id="f-source">
               <NativeSelect id="f-source" wrapperClassName="w-full" value={v.source} onChange={(e) => setSource(e.target.value as Source)}>
