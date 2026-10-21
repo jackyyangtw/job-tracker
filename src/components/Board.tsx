@@ -69,7 +69,7 @@ function AppCard({ app, staleDays, onEdit, onStatus }: Common & { app: Applicati
 }
 
 export function Board({ apps, ...common }: Common & { apps: Application[] }) {
-  // Phones show one status at a time behind a tab bar; from md up every status is a column.
+  // 手機上以切換鈕一次顯示一個狀態；md 以上則每個狀態各一欄。
   const [active, setActive] = useState<Status>('applied');
   return (
     <div className="flex flex-col gap-3">
@@ -126,7 +126,7 @@ export function Board({ apps, ...common }: Common & { apps: Application[] }) {
   );
 }
 
-/** Small caption that only shows on phones, where the table collapses into stacked cards. */
+/** 只在手機上顯示的小標籤，因為手機上表格會變成堆疊的卡片。 */
 function MobileLabel({ children }: { children: React.ReactNode }) {
   return <span className="mr-1.5 text-xs text-muted-foreground md:hidden">{children}</span>;
 }
@@ -134,7 +134,7 @@ function MobileLabel({ children }: { children: React.ReactNode }) {
 export function ListView({ apps, staleDays, onEdit }: Pick<Common, 'staleDays' | 'onEdit'> & { apps: Application[] }) {
   if (!apps.length) return <p className="text-muted-foreground">沒有符合的項目。</p>;
   const th = 'px-3 py-2 text-left text-xs font-medium tracking-wide whitespace-nowrap text-muted-foreground';
-  // Phones: every row becomes a card (no horizontal scrolling). md and up: a regular table.
+  // 手機：每一列變成一張卡片（不需橫向捲動）。md 以上：一般表格。
   const td = 'md:border-t md:px-3 md:py-2 md:align-top max-md:block max-md:py-0.5';
   const pill = 'max-md:inline-block max-md:mr-2';
   return (

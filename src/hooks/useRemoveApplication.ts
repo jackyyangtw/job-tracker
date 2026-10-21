@@ -8,7 +8,7 @@ import { getSupabase } from '@/lib/supabase/client';
 import type { Application } from '@/lib/types';
 import { isOffline, messageFor, UserFacingError } from '@/lib/userFacingError';
 
-/** Optimistic delete. Resolves to `true` on success; failures are rolled back and toasted. */
+/** 樂觀更新的刪除。成功回傳 `true`；失敗會還原並跳出提示。 */
 export function useRemoveApplication(userId: string) {
   const queryClient = useQueryClient();
   const key = applicationsKey(userId);

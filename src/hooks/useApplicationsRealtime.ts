@@ -9,7 +9,7 @@ import { applicationsKey } from '@/lib/queryKeys';
 import { getSupabase } from '@/lib/supabase/client';
 import type { Application, ApplicationRow } from '@/lib/types';
 
-/** Pushes changes made on other devices into the query cache. */
+/** 把其他裝置上的變更推送到 query 快取。 */
 export function useApplicationsRealtime(userId: string) {
   const queryClient = useQueryClient();
   useEffect(() => {

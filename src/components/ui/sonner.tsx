@@ -2,7 +2,7 @@
 
 import { Toaster as Sonner, type ToasterProps } from 'sonner';
 
-/** Follows the OS colour scheme, like the rest of the app. */
+/** 和 App 其他部分一樣，跟隨系統的深淺色設定。 */
 function Toaster(props: ToasterProps) {
   return (
     <Sonner

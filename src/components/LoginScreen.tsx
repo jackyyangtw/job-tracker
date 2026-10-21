@@ -8,10 +8,10 @@ import { useSession } from '@/hooks/useSession';
 import { getSupabase } from '@/lib/supabase/client';
 
 const noopSubscribe = () => () => {};
-// Reads ?auth_error from the URL on the client; the server snapshot is `false` so hydration matches.
+// 在瀏覽器端讀取網址的 ?auth_error；伺服器端快照固定是 `false`，hydration 才會一致。
 const readAuthError = () => new URLSearchParams(window.location.search).has('auth_error');
 
-/** Login page. Already-signed-in users are sent straight back to the dashboard. */
+/** 登入頁。已經登入的使用者會直接被導回看板。 */
 export default function LoginScreen() {
   const router = useRouter();
   const { session, checking } = useSession();
@@ -34,7 +34,7 @@ export default function LoginScreen() {
       setErr('無法開始 Google 登入，請稍後再試。');
       setBusy(false);
     }
-    // On success the browser is redirected to Google, so there is nothing more to do here.
+    // 成功時瀏覽器會被導向 Google，這裡不需要再做任何事。
   }
 
   if (checking || session) return <p role="status" className="py-7 text-center text-muted-foreground">載入中…</p>;

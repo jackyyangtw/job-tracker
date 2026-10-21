@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
-/** Server-side client for route handlers. Uses the anon key and the caller's cookies, so RLS still applies. */
+/** 給 route handler 用的伺服器端 client。使用 anon key 與呼叫者的 cookie，所以 RLS 仍然生效。 */
 export async function createClient() {
   const cookieStore = await cookies();
   return createServerClient(
@@ -16,7 +16,7 @@ export async function createClient() {
           try {
             cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
           } catch {
-            // Called from a Server Component: safe to ignore because the proxy refreshes sessions.
+            // 從 Server Component 呼叫時可以忽略，因為 proxy 會負責更新 session。
           }
         },
       },

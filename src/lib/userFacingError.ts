@@ -1,4 +1,4 @@
-/** Error whose message is safe to show to the user as-is. */
+/** 訊息可以直接顯示給使用者看的錯誤。 */
 export class UserFacingError extends Error {}
 
 export const isOffline = () => typeof navigator !== 'undefined' && !navigator.onLine;

@@ -3,13 +3,13 @@ import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 
 export type View = 'board' | 'list';
 
-// Client/UI state only. Server state (applications) lives in TanStack Query, see src/hooks/.
+// 只放前端／UI 狀態。伺服器狀態（投遞資料）放在 TanStack Query，見 src/hooks/。
 interface UiState {
-  // Persisted preferences.
+  // 會持久化的偏好設定。
   view: View;
   staleDays: number;
   samplesDismissed: boolean;
-  // Ephemeral filters.
+  // 暫時性的篩選條件。
   source: string;
   query: string;
 

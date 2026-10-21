@@ -7,12 +7,12 @@ export function toJson(apps: Application[]): string {
 
 function csvCell(v: unknown): string {
   let s = String(v ?? '');
-  // Neutralise spreadsheet formula injection (=, +, -, @ at the start of a cell).
+  // 防止試算表公式注入（儲存格開頭是 =、+、-、@）。
   if (/^[=+\-@]/.test(s)) s = `'${s}`;
   return `"${s.replace(/"/g, '""')}"`;
 }
 
-/** UTF-8 with BOM so Excel opens Chinese text correctly. */
+/** 帶 BOM 的 UTF-8，Excel 開啟時中文才不會亂碼。 */
 export function toCsv(apps: Application[]): string {
   const head = ['公司', '職位', '來源', '狀態', '投遞日', '履歷版本', '下次跟進', '連結', '備註'];
   const rows = apps.map((a) =>

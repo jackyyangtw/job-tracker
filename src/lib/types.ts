@@ -16,10 +16,10 @@ export const STATUS_LABEL: Record<Status, string> = Object.fromEntries(
 export const SOURCES = ['104', 'Cake', 'LinkedIn', '內推', '公司官網', '其他'] as const;
 export type Source = (typeof SOURCES)[number] | '';
 
-/** "Got a reply": interview, offer, or a rejection. Withdrawn and wishlist do not count. */
+/** 「有回應」：面試、Offer 或收到婉拒。已撤回與想投不算。 */
 export const REPLIED: Status[] = ['interview', 'offer', 'rejected'];
 
-/** Dates are plain `YYYY-MM-DD` strings (no time zone), or '' when unset. */
+/** 日期是單純的 `YYYY-MM-DD` 字串（不含時區），未設定時是 ''。 */
 export interface Application {
   id: string;
   company: string;
@@ -34,11 +34,11 @@ export interface Application {
   note: string;
   createdAt: string;
   updatedAt: string;
-  /** Display-only example rows. Never written to the database. */
+  /** 只用來顯示的範例資料，絕不會寫入資料庫。 */
   sample?: boolean;
 }
 
-/** Row shape of public.applications (see supabase/migrations/0001_init.sql). */
+/** public.applications 的資料列格式（見 supabase/migrations/0001_init.sql）。 */
 export interface ApplicationRow {
   id: string;
   user_id?: string;

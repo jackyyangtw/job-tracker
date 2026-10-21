@@ -1,6 +1,6 @@
 import type { Status } from './types';
 
-// Tailwind only generates classes it can see as complete strings, so each status spells them out.
+// Tailwind 只會產生它能看到完整字串的 class，所以每個狀態都要把 class 完整寫出來。
 export const STATUS_STYLE: Record<Status, { dot: string; text: string; pill: string }> = {
   wishlist: { dot: 'bg-status-wishlist', text: 'text-status-wishlist', pill: 'bg-status-wishlist/15 text-status-wishlist' },
   applied: { dot: 'bg-status-applied', text: 'text-status-applied', pill: 'bg-status-applied/15 text-status-applied' },

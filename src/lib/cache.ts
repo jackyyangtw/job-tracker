@@ -1,5 +1,5 @@
-// IndexedDB copy of the last data fetched from Supabase, so the app can show something when offline.
-// Supabase stays the source of truth; this cache is only read at startup and is wiped on sign-out.
+// 最後一次從 Supabase 抓到的資料在 IndexedDB 的副本，讓 App 離線時仍有東西可以顯示。
+// 資料的唯一真實來源仍是 Supabase；這份快取只在啟動時讀取，登出時會清空。
 import Dexie, { type Table } from 'dexie';
 import type { Application } from './types';
 
@@ -41,7 +41,7 @@ export async function cacheReplace(userId: string, apps: Application[]): Promise
       await d.apps.bulkPut(apps.filter((a) => !a.sample).map((a) => ({ ...a, userId })));
     });
   } catch {
-    /* cache is best-effort */
+    /* 快取是盡力而為 */
   }
 }
 
@@ -49,7 +49,7 @@ export async function cachePut(userId: string, apps: Application[]): Promise<voi
   try {
     await getDb()?.apps.bulkPut(apps.filter((a) => !a.sample).map((a) => ({ ...a, userId })));
   } catch {
-    /* best-effort */
+    /* 盡力而為 */
   }
 }
 
@@ -57,15 +57,15 @@ export async function cacheDelete(id: string): Promise<void> {
   try {
     await getDb()?.apps.delete(id);
   } catch {
-    /* best-effort */
+    /* 盡力而為 */
   }
 }
 
-/** Called on sign-out so the next person on a shared device cannot read this user's applications. */
+/** 登出時呼叫，避免共用裝置上的下一個人讀到這位使用者的投遞資料。 */
 export async function cacheClear(): Promise<void> {
   try {
     await getDb()?.apps.clear();
   } catch {
-    /* best-effort */
+    /* 盡力而為 */
   }
 }

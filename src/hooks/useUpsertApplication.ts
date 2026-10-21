@@ -10,7 +10,7 @@ import { getSupabase } from '@/lib/supabase/client';
 import type { Application } from '@/lib/types';
 import { isOffline, messageFor, UserFacingError } from '@/lib/userFacingError';
 
-/** Optimistic create/update. Resolves to `true` on success; failures are rolled back and toasted. */
+/** 樂觀更新的新增／修改。成功回傳 `true`；失敗會還原並跳出提示。 */
 export function useUpsertApplication(userId: string) {
   const queryClient = useQueryClient();
   const key = applicationsKey(userId);

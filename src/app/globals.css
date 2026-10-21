@@ -3,8 +3,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Palette: graphite-green neutrals, one deep teal accent, six status hues used only for state.
-   Token names follow shadcn/ui so its components pick them up. */
+/* 配色：石墨綠的中性色、一個深青色強調色，以及只用來表示狀態的六種色相。
+   變數名稱沿用 shadcn/ui，元件才能直接套用。 */
 :root {
   --background: #f2f5f4;
   --foreground: #16201e;
@@ -116,7 +116,7 @@
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
   }
-  /* iOS Safari gives date inputs an intrinsic width that can push a form wider than the screen. */
+  /* iOS Safari 的日期欄位有固有寬度，可能把表單撐得比螢幕寬。 */
   input[type='date'] {
     appearance: none;
     min-width: 0;

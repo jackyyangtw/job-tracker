@@ -5,7 +5,7 @@ import RegisterSW from '@/components/RegisterSW';
 import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 
-// Noto Sans TC is a large CJK font; `preload: false` avoids preloading every weight on first paint.
+// Noto Sans TC 是體積很大的中日韓字型；`preload: false` 避免首次載入時預載所有字重。
 const noto = Noto_Sans_TC({ weight: ['400', '500', '700'], display: 'swap', preload: false, variable: '--font-noto' });
 const plex = IBM_Plex_Mono({ weight: ['400', '500'], subsets: ['latin'], display: 'swap', variable: '--font-plex' });
 

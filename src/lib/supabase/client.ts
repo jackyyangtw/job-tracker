@@ -3,7 +3,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 let client: SupabaseClient | null = null;
 
-/** One browser client per page load. Cookies are managed by @supabase/ssr so the proxy can refresh them. */
+/** 每次載入頁面只建立一個瀏覽器端 client。Cookie 由 @supabase/ssr 管理，proxy 才能更新它們。 */
 export function getSupabase(): SupabaseClient {
   if (!client) {
     client = createBrowserClient(

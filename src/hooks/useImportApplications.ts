@@ -10,7 +10,7 @@ import { isOffline, messageFor, UserFacingError } from '@/lib/userFacingError';
 
 const CHUNK_SIZE = 100;
 
-/** Bulk upsert in chunks. Resolves to how many rows were saved, then refetches the list. */
+/** 分批大量 upsert。回傳實際儲存的筆數，完成後重新抓取列表。 */
 export function useImportApplications(userId: string) {
   const queryClient = useQueryClient();
 

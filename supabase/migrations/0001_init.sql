@@ -1,5 +1,5 @@
--- Job application tracker: schema, Row Level Security, and realtime.
--- Run this once in Supabase Dashboard -> SQL Editor (or with the Supabase CLI: supabase db push).
+-- 投遞追蹤：資料表、Row Level Security 與 Realtime。
+-- 在 Supabase Dashboard -> SQL Editor 執行一次（或用 Supabase CLI：supabase db push）。
 
 create table public.applications (
   id           uuid primary key default gen_random_uuid(),
@@ -20,8 +20,8 @@ create table public.applications (
 
 create index applications_user_updated_idx on public.applications (user_id, updated_at desc);
 
--- Row Level Security: a signed-in user can only touch their own rows.
--- (select auth.uid()) is wrapped in a subselect so Postgres evaluates it once per query, not per row.
+-- Row Level Security：登入的使用者只能操作自己的資料列。
+-- (select auth.uid()) 包成子查詢，Postgres 才會每個查詢只計算一次，而不是每一列都算。
 alter table public.applications enable row level security;
 
 create policy "applications_select_own" on public.applications
@@ -41,7 +41,7 @@ create policy "applications_delete_own" on public.applications
   for delete to authenticated
   using ((select auth.uid()) = user_id);
 
--- Keep updated_at honest regardless of what the client sends.
+-- 不管前端送什麼，都讓 updated_at 保持正確。
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
@@ -57,6 +57,6 @@ create trigger applications_set_updated_at
   before update on public.applications
   for each row execute function public.set_updated_at();
 
--- Realtime: lets a change made on your phone appear on your laptop without a refresh.
--- Realtime respects the RLS policies above, so other users never receive your rows.
+-- Realtime：手機上的變更不用重新整理就會出現在筆電上。
+-- Realtime 會遵守上面的 RLS 政策，所以其他使用者收不到你的資料列。
 alter publication supabase_realtime add table public.applications;

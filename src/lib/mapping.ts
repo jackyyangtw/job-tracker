@@ -3,7 +3,7 @@ import { SOURCES, STATUS_LABEL, type Application, type ApplicationRow, type Sour
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const clip = (v: unknown, n: number) => String(v ?? '').slice(0, n);
-/** Returns `YYYY-MM-DD` only for a date that really exists on the calendar (rejects 2026-13-99, 2026-02-30). */
+/** 只有日曆上真的存在的日期才回傳 `YYYY-MM-DD`（會拒絕 2026-13-99、2026-02-30）。 */
 function date(v: unknown): string {
   if (typeof v !== 'string') return '';
   const s = v.slice(0, 10);
@@ -13,7 +13,7 @@ function date(v: unknown): string {
   return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d ? s : '';
 }
 
-/** Accepts only http(s) links; adds https:// when the scheme is missing. Returns '' for anything else. */
+/** 只接受 http(s) 連結；缺少協定時補上 https://。其他一律回傳 ''。 */
 export function safeUrl(input: unknown): string {
   let u = String(input ?? '').trim();
   if (!u) return '';
@@ -27,10 +27,9 @@ export function safeUrl(input: unknown): string {
 }
 
 /**
- * Pulls the first http(s) link out of pasted share text, e.g. the message the 104 app copies:
- * "我在104工作快找上發現了一個超適合你的內容…
-https://www.104.com.tw/job/8wgp3?jobsource=ios_share".
- * Returns the input unchanged when it contains no link, so typing a URL by hand still works.
+ * 從貼上的分享文字裡取出第一個 http(s) 連結，例如 104 App 複製出來的訊息：
+ * 「我在104工作快找上發現了一個超適合你的內容…（換行）https://www.104.com.tw/job/8wgp3?jobsource=ios_share」。
+ * 文字裡沒有連結就原樣回傳，所以手動輸入網址仍然可以。
  */
 export function extractUrl(text: string): string {
   const m = text.match(/https?:\/\/[!-~]+/i);
@@ -38,10 +37,10 @@ export function extractUrl(text: string): string {
   const url = m[0].replace(/[.,;:!?)\]}'"]+$/, '');
   try {
     const { hostname, pathname } = new URL(url);
-    // 104 share links carry tracking parameters (?jobsource=ios_share); the job page works without them.
+    // 104 分享連結帶有追蹤參數（?jobsource=ios_share），拿掉之後職缺頁面照樣能開。
     if (/(^|\.)104\.com\.tw$/.test(hostname) && pathname.startsWith('/job/')) return url.split(/[?#]/)[0];
   } catch {
-    // Half-typed URL: keep it as is.
+    // 還沒打完的網址：維持原樣。
   }
   return url;
 }
@@ -59,7 +58,7 @@ export function detectSource(url: string): Source {
   return '';
 }
 
-/** Validates and cleans anything that claims to be an application (imports, realtime payloads). */
+/** 驗證並清理任何自稱是投遞資料的內容（匯入檔、Realtime 推送）。 */
 export function normalizeApp(raw: unknown): Application | null {
   if (!raw || typeof raw !== 'object') return null;
   const r = raw as Record<string, unknown>;
@@ -70,7 +69,7 @@ export function normalizeApp(raw: unknown): Application | null {
   const source: Source = (SOURCES as readonly string[]).includes(srcRaw) ? (srcRaw as Source) : srcRaw ? '其他' : '';
   const now = new Date().toISOString();
   return {
-    // The database column is a uuid, so ids from older exports (e.g. the HTML prototype) get a fresh one.
+    // 資料庫欄位是 uuid，所以舊版匯出檔（例如 HTML 原型）的 id 會重新產生。
     id: typeof r.id === 'string' && UUID_RE.test(r.id) ? r.id : crypto.randomUUID(),
     company,
     title: clip(r.title, 160),
@@ -105,7 +104,7 @@ export function fromRow(row: ApplicationRow): Application {
   };
 }
 
-/** Columns the client may write. user_id, created_at and updated_at are set by the database. */
+/** 前端可以寫入的欄位。user_id、created_at、updated_at 由資料庫設定。 */
 export function toRow(a: Application) {
   return {
     id: a.id,

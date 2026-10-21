@@ -10,7 +10,7 @@ import { applicationsCacheKey, applicationsKey } from '@/lib/queryKeys';
 import { getSupabase } from '@/lib/supabase/client';
 import type { ApplicationRow } from '@/lib/types';
 
-/** Applications for the signed-in user: IndexedDB copy first, Supabase answer replaces it. */
+/** 目前登入使用者的投遞資料：先顯示 IndexedDB 的副本，Supabase 回應後再取代。 */
 export function useApplications(userId: string) {
   const cached = useQuery({
     queryKey: applicationsCacheKey(userId),
@@ -29,7 +29,7 @@ export function useApplications(userId: string) {
       return apps;
     },
     retry: 1,
-    // Refetch on window focus / reconnect is on by default.
+    // 視窗取得焦點或重新連線時會自動重新抓取（預設行為）。
   });
 
   const apps = remote.data ?? cached.data ?? EMPTY_APPLICATIONS;

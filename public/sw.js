@@ -1,17 +1,17 @@
-/* Minimal service worker: installable PWA + offline shell.
+/* 精簡的 Service Worker：讓 PWA 可安裝，並提供離線外殼。
  *
- * Strategy
- *  - Install: precache / and /login (static shells) plus /offline.html and the icons.
- *  - Navigations: network first, fall back to the last cached page, then /offline.html.
- *  - /_next/static and /icons: cache first (filenames are content-hashed, so this is safe).
- *  - Everything cross-origin (Supabase API, Google auth) and /auth/*: never touched by the worker.
+ * 策略
+ *  - 安裝時：預先快取 / 與 /login（靜態外殼），以及 /offline.html 和圖示。
+ *  - 頁面導覽：網路優先，失敗時用最後快取的頁面，再不行就用 /offline.html。
+ *  - /_next/static 與 /icons：快取優先（檔名含內容雜湊，所以安全）。
+ *  - 所有跨網域請求（Supabase API、Google 登入）與 /auth/*：Service Worker 完全不處理。
  *
- * Bump CACHE_VERSION when you change this file so old caches are removed.
+ * 修改這個檔案時要調高 CACHE_VERSION，舊的快取才會被清掉。
  */
 const CACHE_VERSION = 'v3';
 const SHELL_CACHE = `jt-shell-${CACHE_VERSION}`;
 const STATIC_CACHE = `jt-static-${CACHE_VERSION}`;
-// Pages whose HTML is cached for offline use (both are thin client-side shells).
+// 會為了離線使用而快取 HTML 的頁面（兩者都是薄的前端外殼）。
 const SHELL_PAGES = ['/', '/login'];
 const PRECACHE = ['/offline.html', '/icons/icon-192.png', '/icons/icon-512.png'];
 
@@ -21,8 +21,8 @@ self.addEventListener('install', (event) => {
       .open(SHELL_CACHE)
       .then(async (c) => {
         await c.addAll(PRECACHE);
-        // The two pages are identical for everyone (no personal data), so they are safe to cache up front.
-        // Best effort: a failed fetch here must not block installing the worker.
+        // 這兩個頁面對所有人都一樣（不含個人資料），所以可以安全地預先快取。
+        // 盡力而為：這裡抓取失敗不能阻擋 Service Worker 安裝。
         await Promise.allSettled(SHELL_PAGES.map((page) => c.add(page)));
       })
       .then(() => self.skipWaiting()),
@@ -81,7 +81,7 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
-/* Placeholder for phase 2 (Web Push). Intentionally inert until a push backend exists.
+/* 第二階段（Web Push）的預留位置。在有推播後端之前刻意保持不啟用。
 self.addEventListener('push', (event) => { ... });
 self.addEventListener('notificationclick', (event) => { ... });
 */

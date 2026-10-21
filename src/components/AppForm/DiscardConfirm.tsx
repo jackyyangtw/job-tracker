@@ -7,7 +7,7 @@ interface Props {
   onDiscard: () => void;
 }
 
-/** Nested confirmation shown when the form is closed with unsaved edits. */
+/** 表單有未儲存的內容就要關閉時，疊在上面的確認對話框。 */
 export default function DiscardConfirm({ open, onOpenChange, onDiscard }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

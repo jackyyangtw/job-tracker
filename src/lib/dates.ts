@@ -1,6 +1,6 @@
 const pad = (n: number) => String(n).padStart(2, '0');
 
-/** Local-calendar `YYYY-MM-DD`. Deliberately not toISOString(), which would shift the day in UTC+8. */
+/** 本地日曆的 `YYYY-MM-DD`。刻意不用 toISOString()，它在 UTC+8 會讓日期差一天。 */
 export function dstr(d: Date): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
@@ -14,7 +14,7 @@ export function parseD(s: string): Date {
   return new Date(y, m - 1, d);
 }
 
-/** Whole days from `earlier` to `later` (both `YYYY-MM-DD`). */
+/** 從 `earlier` 到 `later` 相隔的整天數（兩者都是 `YYYY-MM-DD`）。 */
 export function daysBetween(later: string, earlier: string): number {
   return Math.round((parseD(later).getTime() - parseD(earlier).getTime()) / 86_400_000);
 }

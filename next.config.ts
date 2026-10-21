@@ -2,14 +2,14 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  // React Compiler is stable in Next.js 16 and requires babel-plugin-react-compiler.
-  // It memoizes components automatically, so we don't hand-write useMemo/useCallback for performance.
+  // React Compiler 在 Next.js 16 已是穩定版，需要 babel-plugin-react-compiler。
+  // 它會自動做 memoize，所以不用為了效能手寫 useMemo／useCallback。
   reactCompiler: true,
   async headers() {
     return [
       {
-        // The service worker must never be served from a stale HTTP cache,
-        // otherwise updates to it can take a day or more to reach users.
+        // Service Worker 絕對不能從過期的 HTTP 快取提供，
+        // 否則更新可能要一天以上才會到使用者手上。
         source: '/sw.js',
         headers: [
           { key: 'Content-Type', value: 'application/javascript; charset=utf-8' },

@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { useTrackerStore } from '@/store/useTrackerStore';
 
-/** Mirrors view / search / source into the URL so a reload or a shared link keeps them. */
+/** 把檢視、搜尋與來源同步到網址，重新整理或分享連結時才會保留。 */
 export function useUrlFilters() {
   const view = useTrackerStore((s) => s.view);
   const query = useTrackerStore((s) => s.query);
   const source = useTrackerStore((s) => s.source);
 
-  // On mount: URL -> store.
+  // 載入時：網址 -> store。
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
     const v = p.get('view');
@@ -17,7 +17,7 @@ export function useUrlFilters() {
     setSource(p.get('source') ?? '');
   }, []);
 
-  // Afterwards: store -> URL (replaceState, so history is not filled with keystrokes).
+  // 之後：store -> 網址（用 replaceState，歷史紀錄才不會被每次按鍵塞滿）。
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
     const sync = (key: string, value: string) => (value ? p.set(key, value) : p.delete(key));

@@ -1,7 +1,7 @@
 import type { Application } from './types';
 import { addDays } from './dates';
 
-/** Example rows shown to a brand-new user. They live only in memory and are never saved. */
+/** 顯示給全新使用者看的範例資料。只存在記憶體裡，不會被儲存。 */
 export function sampleApps(): Application[] {
   const now = new Date().toISOString();
   const base = { url: '', followUpAt: '', lastContact: '', note: '', createdAt: now, updatedAt: now, sample: true } as const;

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from '@/hooks/useSession';
 import Dashboard from './Dashboard';
 
-/** Home page gate: signed-in users get the dashboard, everyone else is sent to /login. */
+/** 首頁的守門員：已登入顯示看板，其他人導向 /login。 */
 export default function TrackerApp() {
   const router = useRouter();
   const { session, checking } = useSession();

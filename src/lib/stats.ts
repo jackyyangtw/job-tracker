@@ -2,11 +2,11 @@ import { REPLIED, type Application } from './types';
 
 export interface Tally {
   name: string;
-  /** Applications actually sent (wishlist excluded). */
+  /** 實際投出的數量（不含「想投」）。 */
   n: number;
-  /** Applications that got a reply. */
+  /** 有收到回覆的數量。 */
   replied: number;
-  /** Reply rate, rounded to a whole percent. */
+  /** 回應率，四捨五入到整數百分比。 */
   pct: number;
 }
 

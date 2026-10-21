@@ -4,7 +4,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { SOURCES } from '@/lib/types';
 import { useTrackerStore } from '@/store/useTrackerStore';
 
-/** View toggle, search box and the source / stale-days selects. State lives in the tracker store. */
+/** 檢視切換、搜尋框，以及來源與提醒天數的下拉選單。狀態存在 tracker store。 */
 export default function Filters() {
   const view = useTrackerStore((s) => s.view);
   const staleDays = useTrackerStore((s) => s.staleDays);
@@ -18,7 +18,7 @@ export default function Filters() {
         type="single"
         aria-label="檢視方式"
         value={view}
-        // Radix reports an empty string when the active item is clicked again; keep the current view in that case.
+        // 再次點擊已選中的項目時 Radix 會回報空字串；這時維持目前的檢視。
         onValueChange={(v) => v && setView(v as 'board' | 'list')}
       >
         <ToggleGroupItem value="board">看板</ToggleGroupItem>
