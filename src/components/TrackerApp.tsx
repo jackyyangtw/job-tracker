@@ -26,7 +26,7 @@ export default function TrackerApp() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  if (checking) return <p className="py-7 text-center text-muted-foreground">載入中…</p>;
+  if (checking) return <p role="status" className="py-7 text-center text-muted-foreground">載入中…</p>;
   if (!session) return <LoginScreen authError={authError} />;
   return <Dashboard session={session} />;
 }

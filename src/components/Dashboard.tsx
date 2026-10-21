@@ -48,6 +48,24 @@ export default function Dashboard({ session }: { session: Session }) {
   const [form, setForm] = useState<{ open: boolean; id: string | null }>({ open: false, id: null });
   const fileRef = useRef<HTMLInputElement>(null);
 
+  // Mirror view / search / source into the URL so a reload or a shared link keeps them.
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    const v = p.get('view');
+    if (v === 'board' || v === 'list') store().setView(v);
+    store().setQuery(p.get('q') ?? '');
+    store().setSource(p.get('source') ?? '');
+  }, [store]);
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    const sync = (key: string, value: string) => (value ? p.set(key, value) : p.delete(key));
+    sync('view', view);
+    sync('q', query);
+    sync('source', source);
+    const qs = p.toString();
+    window.history.replaceState(null, '', qs ? `?${qs}` : window.location.pathname);
+  }, [view, query, source]);
+
   const samplesOn = loaded && apps.length === 0 && !samplesDismissed;
   const examples = samplesOn ? sampleApps() : [];
   const shown = samplesOn ? examples : apps;
@@ -142,7 +160,7 @@ export default function Dashboard({ session }: { session: Session }) {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Badge className={cn('max-w-full wrap-anywhere', offline && 'bg-warn/15 text-warn')}>{chip}</Badge>
+          <Badge role="status" className={cn('max-w-full wrap-anywhere', offline && 'bg-warn/15 text-warn')}>{chip}</Badge>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button type="button" variant="outline" aria-label="資料備份選單">
@@ -230,7 +248,7 @@ export default function Dashboard({ session }: { session: Session }) {
 
       <main>
         {!loaded ? (
-          <p className="py-7 text-center text-muted-foreground">載入中…</p>
+          <p role="status" className="py-7 text-center text-muted-foreground">載入中…</p>
         ) : view === 'board' ? (
           <Board apps={visible} staleDays={staleDays} onEdit={(id) => setForm({ open: true, id })} onStatus={changeStatus} />
         ) : (

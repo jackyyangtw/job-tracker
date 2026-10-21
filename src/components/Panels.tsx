@@ -67,7 +67,7 @@ export function Reminders({
                 <Button type="button" variant="outline" size="sm" onClick={() => onFollowed(a.id)}>
                   已跟進
                 </Button>
-                <Button type="button" variant="ghost" size="sm" onClick={() => onEdit(a.id)}>
+                <Button type="button" variant="ghost" size="sm" aria-label={`編輯 ${a.company}`} onClick={() => onEdit(a.id)}>
                   編輯
                 </Button>
               </div>

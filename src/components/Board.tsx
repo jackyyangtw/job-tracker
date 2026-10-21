@@ -58,7 +58,7 @@ function AppCard({ app, staleDays, onEdit, onStatus }: Common & { app: Applicati
           ))}
         </NativeSelect>
         {!app.sample && (
-          <Button type="button" variant="outline" size="sm" onClick={() => onEdit(app.id)}>
+          <Button type="button" variant="outline" size="sm" aria-label={`編輯 ${app.company}`} onClick={() => onEdit(app.id)}>
             編輯
           </Button>
         )}
@@ -69,16 +69,11 @@ function AppCard({ app, staleDays, onEdit, onStatus }: Common & { app: Applicati
 
 export function Board({ apps, ...common }: Common & { apps: Application[] }) {
   return (
-    <div className="grid snap-x snap-proximity auto-cols-[minmax(188px,1fr)] grid-flow-col gap-3 overflow-x-auto pb-2" role="list">
+    <ul className="m-0 grid list-none snap-x snap-proximity auto-cols-[minmax(188px,1fr)] grid-flow-col gap-3 overflow-x-auto p-0 pb-2">
       {STATUS_LIST.map((s) => {
         const items = apps.filter((a) => a.status === s.key);
         return (
-          <section
-            key={s.key}
-            role="listitem"
-            aria-label={s.label}
-            className="flex min-w-0 snap-start flex-col content-start gap-2 rounded-xl bg-secondary p-2.5"
-          >
+          <li key={s.key} className="flex min-w-0 snap-start flex-col content-start gap-2 rounded-xl bg-secondary p-2.5">
             <div className="flex items-center justify-between gap-2 px-1 py-0.5">
               <span className="inline-flex items-center gap-1.5 font-medium">
                 <span className={cn('size-[9px] rounded-full', STATUS_STYLE[s.key].dot)} />
@@ -91,10 +86,10 @@ export function Board({ apps, ...common }: Common & { apps: Application[] }) {
             ) : (
               <div className="px-1.5 py-3.5 text-center text-xs text-muted-foreground">沒有項目</div>
             )}
-          </section>
+          </li>
         );
       })}
-    </div>
+    </ul>
   );
 }
 
@@ -113,7 +108,9 @@ export function ListView({ apps, staleDays, onEdit }: Pick<Common, 'staleDays' |
             <th className={th}>投遞日</th>
             <th className={th}>履歷</th>
             <th className={th}>跟進</th>
-            <th className={th} />
+            <th className={th}>
+              <span className="sr-only">操作</span>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -149,7 +146,7 @@ export function ListView({ apps, staleDays, onEdit }: Pick<Common, 'staleDays' |
               </td>
               <td className={td}>
                 {!a.sample && (
-                  <Button type="button" variant="outline" size="sm" onClick={() => onEdit(a.id)}>
+                  <Button type="button" variant="outline" size="sm" aria-label={`編輯 ${a.company}`} onClick={() => onEdit(a.id)}>
                     編輯
                   </Button>
                 )}

@@ -47,6 +47,23 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
     if (s && !sourceTouched.current) setSource(s);
   }
 
+  const dirty =
+    company !== (initial?.company ?? '') ||
+    title !== (initial?.title ?? '') ||
+    url !== (initial?.url ?? '') ||
+    source !== (initial?.source ?? '') ||
+    status !== (initial?.status ?? 'applied') ||
+    appliedAt !== (initial ? initial.appliedAt : todayStr()) ||
+    followUpAt !== (initial ? initial.followUpAt : addDays(7)) ||
+    resume !== (initial?.resume ?? '') ||
+    note !== (initial?.note ?? '');
+
+  function requestClose() {
+    if (busy) return;
+    if (dirty && !window.confirm('尚未儲存的內容會遺失，確定要關閉嗎？')) return;
+    onClose();
+  }
+
   async function submit() {
     if (!company.trim()) {
       setError('請填公司名稱');
@@ -89,7 +106,7 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
 
   return (
     // Radix Dialog handles focus trapping, Escape, scroll lock and aria; closing is reported through onOpenChange.
-    <Dialog open onOpenChange={(open) => !open && onClose()}>
+    <Dialog open onOpenChange={(open) => !open && requestClose()}>
       <DialogContent
         aria-describedby="form-desc"
         onOpenAutoFocus={(e) => {
@@ -108,7 +125,7 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
         >
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Field label="公司 *" id="f-company" error={error}>
-              <Input id="f-company" ref={companyRef} value={company} onChange={(e) => setCompany(e.target.value)} autoComplete="off" maxLength={120} aria-invalid={!!error} />
+              <Input id="f-company" ref={companyRef} value={company} onChange={(e) => setCompany(e.target.value)} autoComplete="off" maxLength={120} aria-invalid={!!error} aria-describedby={error ? 'f-company-error' : undefined} />
             </Field>
             <Field label="職位" id="f-title">
               <Input id="f-title" value={title} onChange={(e) => setTitle(e.target.value)} autoComplete="off" maxLength={160} />
@@ -117,7 +134,9 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
               <Input
                 id="f-url"
                 value={url}
+                type="url"
                 inputMode="url"
+                spellCheck={false}
                 autoComplete="off"
                 placeholder="貼上 104、Cake 或 LinkedIn 網址，來源會自動判斷"
                 onChange={(e) => onUrlChange(e.target.value)}
@@ -176,24 +195,29 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
               <Textarea id="f-note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="面試時間、聯絡人、薪資範圍…" maxLength={2000} />
             </Field>
           </div>
-        </form>
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          {initial ? (
-            <Button type="button" variant={armed ? 'destructive-solid' : 'destructive'} onClick={() => void remove()} disabled={busy}>
-              {armed ? '再按一次確認刪除' : '刪除'}
-            </Button>
-          ) : (
-            <span />
-          )}
-          <div className="flex gap-2">
-            <Button type="button" variant="outline" onClick={onClose} disabled={busy}>
-              取消
-            </Button>
-            <Button type="button" onClick={() => void submit()} disabled={busy}>
-              儲存
-            </Button>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
+            {initial ? (
+              <>
+                <Button type="button" variant={armed ? 'destructive-solid' : 'destructive'} onClick={() => void remove()} disabled={busy}>
+                  {armed ? '再按一次確認刪除' : '刪除'}
+                </Button>
+                <span role="status" className="sr-only">
+                  {armed ? '請再按一次以確認刪除，數秒後會自動取消' : ''}
+                </span>
+              </>
+            ) : (
+              <span />
+            )}
+            <div className="flex gap-2">
+              <Button type="button" variant="outline" onClick={requestClose} disabled={busy}>
+                取消
+              </Button>
+              <Button type="submit" disabled={busy}>
+                儲存
+              </Button>
+            </div>
           </div>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );
@@ -204,7 +228,11 @@ function Field({ label, id, error, full, children }: { label: string; id: string
     <div className={`flex min-w-0 flex-col gap-1${full ? ' sm:col-span-2' : ''}`}>
       <Label htmlFor={id}>{label}</Label>
       {children}
-      {error && <div className="text-xs text-destructive">{error}</div>}
+      {error && (
+        <div id={`${id}-error`} role="alert" className="text-xs text-destructive">
+          {error}
+        </div>
+      )}
     </div>
   );
 }
