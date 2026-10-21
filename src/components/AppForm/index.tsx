@@ -11,6 +11,8 @@ import { SOURCES, STATUS_LIST, type Application, type Source, type Status } from
 import DiscardConfirm from './DiscardConfirm';
 import Field from './Field';
 import { useAppFormState } from './useAppFormState';
+import PreviewHint from './PreviewHint';
+import { useJobPreview } from './useJobPreview';
 
 interface Props {
   initial: Application | null;
@@ -21,7 +23,8 @@ interface Props {
 }
 
 export default function AppForm({ initial, resumeOptions, onSave, onDelete, onClose }: Props) {
-  const { values: v, set, setUrl, setSource, dirty, toApplication } = useAppFormState(initial);
+  const { values: v, set, setUrl, setSource, applyPreview, dirty, toApplication } = useAppFormState(initial);
+  const preview = useJobPreview(applyPreview);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [armed, setArmed] = useState(false);
@@ -38,6 +41,11 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
     if (busy) return;
     if (dirty) setConfirmDiscard(true);
     else onClose();
+  }
+
+  // 公司或職位還是空的才去查職缺，所以編輯已填好的資料時不會呼叫 API。
+  function lookUp(url: string) {
+    if (!v.company.trim() || !v.title.trim()) preview.request(url);
   }
 
   async function submit() {
@@ -65,7 +73,7 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
   }
 
   return (
-    // Radix Dialog handles focus trapping, Escape, scroll lock and aria; closing is reported through onOpenChange.
+    // Radix Dialog 負責焦點陷阱、Escape、鎖定捲動與 aria；關閉事件透過 onOpenChange 回報。
     <Dialog open onOpenChange={(open) => !open && requestClose()}>
       <DialogContent
         aria-describedby="form-desc"
@@ -108,14 +116,17 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
                 autoComplete="off"
                 placeholder="貼上 104、Cake 或 LinkedIn 網址，來源會自動判斷"
                 onChange={(e) => setUrl(e.target.value)}
-                // Mobile Safari does not always hand the whole pasted message to onChange, so read the clipboard directly.
+                onBlur={() => lookUp(v.url)}
+                // 手機版 Safari 不一定會把整段貼上的訊息交給 onChange，所以直接讀剪貼簿。
                 onPaste={(e) => {
                   const text = e.clipboardData.getData('text');
+                  lookUp(extractUrl(text));
                   if (extractUrl(text) === text.trim()) return;
                   e.preventDefault();
                   setUrl(text);
                 }}
               />
+              <PreviewHint status={preview.status} />
             </Field>
             <Field label="來源" id="f-source">
               <NativeSelect id="f-source" wrapperClassName="w-full" value={v.source} onChange={(e) => setSource(e.target.value as Source)}>

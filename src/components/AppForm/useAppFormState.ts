@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { addDays, todayStr } from '@/lib/dates';
 import { detectSource, extractUrl, safeUrl } from '@/lib/mapping';
+import type { JobPreview } from '@/lib/jobPreview';
 import type { Application, Source, Status } from '@/lib/types';
 
 interface Values {
@@ -29,20 +30,29 @@ function initialValues(initial: Application | null): Values {
   };
 }
 
-/** Field values, dirty tracking and the final Application built from them. */
+/** 欄位值、是否有未儲存的修改，以及由欄位組出的最終 Application。 */
 export function useAppFormState(initial: Application | null) {
   const [start] = useState(() => initialValues(initial));
   const [values, setValues] = useState(start);
-  // Once a source is picked by hand, pasting a URL no longer overrides it.
+  // 手動選過來源之後，貼上網址就不再自動覆蓋它。
   const sourceTouched = useRef(!!initial?.source);
 
   const set = <K extends keyof Values>(key: K, value: Values[K]) => setValues((v) => ({ ...v, [key]: value }));
 
   function setUrl(raw: string) {
-    // Pasting a whole share message is fine: only the link in it is kept.
+    // 貼上整段分享訊息也沒關係：只會保留其中的連結。
     const url = extractUrl(raw);
     const detected = detectSource(url);
     setValues((v) => ({ ...v, url, source: detected && !sourceTouched.current ? detected : v.source }));
+  }
+
+  /** 把查到的公司與職稱填進表單，但絕不覆蓋使用者已經輸入的內容。 */
+  function applyPreview(preview: JobPreview) {
+    setValues((v) => ({
+      ...v,
+      company: v.company.trim() ? v.company : preview.company,
+      title: v.title.trim() ? v.title : preview.title,
+    }));
   }
 
   function setSource(source: Source) {
@@ -71,5 +81,5 @@ export function useAppFormState(initial: Application | null) {
     };
   }
 
-  return { values, set, setUrl, setSource, dirty, toApplication };
+  return { values, set, setUrl, setSource, applyPreview, dirty, toApplication };
 }
