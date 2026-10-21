@@ -3,6 +3,8 @@ import { SOURCES, STATUS_LABEL, type Application, type ApplicationRow, type Sour
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const clip = (v: unknown, n: number) => String(v ?? '').slice(0, n);
+// 用 Object.hasOwn 而不是 `in`：`in` 會把 toString、constructor 這類原型上的名稱也當成合法狀態。
+const isStatus = (v: unknown): v is Status => typeof v === 'string' && Object.hasOwn(STATUS_LABEL, v);
 /** 只有日曆上真的存在的日期才回傳 `YYYY-MM-DD`（會拒絕 2026-13-99、2026-02-30）。 */
 function date(v: unknown): string {
   if (typeof v !== 'string') return '';
@@ -64,7 +66,7 @@ export function normalizeApp(raw: unknown): Application | null {
   const r = raw as Record<string, unknown>;
   const company = clip(r.company, 120).trim();
   if (!company) return null;
-  const status = (r.status as Status) in STATUS_LABEL ? (r.status as Status) : 'applied';
+  const status: Status = isStatus(r.status) ? r.status : 'applied';
   const srcRaw = String(r.source ?? '');
   const source: Source = (SOURCES as readonly string[]).includes(srcRaw) ? (srcRaw as Source) : srcRaw ? '其他' : '';
   const now = new Date().toISOString();
@@ -93,7 +95,7 @@ export function fromRow(row: ApplicationRow): Application {
     title: row.title ?? '',
     url: row.url ?? '',
     source: (SOURCES as readonly string[]).includes(row.source) ? (row.source as Source) : '',
-    status: row.status in STATUS_LABEL ? (row.status as Status) : 'applied',
+    status: isStatus(row.status) ? row.status : 'applied',
     appliedAt: row.applied_at ?? '',
     followUpAt: row.follow_up_at ?? '',
     lastContact: row.last_contact ?? '',

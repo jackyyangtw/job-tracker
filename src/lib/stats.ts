@@ -28,5 +28,6 @@ export function groupTally(list: Application[], keyOf: (a: Application) => strin
   }
   return [...map.entries()]
     .map(([name, v]) => ({ name, n: v.n, replied: v.replied, pct: Math.round((v.replied / v.n) * 100) }))
-    .sort((a, b) => b.n - a.n || a.name.localeCompare(b.name));
+    // 指定語系，不同裝置的排序結果才會一致。
+    .sort((a, b) => b.n - a.n || a.name.localeCompare(b.name, 'zh-Hant-TW'));
 }
