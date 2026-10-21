@@ -1,13 +1,14 @@
 /* Minimal service worker: installable PWA + offline shell.
  *
  * Strategy
+ *  - Install: precache / and /login (static shells) plus /offline.html and the icons.
  *  - Navigations: network first, fall back to the last cached page, then /offline.html.
  *  - /_next/static and /icons: cache first (filenames are content-hashed, so this is safe).
  *  - Everything cross-origin (Supabase API, Google auth) and /auth/*: never touched by the worker.
  *
  * Bump CACHE_VERSION when you change this file so old caches are removed.
  */
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const SHELL_CACHE = `jt-shell-${CACHE_VERSION}`;
 const STATIC_CACHE = `jt-static-${CACHE_VERSION}`;
 // Pages whose HTML is cached for offline use (both are thin client-side shells).
@@ -15,7 +16,17 @@ const SHELL_PAGES = ['/', '/login'];
 const PRECACHE = ['/offline.html', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(SHELL_CACHE).then((c) => c.addAll(PRECACHE)).then(() => self.skipWaiting()));
+  event.waitUntil(
+    caches
+      .open(SHELL_CACHE)
+      .then(async (c) => {
+        await c.addAll(PRECACHE);
+        // The two pages are identical for everyone (no personal data), so they are safe to cache up front.
+        // Best effort: a failed fetch here must not block installing the worker.
+        await Promise.allSettled(SHELL_PAGES.map((page) => c.add(page)));
+      })
+      .then(() => self.skipWaiting()),
+  );
 });
 
 self.addEventListener('activate', (event) => {
