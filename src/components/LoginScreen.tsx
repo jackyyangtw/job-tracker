@@ -20,7 +20,7 @@ export default function LoginScreen() {
   const [err, setErr] = useState('');
 
   useEffect(() => {
-    if (session) router.replace('/');
+    if (session) router.replace('/applications');
   }, [session, router]);
 
   async function signIn() {

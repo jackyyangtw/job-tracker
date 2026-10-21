@@ -15,6 +15,7 @@
 
 ## 架構
 
+- **路由**：`/applications`（投遞）、`/statistics`（統計）、`/settings`（設定）放在 `src/app/(dashboard)/`，共用 `AppShell`（登入檢查、資料、Realtime、提醒天數同步、導覽列），頁面用 `useShell()` 取得資料；`/` 會導到 `/applications`。新增需要登入的頁面時放進 `(dashboard)`，並加進 `public/sw.js` 的 `SHELL_PAGES`。
 - **伺服器狀態**用 TanStack Query，hook 放在 `src/hooks/`（`useApplications`、`useUpsertApplication` 等），採樂觀更新，失敗要回復並 toast。
 - **UI 狀態**用 Zustand（`src/store/useTrackerStore.ts`），只放檢視模式、篩選等；不要把投遞資料放進去。
 - **離線**：IndexedDB（Dexie）先顯示快取，Supabase 回應後覆蓋（`src/lib/cache.ts`）。

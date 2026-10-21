@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: '投遞追蹤看板',
     short_name: '投遞追蹤',
     description: '記錄每次求職投遞，提醒你該跟進的職缺，並統計各來源與履歷版本的回應率。',
-    start_url: '/',
+    start_url: '/applications',
     scope: '/',
     display: 'standalone',
     orientation: 'portrait',
