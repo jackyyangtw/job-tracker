@@ -27,7 +27,7 @@ corepack enable
 
 `pnpm-lock.yaml` 請一併提交到 Git。
 
-常用指令：`pnpm dev`（port 3300）、`pnpm build`、`pnpm lint`、`pnpm typecheck`。
+常用指令：`pnpm dev`（port 3300）、`pnpm build`、`pnpm lint`、`pnpm typecheck`、`pnpm test`（Vitest，`pnpm test:watch` 為監看模式）。
 
 ## 版本與安全更新
 

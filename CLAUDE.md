@@ -4,9 +4,11 @@
 
 ## 指令
 
-- `pnpm dev`（固定 port **3300**）、`pnpm build`、`pnpm lint`、`pnpm typecheck`
+- `pnpm dev`（固定 port **3300**）、`pnpm build`、`pnpm lint`、`pnpm typecheck`、`pnpm test`（Vitest）
 - 套件管理用 pnpm，不要用 npm／yarn。
-- 完成修改後跑 `pnpm typecheck`（與 `pnpm lint`）確認。
+- 完成修改後跑 `pnpm typecheck`、`pnpm lint` 與 `pnpm test` 確認。
+- `src/lib/` 的純函式要有測試（同目錄的 `*.test.ts`，測試資料用 `testUtils.ts` 的 `makeApp`）；修改這些函式時一併更新或補上測試。測試固定在 `Asia/Taipei` 時區執行。
+- dev server 執行中不要跑 `pnpm build`：兩者共用 `.next`，會讓 dev server 壞掉。
 
 ## 必須遵守
 
