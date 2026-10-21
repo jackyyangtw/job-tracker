@@ -9,47 +9,62 @@ import type { Common } from './types';
 
 export { default as ListView } from './ListView';
 
+type Filter = Status | 'all';
+
+/**
+ * 看板。桌機版每個狀態一欄；手機版上方是可橫向捲動的狀態切換（含「全部」），
+ * 「全部」時依狀態分段列出，選了某個狀態就只列那個狀態。
+ */
 export default function Board({ apps, ...common }: Common & { apps: Application[] }) {
-  // 手機上以切換鈕一次顯示一個狀態；md 以上則每個狀態各一欄。
-  const [active, setActive] = useState<Status>('applied');
+  const [active, setActive] = useState<Filter>('all');
+  const chips: { key: Filter; label: string; count: number }[] = [
+    { key: 'all', label: '全部', count: apps.length },
+    ...STATUS_LIST.map((s) => ({ key: s.key, label: s.label, count: apps.filter((a) => a.status === s.key).length })),
+  ];
+
   return (
     <div className="flex flex-col gap-3">
-      <div role="group" aria-label="切換狀態" className="grid grid-cols-3 gap-2 md:hidden">
-        {STATUS_LIST.map((s) => {
-          const count = apps.filter((a) => a.status === s.key).length;
-          const on = s.key === active;
+      <div role="group" aria-label="依狀態顯示" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:hidden">
+        {chips.map((c) => {
+          const on = c.key === active;
           return (
             <button
-              key={s.key}
+              key={c.key}
               type="button"
               aria-pressed={on}
-              onClick={() => setActive(s.key)}
+              onClick={() => setActive(c.key)}
               className={cn(
-                'flex min-h-11 items-center justify-center gap-1.5 rounded-lg border px-2 text-[13px] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                on ? 'border-primary bg-card font-medium text-foreground' : 'bg-secondary text-muted-foreground',
+                'inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-[13px] whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                on ? 'border-primary bg-primary/15 font-medium text-foreground' : 'bg-card text-muted-foreground',
               )}
             >
-              <span aria-hidden className={cn('size-[9px] shrink-0 rounded-full', STATUS_STYLE[s.key].dot)} />
-              {s.label}
-              <span className="font-mono text-xs tabular-nums">{count}</span>
+              {c.key === 'all' ? null : <span aria-hidden className={cn('size-2 shrink-0 rounded-full', STATUS_STYLE[c.key].dot)} />}
+              {c.label}
+              <span className="font-mono text-xs tabular-nums">{c.count}</span>
             </button>
           );
         })}
       </div>
-      <ul className="m-0 flex list-none flex-col gap-3 p-0 md:grid md:snap-x md:snap-proximity md:auto-cols-[minmax(188px,1fr)] md:grid-flow-col md:overflow-x-auto md:pb-2">
+
+      {active === 'all' && !apps.length ? <p className="py-6 text-center text-sm text-muted-foreground md:hidden">沒有符合的項目。</p> : null}
+
+      <ul className="m-0 flex list-none flex-col gap-4 p-0 md:grid md:snap-x md:snap-proximity md:auto-cols-[minmax(188px,1fr)] md:grid-flow-col md:gap-3 md:overflow-x-auto md:pb-2">
         {STATUS_LIST.map((s) => {
           const items = apps.filter((a) => a.status === s.key);
+          // 手機版：選了別的狀態，或「全部」時這個狀態沒有項目，就不顯示這一段。
+          const hiddenOnMobile = active === 'all' ? items.length === 0 : s.key !== active;
           return (
             <li
               key={s.key}
               className={cn(
-                'flex min-w-0 snap-start flex-col content-start gap-2 rounded-xl bg-secondary p-2.5',
-                s.key !== active && 'max-md:hidden',
+                'flex min-w-0 snap-start flex-col content-start gap-2 md:rounded-xl md:bg-secondary md:p-2.5',
+                hiddenOnMobile && 'max-md:hidden',
               )}
             >
-              <div className="flex items-center justify-between gap-2 px-1 py-0.5 max-md:hidden">
-                <span className="inline-flex items-center gap-1.5 font-medium">
-                  <span className={cn('size-[9px] rounded-full', STATUS_STYLE[s.key].dot)} />
+              {/* 欄位標題：桌機版一律顯示；手機版只在「全部」時當作分段標題 */}
+              <div className={cn('flex items-center justify-between gap-2 px-1 py-0.5', active !== 'all' && 'max-md:hidden')}>
+                <span className="inline-flex items-center gap-1.5 font-medium max-md:text-[13px] max-md:text-muted-foreground">
+                  <span aria-hidden className={cn('size-[9px] rounded-full', STATUS_STYLE[s.key].dot)} />
                   {s.label}
                 </span>
                 <span className="font-mono text-xs text-muted-foreground">{items.length}</span>

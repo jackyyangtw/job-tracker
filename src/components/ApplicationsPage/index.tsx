@@ -80,14 +80,8 @@ export default function ApplicationsPage() {
 
   return (
     <main className="flex flex-col gap-[18px]">
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl leading-tight font-medium">投遞</h1>
-        {/* 桌機版的新增按鈕；手機版改用右下角的浮動按鈕 */}
-        <Button type="button" className="max-md:hidden" onClick={() => openForm(null)}>
-          <Plus aria-hidden />
-          新增投遞
-        </Button>
-      </div>
+      {/* 導覽列已標示目前頁面，標題只留給螢幕閱讀器 */}
+      <h1 className="sr-only">投遞</h1>
 
       {samplesOn ? (
         <div className="flex flex-wrap items-center justify-between gap-x-3.5 gap-y-2 rounded-[10px] bg-secondary px-3.5 py-3">
@@ -100,7 +94,16 @@ export default function ApplicationsPage() {
 
       <Reminders apps={shown} staleDays={staleDays} onFollowed={followed} onCopy={(id) => void copyMessage(id)} onEdit={openForm} />
 
-      <Filters months={monthsOf(shown)} />
+      <Filters
+        months={monthsOf(shown)}
+        action={
+          // 桌機版的新增按鈕放在篩選列尾端；手機版改用右下角的浮動按鈕
+          <Button type="button" className="max-md:hidden" onClick={() => openForm(null)}>
+            <Plus aria-hidden />
+            新增投遞
+          </Button>
+        }
+      />
 
       {!loaded ? (
         <p role="status" className="py-7 text-center text-muted-foreground">
@@ -109,7 +112,15 @@ export default function ApplicationsPage() {
       ) : view === 'board' ? (
         <Board apps={visible} staleDays={staleDays} onEdit={openForm} onStatus={changeStatus} />
       ) : (
-        <ListView apps={visible} staleDays={staleDays} onEdit={openForm} />
+        // 手機版沒有看板／列表切換，一律用看板（狀態切換＋卡片）；列表只在桌機版顯示。
+        <>
+          <div className="md:hidden">
+            <Board apps={visible} staleDays={staleDays} onEdit={openForm} onStatus={changeStatus} />
+          </div>
+          <div className="max-md:hidden">
+            <ListView apps={visible} staleDays={staleDays} onEdit={openForm} />
+          </div>
+        </>
       )}
 
       <Button

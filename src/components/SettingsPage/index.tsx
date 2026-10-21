@@ -64,7 +64,7 @@ export default function SettingsPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-      <h1 className="text-xl leading-tight font-medium">設定</h1>
+      <h1 className="sr-only">設定</h1>
 
       <Card className="gap-3 rounded-[10px]">
         <CardTitle>帳號</CardTitle>
