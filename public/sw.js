@@ -7,9 +7,11 @@
  *
  * Bump CACHE_VERSION when you change this file so old caches are removed.
  */
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const SHELL_CACHE = `jt-shell-${CACHE_VERSION}`;
 const STATIC_CACHE = `jt-static-${CACHE_VERSION}`;
+// Pages whose HTML is cached for offline use (both are thin client-side shells).
+const SHELL_PAGES = ['/', '/login'];
 const PRECACHE = ['/offline.html', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 self.addEventListener('install', (event) => {
@@ -37,14 +39,14 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(req)
         .then((res) => {
-          if (res.ok && url.pathname === '/') {
+          if (res.ok && SHELL_PAGES.includes(url.pathname)) {
             const copy = res.clone();
-            caches.open(SHELL_CACHE).then((c) => c.put('/', copy));
+            caches.open(SHELL_CACHE).then((c) => c.put(url.pathname, copy));
           }
           return res;
         })
         .catch(async () => {
-          const cached = await caches.match(url.pathname === '/' ? '/' : req);
+          const cached = await caches.match(SHELL_PAGES.includes(url.pathname) ? url.pathname : req);
           return cached || (await caches.match('/offline.html')) || Response.error();
         }),
     );

@@ -1,13 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { useSession } from '@/hooks/useSession';
 import { getSupabase } from '@/lib/supabase/client';
 
-export default function LoginScreen({ authError }: { authError: boolean }) {
+const noopSubscribe = () => () => {};
+// Reads ?auth_error from the URL on the client; the server snapshot is `false` so hydration matches.
+const readAuthError = () => new URLSearchParams(window.location.search).has('auth_error');
+
+/** Login page. Already-signed-in users are sent straight back to the dashboard. */
+export default function LoginScreen() {
+  const router = useRouter();
+  const { session, checking } = useSession();
+  const authError = useSyncExternalStore(noopSubscribe, readAuthError, () => false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
+
+  useEffect(() => {
+    if (session) router.replace('/');
+  }, [session, router]);
 
   async function signIn() {
     setBusy(true);
@@ -23,17 +37,23 @@ export default function LoginScreen({ authError }: { authError: boolean }) {
     // On success the browser is redirected to Google, so there is nothing more to do here.
   }
 
+  if (checking || session) return <p role="status" className="py-7 text-center text-muted-foreground">載入中…</p>;
+
   return (
-    <div className="grid min-h-[calc(100dvh-80px)] place-items-center">
+    <main className="grid min-h-[calc(100dvh-80px)] place-items-center">
       <Card className="w-full max-w-100 gap-3.5 rounded-2xl px-6 py-7">
         <h1 className="text-2xl text-balance">投遞追蹤看板</h1>
         <p className="text-muted-foreground">記錄每次投遞、提醒你該跟進的職缺，並看出哪個管道和哪份履歷比較有回應。登入後，手機與電腦的資料會自動同步。</p>
-        {(authError || err) && <p className="text-[13px] text-destructive">{err || '登入沒有完成，請再試一次。'}</p>}
+        {(authError || err) && (
+          <p role="alert" className="text-[13px] text-destructive">
+            {err || '登入沒有完成，請再試一次。'}
+          </p>
+        )}
         <Button type="button" onClick={signIn} disabled={busy}>
           {busy ? '前往 Google…' : '使用 Google 帳號登入'}
         </Button>
         <p className="text-xs text-muted-foreground">你的資料只有你自己能讀寫，其他帳號看不到。</p>
       </Card>
-    </div>
+    </main>
   );
 }
