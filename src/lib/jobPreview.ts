@@ -21,16 +21,19 @@ export function parse104Job(json: unknown): JobPreview | null {
   return company ? { company, title } : null;
 }
 
-/** 請自己的 API 查詢職缺。任何失敗（離線、未登入、上游被擋）都回傳 null。 */
-export async function fetchJobPreview(url: string): Promise<JobPreview | null> {
+export type PreviewFailure = 'unauthorized' | 'blocked' | 'failed';
+
+/** 請自己的 API 查詢職缺。失敗時回傳原因：登入過期、104 拒絕（或無法連線），或其他。 */
+export async function fetchJobPreview(url: string): Promise<{ preview: JobPreview } | { failure: PreviewFailure }> {
   try {
     const res = await fetch(`/api/job-preview?url=${encodeURIComponent(url)}`, { signal: AbortSignal.timeout(8000) });
-    if (!res.ok) return null;
-    const data: unknown = await res.json();
-    const preview = data as Partial<JobPreview> | null;
-    if (typeof preview?.company !== 'string' || !preview.company) return null;
-    return { company: preview.company, title: typeof preview.title === 'string' ? preview.title : '' };
+    if (res.status === 401) return { failure: 'unauthorized' };
+    if (res.status === 502) return { failure: 'blocked' };
+    if (!res.ok) return { failure: 'failed' };
+    const data = (await res.json()) as Partial<JobPreview> | null;
+    if (typeof data?.company !== 'string' || !data.company) return { failure: 'failed' };
+    return { preview: { company: data.company, title: typeof data.title === 'string' ? data.title : '' } };
   } catch {
-    return null;
+    return { failure: 'failed' };
   }
 }

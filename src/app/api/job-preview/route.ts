@@ -31,13 +31,17 @@ export async function GET(request: Request) {
       signal: AbortSignal.timeout(6000),
       cache: 'no-store',
     });
-    if (!res.ok) return fail(502, 'upstream error');
+    if (!res.ok) {
+      console.warn('job-preview: 104 回應', res.status, 'id =', id); // 讓 Vercel Logs 看得到是被擋還是壞掉
+      return fail(502, 'upstream error');
+    }
     if (Number(res.headers.get('content-length') ?? 0) > MAX_BYTES) return fail(502, 'upstream too large');
 
     const preview = parse104Job(await res.json());
     if (!preview) return fail(404, 'not found');
     return NextResponse.json(preview, { headers: HEADERS });
-  } catch {
+  } catch (error) {
+    console.warn('job-preview: 呼叫 104 失敗', String(error), 'id =', id);
     return fail(502, 'upstream unavailable');
   }
 }

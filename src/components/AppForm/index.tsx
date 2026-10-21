@@ -120,10 +120,13 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
                 // 手機版 Safari 不一定會把整段貼上的訊息交給 onChange，所以直接讀剪貼簿。
                 onPaste={(e) => {
                   const text = e.clipboardData.getData('text');
-                  lookUp(extractUrl(text));
-                  if (extractUrl(text) === text.trim()) return;
-                  e.preventDefault();
-                  setUrl(text);
+                  const url = extractUrl(text);
+                  // 先清理貼上的內容，查詢職缺放最後，查詢出任何問題都不會影響貼上。
+                  if (url !== text.trim()) {
+                    e.preventDefault();
+                    setUrl(text);
+                  }
+                  lookUp(url);
                 }}
               />
               <PreviewHint status={preview.status} />

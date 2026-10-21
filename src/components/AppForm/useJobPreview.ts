@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
-import { fetchJobPreview, parse104JobId, type JobPreview } from '@/lib/jobPreview';
+import { fetchJobPreview, parse104JobId, type JobPreview, type PreviewFailure } from '@/lib/jobPreview';
 
-export type PreviewStatus = 'idle' | 'loading' | 'done' | 'failed';
+export type PreviewStatus = 'idle' | 'loading' | 'done' | PreviewFailure;
 
 /** 在貼上或離開欄位時才查詢 104 連結，不是每打一個字就查。 */
 export function useJobPreview(onResult: (preview: JobPreview) => void) {
@@ -13,14 +13,14 @@ export function useJobPreview(onResult: (preview: JobPreview) => void) {
     if (!id || id === lastId.current) return;
     lastId.current = id;
     setStatus('loading');
-    void fetchJobPreview(url).then((preview) => {
+    void fetchJobPreview(url).then((result) => {
       if (lastId.current !== id) return; // 已被較新的連結取代
-      if (preview) {
-        onResult(preview);
+      if ('preview' in result) {
+        onResult(result.preview);
         setStatus('done');
       } else {
         lastId.current = null; // 讓下一次離開欄位或貼上時可以再試一次
-        setStatus('failed');
+        setStatus(result.failure);
       }
     });
   }
