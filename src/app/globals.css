@@ -116,6 +116,12 @@
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
   }
+  /* iOS Safari gives date inputs an intrinsic width that can push a form wider than the screen. */
+  input[type='date'] {
+    appearance: none;
+    min-width: 0;
+    max-width: 100%;
+  }
   button:not(:disabled),
   [role='button']:not(:disabled) {
     cursor: pointer;
