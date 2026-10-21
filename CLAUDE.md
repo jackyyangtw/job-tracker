@@ -21,6 +21,13 @@
 - 資料存取由瀏覽器直接用 `supabase-js`，**沒有自己的後端／ORM**；權限完全靠 Row Level Security（`supabase/migrations/`）。
 - `src/lib/mapping.ts` 負責資料庫列（snake_case）與前端型別（camelCase）互轉。
 
+## 元件拆分
+
+- 元件超過約 200 行就考慮拆分；這是警訊而不是硬上限，**以職責為準，不為湊行數而拆**。
+- 要拆時開一個與元件同名的資料夾：主元件放 `index.tsx` 並 `export default function 元件名`，子元件、專屬 hook 放在同一個資料夾（例如 `components/AppForm/`、`components/Dashboard/`）。
+- 專屬 hook 以 `use` 開頭，放在同一資料夾；跨元件共用的才放 `src/hooks/`。
+- 外部以資料夾名稱 import（`@/components/AppForm`），不要直接 import 資料夾內的子檔案。
+
 ## 安全
 
 - 絕不把 `service_role`／secret key 放進程式碼或任何 `NEXT_PUBLIC_*` 變數。
