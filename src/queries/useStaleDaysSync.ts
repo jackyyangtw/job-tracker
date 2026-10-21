@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { userSettingsKey } from '@/queries/keys';
+import { mutationKeys, userSettingsKey } from '@/queries/keys';
 import { getSupabase } from '@/lib/supabase/client';
 import { useTrackerStore } from '@/store/useTrackerStore';
 
@@ -39,6 +39,7 @@ export function useStaleDaysSync(userId: string) {
   });
 
   const mutation = useMutation({
+    mutationKey: mutationKeys.updateUserSettings,
     mutationFn: async (staleDays: number) => {
       const { error } = await getSupabase().from('user_settings').upsert({ stale_days: staleDays });
       if (error) throw error;

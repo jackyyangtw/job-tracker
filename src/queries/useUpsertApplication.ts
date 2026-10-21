@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { mergeApplication } from '@/lib/applicationList';
 import { cachePut } from '@/lib/cache';
 import { toRow } from '@/lib/mapping';
-import { applicationsKey } from '@/queries/keys';
+import { applicationsKey, mutationKeys } from '@/queries/keys';
 import { getSupabase } from '@/lib/supabase/client';
 import type { Application } from '@/lib/types';
 import { isOffline, messageFor, UserFacingError } from '@/lib/userFacingError';
@@ -16,6 +16,7 @@ export function useUpsertApplication(userId: string) {
   const key = applicationsKey(userId);
 
   const mutation = useMutation({
+    mutationKey: mutationKeys.upsertApplication,
     mutationFn: async (app: Application) => {
       if (isOffline()) throw new UserFacingError('目前離線，無法儲存。連上網路後再試一次。');
       const { error } = await getSupabase().from('applications').upsert(toRow(app));

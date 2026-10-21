@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { cacheDelete } from '@/lib/cache';
-import { applicationsKey } from '@/queries/keys';
+import { applicationsKey, mutationKeys } from '@/queries/keys';
 import { getSupabase } from '@/lib/supabase/client';
 import type { Application } from '@/lib/types';
 import { isOffline, messageFor, UserFacingError } from '@/lib/userFacingError';
@@ -14,6 +14,7 @@ export function useRemoveApplication(userId: string) {
   const key = applicationsKey(userId);
 
   const mutation = useMutation({
+    mutationKey: mutationKeys.removeApplication,
     mutationFn: async (id: string) => {
       if (isOffline()) throw new UserFacingError('目前離線，無法刪除。');
       const { error } = await getSupabase().from('applications').delete().eq('id', id);

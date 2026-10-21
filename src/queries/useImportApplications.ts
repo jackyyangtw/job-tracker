@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { toRow } from '@/lib/mapping';
-import { applicationsKey } from '@/queries/keys';
+import { applicationsKey, mutationKeys } from '@/queries/keys';
 import { getSupabase } from '@/lib/supabase/client';
 import type { Application } from '@/lib/types';
 import { isOffline, messageFor, UserFacingError } from '@/lib/userFacingError';
@@ -15,6 +15,7 @@ export function useImportApplications(userId: string) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
+    mutationKey: mutationKeys.importApplications,
     mutationFn: async (apps: Application[]) => {
       if (isOffline()) throw new UserFacingError('目前離線，無法匯入。');
       const sb = getSupabase();
