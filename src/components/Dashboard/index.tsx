@@ -14,6 +14,7 @@ import { useImportApplications } from '@/hooks/useImportApplications';
 import { useRemoveApplication } from '@/hooks/useRemoveApplication';
 import { useStaleDaysSync } from '@/hooks/useStaleDaysSync';
 import { useUpsertApplication } from '@/hooks/useUpsertApplication';
+import { monthOf, monthsOf } from '@/lib/applicationList';
 import { addDays, todayStr } from '@/lib/dates';
 import { copyText, downloadFile, followUpMessage, toCsv, toJson } from '@/lib/exporters';
 import { flagsOf } from '@/lib/flags';
@@ -42,6 +43,7 @@ export default function Dashboard({ session }: { session: Session }) {
   const samplesDismissed = useTrackerStore((s) => s.samplesDismissed);
   const source = useTrackerStore((s) => s.source);
   const query = useTrackerStore((s) => s.query);
+  const month = useTrackerStore((s) => s.month);
   const store = useTrackerStore.getState;
 
   const [form, setForm] = useState<{ open: boolean; id: string | null }>({ open: false, id: null });
@@ -53,6 +55,7 @@ export default function Dashboard({ session }: { session: Session }) {
   const q = query.trim().toLowerCase();
   const visible = shown.filter((a) => {
     if (source && a.source !== source) return false;
+    if (month && monthOf(a) !== month) return false;
     if (!q) return true;
     return `${a.company} ${a.title} ${a.note} ${a.resume}`.toLowerCase().includes(q);
   });
@@ -136,7 +139,7 @@ export default function Dashboard({ session }: { session: Session }) {
 
   return (
     <div className="mx-auto flex max-w-[1240px] flex-col gap-[18px]">
-      <Header offline={offline} chip={chip} onExport={exportAs} onImport={pickImportFile} onSignOut={signOut} onAdd={() => openForm(null)} />
+      <Header offline={offline} chip={chip} onExport={exportAs} onImport={pickImportFile} onSignOut={signOut} onAdd={() => openForm(null)} onStaleDaysChange={changeStaleDays} />
 
       {samplesOn && (
         <div className="flex flex-wrap items-center justify-between gap-x-3.5 gap-y-2 rounded-[10px] bg-secondary px-3.5 py-3">
@@ -150,7 +153,7 @@ export default function Dashboard({ session }: { session: Session }) {
       <Tiles apps={shown} staleDays={staleDays} />
       <Reminders apps={shown} staleDays={staleDays} onFollowed={followed} onCopy={(id) => void copyMessage(id)} onEdit={openForm} />
 
-      <Filters onStaleDaysChange={changeStaleDays} />
+      <Filters months={monthsOf(shown)} />
 
       <main>
         {!loaded ? (

@@ -12,11 +12,14 @@ interface UiState {
   // 暫時性的篩選條件。
   source: string;
   query: string;
+  /** `YYYY-MM`，空字串代表所有月份。 */
+  month: string;
 
   setView: (v: View) => void;
   setStaleDays: (n: number) => void;
   setSource: (s: string) => void;
   setQuery: (q: string) => void;
+  setMonth: (m: string) => void;
   dismissSamples: () => void;
   resetFilters: () => void;
 }
@@ -30,13 +33,15 @@ export const useTrackerStore = create<UiState>()(
         samplesDismissed: false,
         source: '',
         query: '',
+        month: '',
 
         setView: (view) => set({ view }, false, 'setView'),
         setStaleDays: (staleDays) => set({ staleDays }, false, 'setStaleDays'),
         setSource: (source) => set({ source }, false, 'setSource'),
         setQuery: (query) => set({ query }, false, 'setQuery'),
+        setMonth: (month) => set({ month }, false, 'setMonth'),
         dismissSamples: () => set({ samplesDismissed: true }, false, 'dismissSamples'),
-        resetFilters: () => set({ source: '', query: '' }, false, 'resetFilters'),
+        resetFilters: () => set({ source: '', query: '', month: '' }, false, 'resetFilters'),
       }),
       {
         name: 'jobtracker.prefs',

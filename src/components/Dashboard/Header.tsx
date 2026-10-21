@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { todayStr } from '@/lib/dates';
 import { cn } from '@/lib/utils';
+import ReminderSettings from './ReminderSettings';
 
 interface Props {
   offline: boolean;
@@ -11,9 +12,10 @@ interface Props {
   onImport: () => void;
   onSignOut: () => void;
   onAdd: () => void;
+  onStaleDaysChange: (days: number) => void;
 }
 
-export default function Header({ offline, chip, onExport, onImport, onSignOut, onAdd }: Props) {
+export default function Header({ offline, chip, onExport, onImport, onSignOut, onAdd, onStaleDaysChange }: Props) {
   return (
     <header className="flex flex-wrap items-end justify-between gap-x-5 gap-y-3">
       <div>
@@ -26,6 +28,7 @@ export default function Header({ offline, chip, onExport, onImport, onSignOut, o
         <Badge role="status" className={cn('max-w-full wrap-anywhere', offline && 'bg-warn/15 text-warn')}>
           {chip}
         </Badge>
+        <ReminderSettings onChange={onStaleDaysChange} />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button type="button" variant="outline" aria-label="資料備份選單">

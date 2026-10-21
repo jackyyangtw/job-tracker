@@ -25,6 +25,17 @@ export function addDays(n: number, from: Date = new Date()): string {
   return dstr(d);
 }
 
+const MONTH_RE = /^\d{4}-\d{2}$/;
+
+/** 是否為 `YYYY-MM` 格式的月份（用來檢查網址參數）。 */
+export const isMonth = (s: string) => MONTH_RE.test(s);
+
+/** `2026-10` -> `2026 年 10 月` */
+export function monthLabel(month: string): string {
+  const [y, m] = month.split('-');
+  return `${y} 年 ${Number(m)} 月`;
+}
+
 /** `2026-10-20` -> `10/20` */
 export function shortDate(s: string): string {
   return s ? s.slice(5).replace('-', '/') : '';
