@@ -19,16 +19,15 @@
 
 需要 Node.js 20.9 以上（Next.js 16 的要求；若安裝時報錯請以官方文件為準）與 [pnpm](https://pnpm.io)。
 
-第一次使用請讓 Corepack 記錄 pnpm 版本，團隊與 CI 才會用同一版：
+`package.json` 的 `packageManager` 已固定 pnpm 版本，啟用 Corepack 後會自動使用同一版（Vercel 也一樣）：
 
 ```bash
 corepack enable
-corepack use pnpm@latest   # 會把版本寫進 package.json 的 packageManager 欄位
 ```
 
-`pnpm-lock.yaml` 會在第一次 `pnpm install` 時產生，請一併提交到 Git。
+`pnpm-lock.yaml` 請一併提交到 Git。
 
-常用指令：`pnpm dev`、`pnpm build`、`pnpm lint`、`pnpm typecheck`。
+常用指令：`pnpm dev`（port 3300）、`pnpm build`、`pnpm lint`、`pnpm typecheck`。
 
 ## 版本與安全更新
 
@@ -47,7 +46,7 @@ corepack use pnpm@latest   # 會把版本寫進 package.json 的 packageManager 
 ### 1. 建立 Supabase 專案並建立資料表
 
 1. 到 [supabase.com](https://supabase.com) 建立專案。
-2. 開啟 **SQL Editor**，把 `supabase/migrations/0001_init.sql` 整份貼上執行。
+2. 開啟 **SQL Editor**，依序把 `supabase/migrations/` 裡的 `0001_init.sql`、`0002_harden.sql` 各自整份貼上執行（先 0001 再 0002）。
    它會建立 `applications` 表、四條 RLS 政策（只能存取自己的資料）、`updated_at` 觸發器，並開啟 Realtime。
 3. 在 **Table Editor** 確認 `applications` 旁邊顯示 RLS 已啟用。
 
@@ -63,8 +62,8 @@ corepack use pnpm@latest   # 會把版本寫進 package.json 的 packageManager 
 4. 複製 **Client ID** 和 **Client secret**。
 5. 回到 Supabase：**Authentication → Sign In / Providers → Google**，貼上並啟用。
 6. **Authentication → URL Configuration**：
-   - Site URL：`http://localhost:3000`（上線後改成正式網址）
-   - Redirect URLs 加入：`http://localhost:3000/auth/callback`，之後再加上 `https://你的網域/auth/callback`
+   - Site URL：`http://localhost:3300`（上線後改成正式網址）
+   - Redirect URLs 加入：`http://localhost:3300/auth/callback`，之後再加上 `https://你的網域/auth/callback`
 
 ### 3. 設定環境變數並啟動
 
@@ -75,7 +74,7 @@ pnpm install
 pnpm dev
 ```
 
-開啟 http://localhost:3000，用 Google 登入。
+開啟 http://localhost:3300，用 Google 登入。
 
 > **只能放 anon／publishable key。** `service_role`（secret）key 絕對不要放進 `NEXT_PUBLIC_` 變數或前端程式碼。
 
@@ -97,16 +96,25 @@ iOS 請用 Safari 的「加入主畫面」。
 2. 在 Vercel 的 Environment Variables 加入兩個 `NEXT_PUBLIC_SUPABASE_*` 變數。
 3. 把正式網址加進 Supabase 的 Site URL 與 Redirect URLs（見上方步驟 2-6）。
 
-## 放上 GitHub
+## 在新電腦上開發
+
+Supabase 與 Google 的後台設定是共用的（Redirect URLs 已包含 `http://localhost:3300/auth/callback`），換電腦只需要重建本機環境：
 
 ```bash
-git init
-git add .
-git commit -m "feat: job tracker PWA"
-git branch -M main
-git remote add origin git@github.com:<你的帳號>/job-tracker-pwa.git
-git push -u origin main
+git clone <repo 網址>
+cd job-tracker-pwa
+corepack enable
+pnpm install
 ```
+
+接著取得環境變數，二選一：
+
+- 複製 `.env.example` 為 `.env.local`，手動填入 Supabase 的 URL 與 anon／publishable key。
+- 或用 Vercel CLI 拉下來：`vercel link`，再 `vercel env pull .env.local`。
+
+然後執行 `pnpm dev`，開啟 http://localhost:3300。
+
+> `.env.local` 不會也不應該提交到 Git。Google 的 Client Secret 只存在 Supabase 後台，不需要放在本機。
 
 ## 樣式、元件與工具
 
@@ -123,7 +131,7 @@ git push -u origin main
 ## 驗證隱私設定（建議做一次）
 
 用兩個不同的 Google 帳號各登入一次、各新增一筆資料，確認彼此看不到對方的紀錄。
-資料表層級的保護由 `0001_init.sql` 的 RLS 政策負責，前端程式碼只是讓畫面更方便。
+資料表層級的保護由 `0001_init.sql` 的 RLS 政策負責（`0002_harden.sql` 再補強），前端程式碼只是讓畫面更方便。
 
 ## 架構
 
