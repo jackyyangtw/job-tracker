@@ -24,7 +24,7 @@ export default function Board({ apps, ...common }: Common & { apps: Application[
 
   return (
     <div className="flex flex-col gap-3">
-      <div role="group" aria-label="依狀態顯示" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:hidden">
+      <div role="group" aria-label="依狀態顯示" className="scroll-fade-x -mx-4 -my-1 flex gap-2 overflow-x-auto px-4 py-1 md:hidden">
         {chips.map((c) => {
           const on = c.key === active;
           return (
