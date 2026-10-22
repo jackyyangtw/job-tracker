@@ -1,7 +1,8 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-@custom-variant dark (&:is(.dark *));
+/* 深淺色由 <html data-theme> 決定（見 src/lib/theme.ts），dark: 工具類別也跟著使用者的選擇。 */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
 /* 配色：石墨綠的中性色、一個深青色強調色，以及只用來表示狀態的六種色相。
    變數名稱沿用 shadcn/ui，元件才能直接套用。 */
@@ -36,36 +37,35 @@
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0d1413;
-    --foreground: #e4eeeb;
-    --card: #151f1d;
-    --card-foreground: #e4eeeb;
-    --popover: #151f1d;
-    --popover-foreground: #e4eeeb;
-    --primary: #4cc3b3;
-    --primary-foreground: #06201c;
-    --secondary: #1b2a27;
-    --secondary-foreground: #e4eeeb;
-    --muted: #1b2a27;
-    --muted-foreground: #8fa09b;
-    --accent: #1b2a27;
-    --accent-foreground: #e4eeeb;
-    --destructive: #f2877f;
-    --border: #2a3b37;
-    --input: #2a3b37;
-    --ring: #4cc3b3;
+/* 深色：選「深色」，或選「跟隨系統」且系統是深色時，由 script 設定 data-theme='dark'。 */
+:root[data-theme='dark'] {
+  --background: #0d1413;
+  --foreground: #e4eeeb;
+  --card: #151f1d;
+  --card-foreground: #e4eeeb;
+  --popover: #151f1d;
+  --popover-foreground: #e4eeeb;
+  --primary: #4cc3b3;
+  --primary-foreground: #06201c;
+  --secondary: #1b2a27;
+  --secondary-foreground: #e4eeeb;
+  --muted: #1b2a27;
+  --muted-foreground: #8fa09b;
+  --accent: #1b2a27;
+  --accent-foreground: #e4eeeb;
+  --destructive: #f2877f;
+  --border: #2a3b37;
+  --input: #2a3b37;
+  --ring: #4cc3b3;
 
-    --warn: #e2a65a;
-    --c-wishlist: #8fa3c7;
-    --c-applied: #6fa8ee;
-    --c-interview: #e0a458;
-    --c-offer: #58c98f;
-    --c-rejected: #ea8a96;
-    --c-withdrawn: #9aa6a1;
-    color-scheme: dark;
-  }
+  --warn: #e2a65a;
+  --c-wishlist: #8fa3c7;
+  --c-applied: #6fa8ee;
+  --c-interview: #e0a458;
+  --c-offer: #58c98f;
+  --c-rejected: #ea8a96;
+  --c-withdrawn: #9aa6a1;
+  color-scheme: dark;
 }
 
 @theme inline {
