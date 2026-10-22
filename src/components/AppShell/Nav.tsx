@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { BarChart3, LayoutGrid, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useShell } from './ShellContext';
 
 const ITEMS = [
   { href: '/applications', label: '投遞', icon: LayoutGrid },
@@ -14,18 +15,19 @@ const ITEMS = [
 /** 頁首：品牌名稱；桌機版在右側顯示主要導覽。 */
 export function TopBar() {
   const pathname = usePathname();
+  const { basePath } = useShell();
   return (
     <header className="flex items-center justify-between gap-4">
-      <Link href="/applications" className="text-lg leading-tight font-medium tracking-[0.01em] sm:text-xl">
+      <Link href={`${basePath}/applications`} className="text-lg leading-tight font-medium tracking-[0.01em] sm:text-xl">
         投遞追蹤看板
       </Link>
       <nav aria-label="主要導覽" className="hidden items-center gap-1 md:flex">
         {ITEMS.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href;
+          const active = pathname === basePath + href;
           return (
             <Link
               key={href}
-              href={href}
+              href={basePath + href}
               aria-current={active ? 'page' : undefined}
               className={cn(
                 'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring',
@@ -45,6 +47,7 @@ export function TopBar() {
 /** 手機版底部分頁列，避開 iPhone 底部的 Home 指示條。 */
 export function MobileTabBar() {
   const pathname = usePathname();
+  const { basePath } = useShell();
   return (
     <nav
       aria-label="主要導覽"
@@ -52,11 +55,11 @@ export function MobileTabBar() {
     >
       <ul className="m-0 grid list-none grid-cols-3 p-0">
         {ITEMS.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href;
+          const active = pathname === basePath + href;
           return (
             <li key={href}>
               <Link
-                href={href}
+                href={basePath + href}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
                   'flex min-h-14 flex-col items-center justify-center gap-0.5 text-[11px] outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset',

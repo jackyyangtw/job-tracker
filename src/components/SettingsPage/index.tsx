@@ -2,7 +2,6 @@
 
 import { useRef } from 'react';
 import { Bell, Cloud, CloudOff, Download, Info, LogOut, Upload } from 'lucide-react';
-import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useShell } from '@/components/AppShell';
 import { Button } from '@/components/ui/button';
@@ -11,18 +10,14 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { todayStr } from '@/lib/dates';
 import { downloadFile, toCsv, toJson } from '@/lib/exporters';
 import { normalizeApp } from '@/lib/mapping';
-import { signOutAndClear } from '@/lib/signOut';
 import type { Application } from '@/lib/types';
-import { useImportApplications } from '@/queries/useImportApplications';
 import { useTrackerStore } from '@/store/useTrackerStore';
 
 const STALE_DAY_OPTIONS = [7, 10, 14, 21, 30];
 
 /** 設定頁：帳號、提醒天數、資料備份與版本資訊。 */
 export default function SettingsPage() {
-  const { session, userId, apps, offline, changeStaleDays } = useShell();
-  const qc = useQueryClient();
-  const importMany = useImportApplications(userId);
+  const { isDemo, email, apps, offline, changeStaleDays, importMany, signOut } = useShell();
   const staleDays = useTrackerStore((s) => s.staleDays);
   const store = useTrackerStore.getState;
   const fileRef = useRef<HTMLInputElement>(null);
@@ -53,33 +48,39 @@ export default function SettingsPage() {
     const items = arr.slice(0, 300).map(normalizeApp).filter((a): a is Application => a !== null);
     if (!items.length) return toast('檔案裡沒有可匯入的項目');
     const done = await importMany(items);
-    store().dismissSamples();
+    if (!isDemo) store().dismissSamples();
     toast(`已匯入 ${done} 筆`);
-  }
-
-  function signOut() {
-    store().resetFilters();
-    void signOutAndClear(qc);
   }
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-4">
       <h1 className="sr-only">設定</h1>
 
-      <Card className="gap-3 rounded-[10px]">
-        <CardTitle>帳號</CardTitle>
-        <div className="flex items-center gap-2 text-sm">
-          {offline ? <CloudOff aria-hidden className="size-4 text-warn" /> : <Cloud aria-hidden className="size-4 text-primary" />}
-          <span role="status" className="min-w-0 wrap-anywhere">
-            {offline ? '離線中，顯示最近一次同步的資料' : '已同步'}
-          </span>
-        </div>
-        <p className="text-sm wrap-anywhere text-muted-foreground">{session.user.email}</p>
-        <Button type="button" variant="outline" className="self-start" onClick={signOut}>
-          <LogOut aria-hidden />
-          登出
-        </Button>
-      </Card>
+      {isDemo ? (
+        <Card className="gap-3 rounded-[10px]">
+          <CardTitle>試用模式</CardTitle>
+          <CardDescription>目前沒有登入，所有變更只存在這個分頁，重新整理就會回到範例資料。</CardDescription>
+          <Button type="button" variant="outline" className="self-start" onClick={signOut}>
+            <LogOut aria-hidden />
+            離開試用
+          </Button>
+        </Card>
+      ) : (
+        <Card className="gap-3 rounded-[10px]">
+          <CardTitle>帳號</CardTitle>
+          <div className="flex items-center gap-2 text-sm">
+            {offline ? <CloudOff aria-hidden className="size-4 text-warn" /> : <Cloud aria-hidden className="size-4 text-primary" />}
+            <span role="status" className="min-w-0 wrap-anywhere">
+              {offline ? '離線中，顯示最近一次同步的資料' : '已同步'}
+            </span>
+          </div>
+          <p className="text-sm wrap-anywhere text-muted-foreground">{email}</p>
+          <Button type="button" variant="outline" className="self-start" onClick={signOut}>
+            <LogOut aria-hidden />
+            登出
+          </Button>
+        </Card>
+      )}
 
       <Card className="gap-3 rounded-[10px]">
         <CardTitle>提醒</CardTitle>

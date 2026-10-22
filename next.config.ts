@@ -9,9 +9,12 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_APP_VERSION: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? 'dev',
   },
-  // 首頁直接進投遞頁；登入檢查由 (dashboard) 的 layout 負責。
+  // 首頁直接進投遞頁；登入檢查由 (dashboard) 的 layout 負責。試用模式同理。
   async redirects() {
-    return [{ source: '/', destination: '/applications', permanent: false }];
+    return [
+      { source: '/', destination: '/applications', permanent: false },
+      { source: '/demo', destination: '/demo/applications', permanent: false },
+    ];
   },
   async headers() {
     return [

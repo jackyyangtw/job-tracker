@@ -12,18 +12,14 @@ import { monthOf, monthsOf } from '@/lib/applicationList';
 import { addDays, todayStr } from '@/lib/dates';
 import { copyText, followUpMessage } from '@/lib/exporters';
 import { STATUS_LABEL, type Application, type Status } from '@/lib/types';
-import { useRemoveApplication } from '@/queries/useRemoveApplication';
-import { useUpsertApplication } from '@/queries/useUpsertApplication';
 import { useTrackerStore } from '@/store/useTrackerStore';
 import Filters from './Filters';
 import { useUrlFilters } from './useUrlFilters';
 
 /** 投遞頁：該跟進的清單、篩選、看板／列表，以及新增與編輯。 */
 export default function ApplicationsPage() {
-  const { userId, apps, shown, samplesOn, loaded } = useShell();
+  const { isDemo, apps, shown, samplesOn, loaded, upsert, remove } = useShell();
   useUrlFilters();
-  const upsert = useUpsertApplication(userId);
-  const remove = useRemoveApplication(userId);
   const view = useTrackerStore((s) => s.view);
   const staleDays = useTrackerStore((s) => s.staleDays);
   const source = useTrackerStore((s) => s.source);
@@ -50,7 +46,7 @@ export default function ApplicationsPage() {
   async function saveApp(app: Application) {
     const ok = await upsert(app);
     if (ok) {
-      store().dismissSamples();
+      if (!isDemo) store().dismissSamples();
       toast(editing ? '已更新' : '已新增');
     }
     return ok;
