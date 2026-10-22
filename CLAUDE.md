@@ -2,6 +2,12 @@
 
 求職投遞追蹤 PWA。Next.js 16（App Router、`src/`）· React 19 + React Compiler · TypeScript · Tailwind v4 · shadcn/ui · Supabase（Postgres + Auth + Realtime）· Dexie（離線快取）。
 
+## Next.js 版本規則
+
+`AGENTS.md` 由 `next dev` 自動維護，提醒以 `node_modules/next/dist/docs/` 的版本對應文件為準：
+
+@AGENTS.md
+
 ## 指令
 
 - `pnpm dev`（固定 port **3300**）、`pnpm build`、`pnpm lint`、`pnpm typecheck`、`pnpm test`（Vitest）
