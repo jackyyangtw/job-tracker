@@ -12,6 +12,7 @@ import { downloadFile, toCsv, toJson } from '@/lib/exporters';
 import { normalizeApp } from '@/lib/mapping';
 import type { Application } from '@/lib/types';
 import { useTrackerStore } from '@/store/useTrackerStore';
+import AppearanceCard from './AppearanceCard';
 
 const STALE_DAY_OPTIONS = [7, 10, 14, 21, 30];
 
@@ -81,6 +82,8 @@ export default function SettingsPage() {
           </Button>
         </Card>
       )}
+
+      <AppearanceCard />
 
       <Card className="gap-3 rounded-[10px]">
         <CardTitle>提醒</CardTitle>

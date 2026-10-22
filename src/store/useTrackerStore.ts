@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
+import type { ThemePref } from '@/lib/theme';
+import { PREFS_KEY } from './prefsKey';
 
 export type View = 'board' | 'list';
 
@@ -9,6 +11,7 @@ interface UiState {
   view: View;
   staleDays: number;
   samplesDismissed: boolean;
+  theme: ThemePref;
   // 暫時性的篩選條件。
   source: string;
   query: string;
@@ -17,6 +20,7 @@ interface UiState {
 
   setView: (v: View) => void;
   setStaleDays: (n: number) => void;
+  setTheme: (t: ThemePref) => void;
   setSource: (s: string) => void;
   setQuery: (q: string) => void;
   setMonth: (m: string) => void;
@@ -31,12 +35,14 @@ export const useTrackerStore = create<UiState>()(
         view: 'board',
         staleDays: 14,
         samplesDismissed: false,
+        theme: 'system',
         source: '',
         query: '',
         month: '',
 
         setView: (view) => set({ view }, false, 'setView'),
         setStaleDays: (staleDays) => set({ staleDays }, false, 'setStaleDays'),
+        setTheme: (theme) => set({ theme }, false, 'setTheme'),
         setSource: (source) => set({ source }, false, 'setSource'),
         setQuery: (query) => set({ query }, false, 'setQuery'),
         setMonth: (month) => set({ month }, false, 'setMonth'),
@@ -44,9 +50,9 @@ export const useTrackerStore = create<UiState>()(
         resetFilters: () => set({ source: '', query: '', month: '' }, false, 'resetFilters'),
       }),
       {
-        name: 'jobtracker.prefs',
+        name: PREFS_KEY,
         storage: createJSONStorage(() => localStorage),
-        partialize: (s) => ({ view: s.view, staleDays: s.staleDays, samplesDismissed: s.samplesDismissed }),
+        partialize: (s) => ({ view: s.view, staleDays: s.staleDays, samplesDismissed: s.samplesDismissed, theme: s.theme }),
       },
     ),
     { name: 'TrackerStore', enabled: process.env.NODE_ENV === 'development' },
