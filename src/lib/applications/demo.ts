@@ -1,5 +1,5 @@
-import type { Application } from './types';
-import { addDays } from './dates';
+import type { Application } from '../types';
+import { addDays } from '../dates';
 
 /**
  * 試用模式（/demo）的初始資料：涵蓋六種狀態，並包含「沒消息」與「該跟進」兩種提醒，

@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/compone
 import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Textarea } from '@/components/ui/textarea';
-import { extractUrl } from '@/lib/mapping';
+import { extractUrl } from '@/lib/data/mapping';
 import { SOURCES, STATUS_LIST, type Application, type Source, type Status } from '@/lib/types';
 import DiscardConfirm from './DiscardConfirm';
 import Field from './Field';

@@ -3,7 +3,7 @@
 import { Monitor, Moon, Sun } from 'lucide-react';
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { THEME_PREFS, type ThemePref } from '@/lib/theme';
+import { THEME_PREFS, type ThemePref } from '@/lib/ui/theme';
 import { useTrackerStore } from '@/store/useTrackerStore';
 
 const OPTIONS: Record<ThemePref, { label: string; icon: typeof Sun }> = {

@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { flagsOf } from '@/lib/flags';
+import { flagsOf } from '@/lib/applications/flags';
 import type { Application } from '@/lib/types';
 
 export function FlagBadges({ app, staleDays }: { app: Application; staleDays: number }) {

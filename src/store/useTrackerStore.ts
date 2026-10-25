@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
-import type { ThemePref } from '@/lib/theme';
+import type { ThemePref } from '@/lib/ui/theme';
 import { PREFS_KEY } from './prefsKey';
 
 export type View = 'board' | 'list';

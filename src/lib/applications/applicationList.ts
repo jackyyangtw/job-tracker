@@ -1,5 +1,5 @@
-import { dstr } from './dates';
-import type { Application } from './types';
+import { dstr } from '../dates';
+import type { Application } from '../types';
 
 export const EMPTY_APPLICATIONS: Application[] = [];
 

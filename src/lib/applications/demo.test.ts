@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { demoApps } from './demo';
-import { dstr } from './dates';
+import { dstr } from '../dates';
 import { flagsOf } from './flags';
-import { STATUS_LIST } from './types';
+import { STATUS_LIST } from '../types';
 
 const today = new Date(2026, 9, 22);
 const apps = demoApps(today);

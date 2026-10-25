@@ -139,7 +139,8 @@ pnpm install
 src/app/              頁面、layout、manifest、OAuth callback、globals.css（Tailwind + 主題色票）
 src/components/       畫面元件（Dashboard、Board、Panels、AppForm…）
 src/components/ui/    shadcn/ui 元件（button、dialog、dropdown-menu、toggle-group、sonner…）
-src/lib/              型別、日期、提醒規則、統計、資料轉換、匯出、離線快取（純函式為主）、cn()
+src/lib/              型別、日期、cn()、安全標頭；applications/（提醒、統計、範例資料）、data/（資料轉換、離線快取、匯出）、
+                      supabase/（client、登出）、ui/（外觀主題、狀態樣式）。純函式為主
 src/queries/          TanStack Query：useApplications（讀取）、useApplicationsRealtime、useUpsertApplication、useRemoveApplication、useImportApplications、useStaleDaysSync，query key 在 keys.ts
 src/hooks/            其他共用 hook（useSession）
 src/store/            Zustand：只放 UI 狀態（檢視、篩選、提醒天數、偏好）

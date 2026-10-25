@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { mergeApplication, monthOf, monthsOf } from './applicationList';
-import { makeApp } from './testUtils';
+import { makeApp } from '../testUtils';
 
 describe('monthOf', () => {
   it('有投遞日就用投遞日的月份', () => {

@@ -2,13 +2,13 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { mergeApplication } from '@/lib/applicationList';
-import { cachePut } from '@/lib/cache';
-import { toRow } from '@/lib/mapping';
+import { mergeApplication } from '@/lib/applications/applicationList';
+import { cachePut } from '@/lib/data/cache';
+import { toRow } from '@/lib/data/mapping';
 import { applicationsKey, mutationKeys } from '@/queries/keys';
 import { getSupabase } from '@/lib/supabase/client';
 import type { Application } from '@/lib/types';
-import { isOffline, messageFor, UserFacingError } from '@/lib/userFacingError';
+import { isOffline, messageFor, UserFacingError } from '@/lib/data/userFacingError';
 
 /** 樂觀更新的新增／修改。成功回傳 `true`；失敗會還原並跳出提示。 */
 export function useUpsertApplication(userId: string) {

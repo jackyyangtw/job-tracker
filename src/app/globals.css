@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/* 深淺色由 <html data-theme> 決定（見 src/lib/theme.ts），dark: 工具類別也跟著使用者的選擇。 */
+/* 深淺色由 <html data-theme> 決定（見 src/lib/ui/theme.ts），dark: 工具類別也跟著使用者的選擇。 */
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
 /* 配色：石墨綠的中性色、一個深青色強調色，以及只用來表示狀態的六種色相。

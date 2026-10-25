@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { addDays, todayStr } from '@/lib/dates';
-import { detectSource, extractUrl, safeUrl } from '@/lib/mapping';
+import { detectSource, extractUrl, safeUrl } from '@/lib/data/mapping';
 import type { Application, Source, Status } from '@/lib/types';
 
 interface Values {

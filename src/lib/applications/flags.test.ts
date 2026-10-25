@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { flagsOf, silenceDays } from './flags';
-import { makeApp } from './testUtils';
+import { makeApp } from '../testUtils';
 
 const TODAY = '2026-10-21';
 const kinds = (app: ReturnType<typeof makeApp>, staleDays = 14) => flagsOf(app, staleDays, TODAY).map((f) => f.kind);

@@ -1,8 +1,8 @@
 import { FlagBadges, SampleTag } from '@/components/FlagBadges';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { flagsOf } from '@/lib/flags';
-import { STATUS_STYLE } from '@/lib/statusStyle';
+import { flagsOf } from '@/lib/applications/flags';
+import { STATUS_STYLE } from '@/lib/ui/statusStyle';
 import { STATUS_LABEL, type Application } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import type { Common } from './types';

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { groupTally, overall } from './stats';
-import { makeApp } from './testUtils';
+import { makeApp } from '../testUtils';
 
 describe('overall', () => {
   it('「想投」不算已投遞；面試、Offer、未錄取算有回應，已撤回不算', () => {

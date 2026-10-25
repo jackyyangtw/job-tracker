@@ -2,7 +2,7 @@
 // 資料的唯一真實來源仍是 Supabase；這份快取只在啟動時讀取，登出時會清空。
 import Dexie, { type Table } from 'dexie';
 import { normalizeApp } from './mapping';
-import type { Application } from './types';
+import type { Application } from '../types';
 
 type CachedApp = Application & { userId: string };
 

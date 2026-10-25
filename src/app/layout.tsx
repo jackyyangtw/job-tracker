@@ -3,7 +3,7 @@ import { IBM_Plex_Mono, Noto_Sans_TC } from 'next/font/google';
 import Providers from '@/components/Providers';
 import RegisterSW from '@/components/RegisterSW';
 import { Toaster } from '@/components/ui/sonner';
-import { THEME_COLOR, themeInitScript } from '@/lib/theme';
+import { THEME_COLOR, themeInitScript } from '@/lib/ui/theme';
 import { PREFS_KEY } from '@/store/prefsKey';
 import './globals.css';
 

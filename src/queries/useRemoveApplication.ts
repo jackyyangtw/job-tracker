@@ -2,11 +2,11 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { cacheDelete } from '@/lib/cache';
+import { cacheDelete } from '@/lib/data/cache';
 import { applicationsKey, mutationKeys } from '@/queries/keys';
 import { getSupabase } from '@/lib/supabase/client';
 import type { Application } from '@/lib/types';
-import { isOffline, messageFor, UserFacingError } from '@/lib/userFacingError';
+import { isOffline, messageFor, UserFacingError } from '@/lib/data/userFacingError';
 
 /** 樂觀更新的刪除。成功回傳 `true`；失敗會還原並跳出提示。 */
 export function useRemoveApplication(userId: string) {

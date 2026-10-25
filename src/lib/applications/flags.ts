@@ -1,5 +1,5 @@
-import type { Application } from './types';
-import { daysBetween, todayStr } from './dates';
+import type { Application } from '../types';
+import { daysBetween, todayStr } from '../dates';
 
 export interface Flag {
   kind: 'stale' | 'due';
