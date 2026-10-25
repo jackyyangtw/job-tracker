@@ -1,6 +1,7 @@
 // 最後一次從 Supabase 抓到的資料在 IndexedDB 的副本，讓 App 離線時仍有東西可以顯示。
 // 資料的唯一真實來源仍是 Supabase；這份快取只在啟動時讀取，登出時會清空。
 import Dexie, { type Table } from 'dexie';
+import { normalizeApp } from './mapping';
 import type { Application } from './types';
 
 type CachedApp = Application & { userId: string };
@@ -25,7 +26,9 @@ export async function cacheRead(userId: string): Promise<Application[]> {
     if (!d) return [];
     const rows = await d.apps.where('userId').equals(userId).toArray();
     return rows
-      .map(({ userId: _u, ...app }) => app as Application)
+      // IndexedDB 的內容可能是舊版格式或被竄改過，和匯入檔一樣當成不可信任的資料重新驗證。
+      .map(({ userId: _u, ...app }) => normalizeApp(app))
+      .filter((a): a is Application => a !== null)
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   } catch {
     return [];

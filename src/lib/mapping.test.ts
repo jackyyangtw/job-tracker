@@ -125,6 +125,11 @@ describe('toRow / fromRow', () => {
     expect(fromRow(row)).toEqual(app);
   });
 
+  it('從資料庫或 Realtime 讀進來的危險連結會被清空', () => {
+    const row = { ...toRow(makeApp()), url: 'javascript:alert(document.cookie)', created_at: '', updated_at: '' };
+    expect(fromRow(row).url).toBe('');
+  });
+
   it('空日期寫入資料庫時是 null', () => {
     const row = toRow(makeApp());
     expect(row.applied_at).toBeNull();

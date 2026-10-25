@@ -5,10 +5,16 @@ export function toJson(apps: Application[]): string {
   return JSON.stringify({ app: 'job-tracker', version: 1, exportedAt: new Date().toISOString(), apps: clean }, null, 2);
 }
 
+// 試算表會把這些字元開頭的儲存格當成公式（Tab、換行也會觸發）；前面有空白時部分軟體仍會當成公式。
+const FORMULA_RE = /^\s*[=+\-@]|^[\t\r\n]/;
+
+/** 防止試算表公式注入：可能被當成公式的值前面加上單引號，讓它變成純文字。 */
+export function escapeFormula(s: string): string {
+  return FORMULA_RE.test(s) ? `'${s}` : s;
+}
+
 function csvCell(v: unknown): string {
-  let s = String(v ?? '');
-  // 防止試算表公式注入（儲存格開頭是 =、+、-、@）。
-  if (/^[=+\-@]/.test(s)) s = `'${s}`;
+  const s = escapeFormula(String(v ?? ''));
   return `"${s.replace(/"/g, '""')}"`;
 }
 
