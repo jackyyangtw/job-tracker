@@ -1,4 +1,4 @@
-import { REPLIED, type Application } from './types';
+import { REPLIED, type Application } from '../types';
 
 export interface Tally {
   name: string;

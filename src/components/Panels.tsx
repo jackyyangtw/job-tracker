@@ -3,8 +3,8 @@
 import { FlagBadges, SampleTag } from '@/components/FlagBadges';
 import { Button } from '@/components/ui/button';
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
-import { flagsOf, silenceDays } from '@/lib/flags';
-import { groupTally, overall } from '@/lib/stats';
+import { flagsOf, silenceDays } from '@/lib/applications/flags';
+import { groupTally, overall } from '@/lib/applications/stats';
 import type { Application } from '@/lib/types';
 
 function Tile({ label, value, hint }: { label: string; value: string | number; hint: string }) {

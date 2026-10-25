@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { detectSource, extractUrl, fromRow, normalizeApp, safeUrl, toRow } from './mapping';
-import { makeApp } from './testUtils';
+import { makeApp } from '../testUtils';
 
 const SHARE_TEXT = '我在104工作快找上發現了一個超適合你的內容，分享給你希望會喜歡~~';
 const JOB_URL = 'https://www.104.com.tw/job/8wgp3';

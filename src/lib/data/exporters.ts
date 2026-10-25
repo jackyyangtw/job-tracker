@@ -1,4 +1,4 @@
-import { STATUS_LABEL, type Application } from './types';
+import { STATUS_LABEL, type Application } from '../types';
 
 export function toJson(apps: Application[]): string {
   const clean = apps.map(({ sample: _sample, ...rest }) => rest);

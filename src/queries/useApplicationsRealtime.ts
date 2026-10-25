@@ -2,9 +2,9 @@
 
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { mergeApplication } from '@/lib/applicationList';
-import { cacheDelete, cachePut } from '@/lib/cache';
-import { fromRow } from '@/lib/mapping';
+import { mergeApplication } from '@/lib/applications/applicationList';
+import { cacheDelete, cachePut } from '@/lib/data/cache';
+import { fromRow } from '@/lib/data/mapping';
 import { applicationsKey } from '@/queries/keys';
 import { getSupabase } from '@/lib/supabase/client';
 import type { Application, ApplicationRow } from '@/lib/types';

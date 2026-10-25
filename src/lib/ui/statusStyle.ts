@@ -1,4 +1,4 @@
-import type { Status } from './types';
+import type { Status } from '../types';
 
 // Tailwind 只會產生它能看到完整字串的 class，所以每個狀態都要把 class 完整寫出來。
 export const STATUS_STYLE: Record<Status, { dot: string; text: string; pill: string }> = {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { applyTheme, DARK_QUERY, resolveTheme } from '@/lib/theme';
+import { applyTheme, DARK_QUERY, resolveTheme } from '@/lib/ui/theme';
 import { useTrackerStore } from '@/store/useTrackerStore';
 
 /**

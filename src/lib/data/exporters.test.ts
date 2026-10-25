@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { escapeFormula, followUpMessage, toCsv, toJson } from './exporters';
-import { makeApp } from './testUtils';
+import { makeApp } from '../testUtils';
 
 const dataRow = (csv: string) => csv.split('\r\n')[1];
 

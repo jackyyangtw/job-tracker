@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { STATUS_STYLE } from '@/lib/statusStyle';
+import { STATUS_STYLE } from '@/lib/ui/statusStyle';
 import { STATUS_LIST, type Application, type Status } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import AppCard from './AppCard';

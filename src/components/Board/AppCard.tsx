@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { NativeSelect } from '@/components/ui/native-select';
 import { shortDate } from '@/lib/dates';
-import { flagsOf } from '@/lib/flags';
+import { flagsOf } from '@/lib/applications/flags';
 import { STATUS_LIST, type Application, type Status } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { DRAG_TYPE, type Common } from './types';
