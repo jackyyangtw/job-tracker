@@ -93,7 +93,8 @@ export function fromRow(row: ApplicationRow): Application {
     id: row.id,
     company: row.company,
     title: row.title ?? '',
-    url: row.url ?? '',
+    // 資料庫的 check constraint 只在 0002 之後才有，Realtime 推送也直接來自資料列，所以讀進來時再過濾一次。
+    url: safeUrl(row.url),
     source: (SOURCES as readonly string[]).includes(row.source) ? (row.source as Source) : '',
     status: isStatus(row.status) ? row.status : 'applied',
     appliedAt: row.applied_at ?? '',

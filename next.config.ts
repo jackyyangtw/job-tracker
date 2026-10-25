@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import { securityHeaders } from './src/lib/securityHeaders';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -18,6 +19,14 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      {
+        // CSP 與其他安全標頭，內容與理由見 src/lib/securityHeaders.ts。
+        source: '/:path*',
+        headers: securityHeaders({
+          supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+          dev: process.env.NODE_ENV === 'development',
+        }),
+      },
       {
         // Service Worker 絕對不能從過期的 HTTP 快取提供，
         // 否則更新可能要一天以上才會到使用者手上。

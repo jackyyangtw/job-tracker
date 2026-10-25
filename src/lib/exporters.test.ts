@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { followUpMessage, toCsv, toJson } from './exporters';
+import { escapeFormula, followUpMessage, toCsv, toJson } from './exporters';
 import { makeApp } from './testUtils';
 
 const dataRow = (csv: string) => csv.split('\r\n')[1];
@@ -27,6 +27,21 @@ describe('toCsv', () => {
 
   it.each(['=1+1', '+886', '-cmd', '@SUM(A1)'])('防止公式注入：%s 前面加上單引號', (value) => {
     expect(dataRow(toCsv([makeApp({ company: value })])).startsWith(`"'${value}"`)).toBe(true);
+  });
+
+  it('連結與備註欄位也會跳脫公式', () => {
+    const row = dataRow(toCsv([makeApp({ note: '=HYPERLINK("https://evil.example","點我")' })]));
+    expect(row.endsWith(`"'=HYPERLINK(""https://evil.example"",""點我"")"`)).toBe(true);
+  });
+});
+
+describe('escapeFormula', () => {
+  it.each(['\t=1+1', '\r=1+1', '\n@SUM(A1)', '  =1+1', ' -2+3'])('Tab、換行與前置空白也算公式：%j', (value) => {
+    expect(escapeFormula(value)).toBe(`'${value}`);
+  });
+
+  it.each(['前端工程師', 'https://example.com/?a=1', 'a-b', '', '1+1'])('一般文字維持原樣：%j', (value) => {
+    expect(escapeFormula(value)).toBe(value);
   });
 });
 
