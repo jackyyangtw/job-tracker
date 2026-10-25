@@ -5,7 +5,7 @@ import { STATUS_STYLE } from '@/lib/statusStyle';
 import { STATUS_LIST, type Application, type Status } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import AppCard from './AppCard';
-import type { Common } from './types';
+import { DRAG_TYPE, type Common } from './types';
 
 export { default as ListView } from './ListView';
 
@@ -17,6 +17,8 @@ type Filter = Status | 'all';
  */
 export default function Board({ apps, ...common }: Common & { apps: Application[] }) {
   const [active, setActive] = useState<Filter>('all');
+  // 拖曳中游標所在的欄位，用來顯示放置提示
+  const [dropTarget, setDropTarget] = useState<Status | null>(null);
   const chips: { key: Filter; label: string; count: number }[] = [
     { key: 'all', label: '全部', count: apps.length },
     ...STATUS_LIST.map((s) => ({ key: s.key, label: s.label, count: apps.filter((a) => a.status === s.key).length })),
@@ -56,8 +58,26 @@ export default function Board({ apps, ...common }: Common & { apps: Application[
           return (
             <li
               key={s.key}
+              onDragOver={(e) => {
+                if (!e.dataTransfer.types.includes(DRAG_TYPE)) return;
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                if (dropTarget !== s.key) setDropTarget(s.key);
+              }}
+              onDragLeave={(e) => {
+                // 移到欄位內的子元素也會觸發 dragleave，真的離開欄位才清掉
+                if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setDropTarget(null);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                setDropTarget(null);
+                const id = e.dataTransfer.getData(DRAG_TYPE);
+                const app = apps.find((a) => a.id === id);
+                if (app && app.status !== s.key) common.onStatus(id, s.key);
+              }}
               className={cn(
-                'flex min-w-0 snap-start flex-col content-start gap-2 md:rounded-xl md:bg-secondary md:p-2.5',
+                'flex min-w-0 snap-start flex-col content-start gap-2 md:rounded-xl md:bg-secondary md:p-2.5 md:outline-2 md:-outline-offset-2 md:outline-transparent md:transition-[outline-color,background-color]',
+                dropTarget === s.key && 'md:bg-primary/10 md:outline-dashed md:outline-primary',
                 hiddenOnMobile && 'max-md:hidden',
               )}
             >
