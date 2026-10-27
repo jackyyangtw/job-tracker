@@ -15,10 +15,12 @@ const buttonVariants = cva(
         destructive: 'border border-destructive bg-card text-destructive hover:bg-destructive/10',
         'destructive-solid': 'bg-destructive font-medium text-card hover:bg-destructive/90',
       },
+      // 觸控裝置（pointer: coarse）一律放大到 44px，符合 Apple HIG 建議的最小觸控範圍。
+      // 覆寫高度時要連 pointer-coarse: 一起寫，否則觸控裝置上會被這裡的 44px 蓋掉。
       size: {
-        default: 'h-9 px-4 py-1.5',
-        sm: 'h-8 px-2.5 text-[13px]',
-        icon: 'size-9',
+        default: 'h-9 px-4 py-1.5 pointer-coarse:h-11',
+        sm: 'h-8 px-2.5 text-[13px] pointer-coarse:h-11 pointer-coarse:px-3.5',
+        icon: 'size-9 pointer-coarse:size-11',
       },
     },
     defaultVariants: { variant: 'default', size: 'default' },

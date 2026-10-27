@@ -23,7 +23,8 @@ interface Props {
 export default function AppForm({ initial, resumeOptions, onSave, onDelete, onClose }: Props) {
   const { values: v, set, setUrl, setSource, dirty, toApplication } = useAppFormState(initial);
   const [error, setError] = useState('');
-  const [busy, setBusy] = useState(false);
+  // 正在進行的操作，用來停用按鈕並在對應的按鈕上顯示進度
+  const [busy, setBusy] = useState<'save' | 'delete' | null>(null);
   const [armed, setArmed] = useState(false);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
   const companyRef = useRef<HTMLInputElement>(null);
@@ -46,9 +47,9 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
       companyRef.current?.focus();
       return;
     }
-    setBusy(true);
+    setBusy('save');
     const ok = await onSave(toApplication());
-    setBusy(false);
+    setBusy(null);
     if (ok) onClose();
   }
 
@@ -58,9 +59,9 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
       setArmed(true);
       return;
     }
-    setBusy(true);
+    setBusy('delete');
     const ok = await onDelete(initial.id);
-    setBusy(false);
+    setBusy(null);
     if (ok) onClose();
   }
 
@@ -84,29 +85,33 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
           noValidate
         >
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <Field label="公司 *" id="f-company" error={error}>
+            <Field label="公司" id="f-company" error={error} required>
               <Input
                 id="f-company"
+                name="company"
                 ref={companyRef}
                 value={v.company}
                 onChange={(e) => set('company', e.target.value)}
                 autoComplete="off"
                 maxLength={120}
+                aria-required
                 aria-invalid={!!error}
                 aria-describedby={error ? 'f-company-error' : undefined}
               />
             </Field>
             <Field label="職位" id="f-title">
-              <Input id="f-title" value={v.title} onChange={(e) => set('title', e.target.value)} autoComplete="off" maxLength={160} />
+              <Input id="f-title" name="title" value={v.title} onChange={(e) => set('title', e.target.value)} autoComplete="off" maxLength={160} />
             </Field>
-            <Field label="職缺連結" id="f-url" full>
+            <Field label="職缺連結" id="f-url" hint="貼上 104、Cake 或 LinkedIn 網址，來源會自動判斷" full>
               <Input
                 id="f-url"
+                name="url"
+                type="url"
                 value={v.url}
-                inputMode="url"
                 spellCheck={false}
                 autoComplete="off"
-                placeholder="貼上 104、Cake 或 LinkedIn 網址，來源會自動判斷"
+                placeholder="https://www.104.com.tw/job/…"
+                aria-describedby="f-url-hint"
                 onChange={(e) => setUrl(e.target.value)}
                 // 直接讀剪貼簿，不依賴 onChange。104 App「分享 → 拷貝」會把說明文字和網址存成剪貼簿裡的
                 // 不同項目，Safari 的純文字可能只有說明文字，所以網址格式（text/uri-list）也要一起找。
@@ -124,7 +129,7 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
               />
             </Field>
             <Field label="來源" id="f-source">
-              <NativeSelect id="f-source" wrapperClassName="w-full" value={v.source} onChange={(e) => setSource(e.target.value as Source)}>
+              <NativeSelect id="f-source" name="source" wrapperClassName="w-full" value={v.source} onChange={(e) => setSource(e.target.value as Source)}>
                 <option value="">（未選）</option>
                 {SOURCES.map((s) => (
                   <option key={s} value={s}>
@@ -134,7 +139,7 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
               </NativeSelect>
             </Field>
             <Field label="狀態" id="f-status">
-              <NativeSelect id="f-status" wrapperClassName="w-full" value={v.status} onChange={(e) => set('status', e.target.value as Status)}>
+              <NativeSelect id="f-status" name="status" wrapperClassName="w-full" value={v.status} onChange={(e) => set('status', e.target.value as Status)}>
                 {STATUS_LIST.map((s) => (
                   <option key={s.key} value={s.key}>
                     {s.label}
@@ -143,14 +148,15 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
               </NativeSelect>
             </Field>
             <Field label="投遞日" id="f-applied">
-              <Input id="f-applied" type="date" value={v.appliedAt} onChange={(e) => set('appliedAt', e.target.value)} />
+              <Input id="f-applied" name="appliedAt" type="date" value={v.appliedAt} onChange={(e) => set('appliedAt', e.target.value)} />
             </Field>
             <Field label="下次跟進日" id="f-follow">
-              <Input id="f-follow" type="date" value={v.followUpAt} onChange={(e) => set('followUpAt', e.target.value)} />
+              <Input id="f-follow" name="followUpAt" type="date" value={v.followUpAt} onChange={(e) => set('followUpAt', e.target.value)} />
             </Field>
             <Field label="履歷版本" id="f-resume" full>
               <Input
                 id="f-resume"
+                name="resume"
                 list="resume-options"
                 value={v.resume}
                 onChange={(e) => set('resume', e.target.value)}
@@ -165,14 +171,14 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
               </datalist>
             </Field>
             <Field label="備註" id="f-note" full>
-              <Textarea id="f-note" value={v.note} onChange={(e) => set('note', e.target.value)} placeholder="面試時間、聯絡人、薪資範圍…" maxLength={2000} />
+              <Textarea id="f-note" name="note" value={v.note} onChange={(e) => set('note', e.target.value)} placeholder="面試時間、聯絡人、薪資範圍…" maxLength={2000} />
             </Field>
           </div>
           <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
             {initial ? (
               <>
-                <Button type="button" variant={armed ? 'destructive-solid' : 'destructive'} onClick={() => void remove()} disabled={busy}>
-                  {armed ? '再按一次確認刪除' : '刪除'}
+                <Button type="button" variant={armed ? 'destructive-solid' : 'destructive'} onClick={() => void remove()} disabled={!!busy}>
+                  {busy === 'delete' ? '刪除中…' : armed ? '再按一次確認刪除' : '刪除'}
                 </Button>
                 <span role="status" className="sr-only">
                   {armed ? '請再按一次以確認刪除，數秒後會自動取消' : ''}
@@ -182,11 +188,11 @@ export default function AppForm({ initial, resumeOptions, onSave, onDelete, onCl
               <span />
             )}
             <div className="flex gap-2">
-              <Button type="button" variant="outline" onClick={requestClose} disabled={busy}>
+              <Button type="button" variant="outline" onClick={requestClose} disabled={!!busy}>
                 取消
               </Button>
-              <Button type="submit" disabled={busy}>
-                儲存
+              <Button type="submit" disabled={!!busy}>
+                {busy === 'save' ? '儲存中…' : '儲存'}
               </Button>
             </div>
           </div>

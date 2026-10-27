@@ -51,13 +51,22 @@ export default function Filters({ months, action }: Props) {
 
       <div className="relative min-w-0 flex-[1_1_200px]">
         <Search aria-hidden className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-        <Input type="search" className="pl-8 max-md:h-11" placeholder="搜尋公司、職位、備註" aria-label="搜尋" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <Input
+          type="search"
+          name="q"
+          autoComplete="off"
+          className="pl-8"
+          placeholder="搜尋公司、職位、備註…"
+          aria-label="搜尋"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
       </div>
 
       <Button
         type="button"
         variant={activeCount ? 'secondary' : 'outline'}
-        className="relative md:hidden max-md:size-11"
+        className="relative md:hidden"
         size="icon"
         aria-expanded={open}
         aria-controls="more-filters"
@@ -76,7 +85,6 @@ export default function Filters({ months, action }: Props) {
         <NativeSelect
           icon={<CalendarDays />}
           wrapperClassName="max-md:flex-1"
-          className="max-md:min-h-11"
           aria-label="依月份篩選"
           value={month}
           onChange={(e) => setMonth(e.target.value)}
@@ -92,7 +100,6 @@ export default function Filters({ months, action }: Props) {
         <NativeSelect
           icon={<Globe />}
           wrapperClassName="max-md:flex-1"
-          className="max-md:min-h-11"
           aria-label="依來源篩選"
           value={source}
           onChange={(e) => setSource(e.target.value)}

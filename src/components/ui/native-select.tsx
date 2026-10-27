@@ -3,7 +3,7 @@ import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const selectClass =
-  'h-full min-h-9 w-full min-w-0 appearance-none rounded-lg border bg-card py-1.5 pr-8 pl-2.5 text-base outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 disabled:opacity-50 sm:text-sm';
+  'h-full min-h-9 w-full pointer-coarse:min-h-11 min-w-0 appearance-none rounded-lg border bg-card py-1.5 pr-8 pl-2.5 text-base outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 disabled:opacity-50 sm:text-sm';
 
 /**
  * 套用樣式的原生 <select>：手機上使用系統選單，不需額外 JS。props 會傳給 <select>；
