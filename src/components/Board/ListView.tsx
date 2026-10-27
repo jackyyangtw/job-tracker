@@ -81,7 +81,7 @@ export default function ListView({ apps, staleDays, onEdit }: Pick<Common, 'stal
               </td>
               <td className={cn(td, a.sample && 'max-md:hidden', 'max-md:pt-2')}>
                 {!a.sample && (
-                  <Button type="button" variant="outline" size="sm" className="max-md:h-10 max-md:px-4" aria-label={`編輯 ${a.company}`} onClick={() => onEdit(a.id)}>
+                  <Button type="button" variant="outline" size="sm" aria-label={`編輯 ${a.company}`} onClick={() => onEdit(a.id)}>
                     編輯
                   </Button>
                 )}

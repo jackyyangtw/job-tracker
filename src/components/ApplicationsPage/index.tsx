@@ -121,7 +121,7 @@ export default function ApplicationsPage() {
 
       <Button
         type="button"
-        className="fixed right-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 h-12 rounded-full px-5 shadow-lg md:hidden"
+        className="fixed right-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 h-12 rounded-full pointer-coarse:h-12 px-5 shadow-lg md:hidden"
         onClick={() => openForm(null)}
       >
         <Plus aria-hidden />

@@ -36,7 +36,7 @@ export default function Board({ apps, ...common }: Common & { apps: Application[
               aria-pressed={on}
               onClick={() => setActive(c.key)}
               className={cn(
-                'inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-[13px] whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                'inline-flex min-h-9 shrink-0 pointer-coarse:min-h-11 items-center gap-1.5 rounded-full border px-3.5 text-[13px] whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring',
                 on ? 'border-primary bg-primary/15 font-medium text-foreground' : 'bg-card text-muted-foreground',
               )}
             >

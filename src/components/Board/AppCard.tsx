@@ -97,7 +97,8 @@ export default function AppCard({ app, staleDays, onEdit, onStatus }: Common & {
             aria-label={`開啟 ${app.company} 的職缺頁面`}
             title="開啟職缺頁面"
             draggable={false}
-            className="relative z-10 -mt-1 inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors outline-none hover:bg-secondary hover:text-primary focus-visible:ring-2 focus-visible:ring-ring max-md:-mr-1 md:-mt-0.5 md:size-7 [&_svg]:size-4 md:[&_svg]:size-3.5"
+            // 手機版放大到 44px 觸控範圍，用負邊距抵銷，版面高度不變
+            className="relative z-10 -my-2.5 -mr-2.5 inline-flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors outline-none hover:bg-secondary hover:text-primary focus-visible:ring-2 focus-visible:ring-ring md:my-0 md:-mt-0.5 md:mr-0 md:size-7 [&_svg]:size-4 md:[&_svg]:size-3.5"
           >
             <ExternalLink aria-hidden />
           </a>
@@ -152,7 +153,7 @@ export default function AppCard({ app, staleDays, onEdit, onStatus }: Common & {
       <div className="mt-0.5 flex items-center gap-1.5 border-t pt-2.5 md:hidden">
         <NativeSelect
           wrapperClassName="flex-1"
-          className="min-h-10 text-[13px]"
+          className="text-[13px]"
           value={app.status}
           disabled={app.sample}
           aria-label="變更狀態"
@@ -169,7 +170,6 @@ export default function AppCard({ app, staleDays, onEdit, onStatus }: Common & {
             type="button"
             variant="outline"
             size="icon"
-            className="size-10"
             aria-label={`編輯 ${app.company}`}
             title="編輯"
             onClick={() => onEdit(app.id)}

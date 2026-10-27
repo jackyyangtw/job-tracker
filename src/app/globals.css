@@ -110,6 +110,10 @@
   body {
     margin: 0;
   }
+  /* iOS／Android 點擊時的閃色：預設是一塊灰，改成淡淡的主色，深淺色都看得到又不突兀 */
+  html {
+    -webkit-tap-highlight-color: color-mix(in oklab, var(--primary) 15%, transparent);
+  }
   body {
     @apply bg-background text-foreground font-sans text-sm leading-[1.55];
     padding-block: calc(20px + env(safe-area-inset-top, 0px)) calc(48px + env(safe-area-inset-bottom, 0px));
