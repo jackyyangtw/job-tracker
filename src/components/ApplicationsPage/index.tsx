@@ -75,7 +75,7 @@ export default function ApplicationsPage() {
   }
 
   return (
-    <main className="flex flex-col gap-[18px]">
+    <main id="main" className="flex flex-col gap-[18px]">
       {/* 導覽列已標示目前頁面，標題只留給螢幕閱讀器 */}
       <h1 className="sr-only">投遞</h1>
 
@@ -121,7 +121,6 @@ export default function ApplicationsPage() {
 
       <Button
         type="button"
-        aria-label="新增投遞"
         className="fixed right-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 h-12 rounded-full px-5 shadow-lg md:hidden"
         onClick={() => openForm(null)}
       >

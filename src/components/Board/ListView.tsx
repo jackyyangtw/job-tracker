@@ -2,6 +2,7 @@ import { FlagBadges, SampleTag } from '@/components/FlagBadges';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { flagsOf } from '@/lib/applications/flags';
+import { shortDate } from '@/lib/dates';
 import { STATUS_STYLE } from '@/lib/ui/statusStyle';
 import { STATUS_LABEL, type Application } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -46,7 +47,13 @@ export default function ListView({ apps, staleDays, onEdit }: Pick<Common, 'stal
                   {a.url && (
                     <>
                       {a.title && ' · '}
-                      <a className="text-primary underline-offset-2 hover:underline" href={a.url} target="_blank" rel="noopener noreferrer">
+                      <a
+                        className="text-primary underline-offset-2 hover:underline"
+                        href={a.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`開啟 ${a.company} 的職缺頁面`}
+                      >
                         連結
                       </a>
                     </>
@@ -56,13 +63,13 @@ export default function ListView({ apps, staleDays, onEdit }: Pick<Common, 'stal
               <td className={cn(td, pill, !a.source && 'max-md:hidden')}>{a.source}</td>
               <td className={cn(td, pill)}>
                 <Badge className={STATUS_STYLE[a.status].pill}>
-                  <span className={cn('size-[7px] rounded-full', STATUS_STYLE[a.status].dot)} />
+                  <span aria-hidden className={cn('size-[7px] rounded-full', STATUS_STYLE[a.status].dot)} />
                   {STATUS_LABEL[a.status]}
                 </Badge>
               </td>
               <td className={cn(td, 'font-mono tabular-nums md:whitespace-nowrap', !a.appliedAt && 'max-md:hidden')}>
                 <MobileLabel>投遞日</MobileLabel>
-                {a.appliedAt}
+                {shortDate(a.appliedAt)}
               </td>
               <td className={cn(td, !a.resume && 'max-md:hidden')}>
                 <MobileLabel>履歷</MobileLabel>
@@ -70,7 +77,7 @@ export default function ListView({ apps, staleDays, onEdit }: Pick<Common, 'stal
               </td>
               <td className={cn(td, 'font-mono tabular-nums md:whitespace-nowrap', !a.followUpAt && !flagsOf(a, staleDays).length && 'max-md:hidden')}>
                 <MobileLabel>跟進</MobileLabel>
-                {a.followUpAt} <FlagBadges app={a} staleDays={staleDays} />
+                {shortDate(a.followUpAt)} <FlagBadges app={a} staleDays={staleDays} />
               </td>
               <td className={cn(td, a.sample && 'max-md:hidden', 'max-md:pt-2')}>
                 {!a.sample && (

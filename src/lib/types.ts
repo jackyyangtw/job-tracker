@@ -13,6 +13,9 @@ export const STATUS_LABEL: Record<Status, string> = Object.fromEntries(
   STATUS_LIST.map((s) => [s.key, s.label]),
 ) as Record<Status, string>;
 
+// 用 Object.hasOwn 而不是 `in`：`in` 會把 toString、constructor 這類原型上的名稱也當成合法狀態。
+export const isStatus = (v: unknown): v is Status => typeof v === 'string' && Object.hasOwn(STATUS_LABEL, v);
+
 export const SOURCES = ['104', 'Cake', 'LinkedIn', '內推', '公司官網', '其他'] as const;
 export type Source = (typeof SOURCES)[number] | '';
 

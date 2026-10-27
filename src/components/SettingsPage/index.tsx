@@ -54,7 +54,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-col gap-4">
+    <main id="main" className="mx-auto flex w-full max-w-2xl flex-col gap-4">
       <h1 className="sr-only">設定</h1>
 
       {isDemo ? (
@@ -89,7 +89,7 @@ export default function SettingsPage() {
         <CardTitle>提醒</CardTitle>
         <CardDescription>狀態為「已投遞」且超過這個天數沒有任何動靜，就會列入「該跟進了」。設定會同步到你所有的裝置。</CardDescription>
         <label className="inline-flex items-center gap-2 text-sm">
-          <NativeSelect icon={<Bell />} aria-label="幾天沒消息就提醒" value={staleDays} onChange={(e) => changeStaleDays(Number(e.target.value))}>
+          <NativeSelect icon={<Bell />} value={staleDays} onChange={(e) => changeStaleDays(Number(e.target.value))}>
             {STALE_DAY_OPTIONS.map((n) => (
               <option key={n} value={n}>
                 {n} 天

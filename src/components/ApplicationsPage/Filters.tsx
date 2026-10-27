@@ -51,7 +51,16 @@ export default function Filters({ months, action }: Props) {
 
       <div className="relative min-w-0 flex-[1_1_200px]">
         <Search aria-hidden className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-        <Input type="search" className="pl-8 max-md:h-11" placeholder="搜尋公司、職位、備註" aria-label="搜尋" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <Input
+          type="search"
+          name="q"
+          autoComplete="off"
+          className="pl-8 max-md:h-11"
+          placeholder="搜尋公司、職位、備註…"
+          aria-label="搜尋"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
       </div>
 
       <Button

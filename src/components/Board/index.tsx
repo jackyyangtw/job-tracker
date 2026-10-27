@@ -4,22 +4,22 @@ import { useState } from 'react';
 import { STATUS_STYLE } from '@/lib/ui/statusStyle';
 import { STATUS_LIST, type Application, type Status } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { useTrackerStore } from '@/store/useTrackerStore';
 import AppCard from './AppCard';
 import { DRAG_TYPE, type Common } from './types';
 
 export { default as ListView } from './ListView';
 
-type Filter = Status | 'all';
-
 /**
  * 看板。桌機版每個狀態一欄；手機版上方是可橫向捲動的狀態切換（含「全部」），
- * 「全部」時依狀態分段列出，選了某個狀態就只列那個狀態。
+ * 「全部」時依狀態分段列出，選了某個狀態就只列那個狀態（存在 tracker store，會同步到網址）。
  */
 export default function Board({ apps, ...common }: Common & { apps: Application[] }) {
-  const [active, setActive] = useState<Filter>('all');
+  const active = useTrackerStore((s) => s.status);
+  const setActive = useTrackerStore((s) => s.setStatus);
   // 拖曳中游標所在的欄位，用來顯示放置提示
   const [dropTarget, setDropTarget] = useState<Status | null>(null);
-  const chips: { key: Filter; label: string; count: number }[] = [
+  const chips: { key: Status | 'all'; label: string; count: number }[] = [
     { key: 'all', label: '全部', count: apps.length },
     ...STATUS_LIST.map((s) => ({ key: s.key, label: s.label, count: apps.filter((a) => a.status === s.key).length })),
   ];
