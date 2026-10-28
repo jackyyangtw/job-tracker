@@ -35,6 +35,7 @@
 開啟 `/applications?new=1&company=公司&title=職稱&url=職缺連結` 會直接跳出新增表單並帶入欄位，給 iOS 捷徑（設定方式見 [ios-shortcut.md](ios-shortcut.md)）、書籤小工具等外部工具使用。
 
 - 一定要有 `new` 參數才會開表單；`company`、`title`、`url` 都可省略（只有 `?new=1` 就是開空白表單）。參數值記得用 `encodeURIComponent` 編碼。
+- 也可以用 `h104` 參數傳入 104 職缺 JSON 的 `data.header`（整段 JSON 編碼後放進去），App 會取出 `custName`、`jobName` 當公司與職稱；同時有 `company`／`title` 時以後者為準。iOS 捷徑用這個方式，省掉在捷徑裡拆欄位。
 - 公司、職稱會去除多餘空白並截到表單的長度上限；連結會比照貼上的處理（擷取網址、移除 104 追蹤參數、只接受 http(s)），來源由連結判斷。
 - 讀完後會從網址拿掉這些參數，重新整理不會再開一次；其他篩選參數保留。
 - 預填的內容沒有儲存就關閉時，會詢問是否放棄。
