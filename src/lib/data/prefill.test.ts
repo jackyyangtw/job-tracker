@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parsePrefill } from './prefill';
+import { parseClipboardPrefill, parsePrefill } from './prefill';
 
 const qs = (params: Record<string, string>) => `?${new URLSearchParams(params)}`;
 
@@ -58,5 +58,30 @@ describe('parsePrefill', () => {
   it('連結參數是整段分享訊息時只留下網址', () => {
     const r = parsePrefill(qs({ new: '1', url: '分享給你 https://www.cake.me/companies/x/jobs/y' }));
     expect(r).toMatchObject({ url: 'https://www.cake.me/companies/x/jobs/y', source: 'Cake' });
+  });
+});
+
+describe('parseClipboardPrefill', () => {
+  it('剪貼簿是捷徑拷貝的預填網址時照網址參數解析（不管網域）', () => {
+    const h104 = encodeURIComponent(JSON.stringify({ jobName: '前端工程師', custName: '測試公司' }));
+    const clip = `https://example.com/applications?new=1&h104=${h104}&url=https://www.104.com.tw/job/8wgp3?jobsource=ios_share\n`;
+    expect(parseClipboardPrefill(clip)).toEqual({ company: '測試公司', title: '前端工程師', url: 'https://www.104.com.tw/job/8wgp3', source: '104' });
+  });
+
+  it('剪貼簿是一般職缺連結或分享訊息時只帶入連結', () => {
+    expect(parseClipboardPrefill('我在104工作快找上發現了一個超適合你的內容\nhttps://www.104.com.tw/job/8wgp3?jobsource=ios_share')).toEqual({
+      company: '',
+      title: '',
+      url: 'https://www.104.com.tw/job/8wgp3',
+      source: '104',
+    });
+    expect(parseClipboardPrefill('https://www.cake.me/companies/x/jobs/y')).toMatchObject({ url: 'https://www.cake.me/companies/x/jobs/y', source: 'Cake' });
+  });
+
+  it('沒有 http(s) 連結時回傳 null', () => {
+    expect(parseClipboardPrefill('')).toBeNull();
+    expect(parseClipboardPrefill('只有文字')).toBeNull();
+    expect(parseClipboardPrefill('www.104.com.tw/job/abc')).toBeNull();
+    expect(parseClipboardPrefill('javascript:alert(1)')).toBeNull();
   });
 });

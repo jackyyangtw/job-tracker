@@ -50,3 +50,22 @@ export function parsePrefill(search: string): Prefill | null {
     source: detectSource(url),
   };
 }
+
+/**
+ * 「從剪貼簿新增」：剪貼簿是預填網址（iOS 捷徑拷貝的 `…?new=1&h104=…&url=…`）時照預填網址解析；
+ * 是一般的職缺連結或分享訊息時只帶入連結。找不到 http(s) 連結時回傳 null。
+ * 只讀網址參數，不管網域，所以捷徑裡的網域填錯也沒關係。
+ */
+export function parseClipboardPrefill(clip: string): Prefill | null {
+  const found = extractUrl(clip.trim().slice(0, 50_000));
+  if (!/^https?:\/\//i.test(found)) return null;
+  let u: URL;
+  try {
+    u = new URL(found);
+  } catch {
+    return null;
+  }
+  if (u.searchParams.has('new')) return parsePrefill(u.search);
+  const url = safeUrl(found);
+  return url ? { company: '', title: '', url, source: detectSource(url) } : null;
+}

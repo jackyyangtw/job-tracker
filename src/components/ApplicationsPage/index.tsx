@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { ClipboardPaste, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import AppForm from '@/components/AppForm';
 import { useShell } from '@/components/AppShell';
@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { monthOf, monthsOf } from '@/lib/applications/applicationList';
 import { addDays, todayStr } from '@/lib/dates';
 import { copyText, followUpMessage } from '@/lib/data/exporters';
-import type { Prefill } from '@/lib/data/prefill';
+import { parseClipboardPrefill, type Prefill } from '@/lib/data/prefill';
 import { STATUS_LABEL, type Application, type Status } from '@/lib/types';
 import { useTrackerStore } from '@/store/useTrackerStore';
 import Filters from './Filters';
@@ -71,6 +71,19 @@ export default function ApplicationsPage() {
     if (!a) return;
     void upsert({ ...a, lastContact: todayStr(), followUpAt: addDays(7) }).then((ok) => ok && toast('已記錄，7 天後會再提醒你'));
   }
+  // iOS 捷徑打不開主畫面 App，改由捷徑拷貝預填網址、這裡讀剪貼簿；iOS 會先跳出「貼上」確認。
+  async function addFromClipboard() {
+    let clip: string;
+    try {
+      clip = await navigator.clipboard.readText();
+    } catch {
+      toast('無法讀取剪貼簿，請改用「新增投遞」並在職缺連結欄貼上');
+      return;
+    }
+    const prefill = parseClipboardPrefill(clip);
+    if (prefill) setForm({ open: true, id: null, prefill });
+    else toast('剪貼簿裡沒有職缺連結');
+  }
   async function copyMessage(id: string) {
     const a = byId(id);
     if (!a) return;
@@ -98,10 +111,16 @@ export default function ApplicationsPage() {
         months={monthsOf(shown)}
         action={
           // 桌機版的新增按鈕放在篩選列尾端；手機版改用右下角的浮動按鈕
-          <Button type="button" className="max-md:hidden" onClick={() => openForm(null)}>
-            <Plus aria-hidden />
-            新增投遞
-          </Button>
+          <>
+            <Button type="button" variant="outline" className="max-md:hidden" onClick={() => void addFromClipboard()}>
+              <ClipboardPaste aria-hidden />
+              從剪貼簿新增
+            </Button>
+            <Button type="button" className="max-md:hidden" onClick={() => openForm(null)}>
+              <Plus aria-hidden />
+              新增投遞
+            </Button>
+          </>
         }
       />
 
@@ -123,14 +142,23 @@ export default function ApplicationsPage() {
         </>
       )}
 
-      <Button
-        type="button"
-        className="fixed right-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 h-12 rounded-full pointer-coarse:h-12 px-5 shadow-lg md:hidden"
-        onClick={() => openForm(null)}
-      >
-        <Plus aria-hidden />
-        新增投遞
-      </Button>
+      <div className="fixed right-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 flex items-center gap-2 md:hidden">
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          className="size-12 rounded-full bg-background shadow-lg pointer-coarse:size-12"
+          aria-label="從剪貼簿新增"
+          title="從剪貼簿新增"
+          onClick={() => void addFromClipboard()}
+        >
+          <ClipboardPaste aria-hidden />
+        </Button>
+        <Button type="button" className="h-12 rounded-full px-5 shadow-lg pointer-coarse:h-12" onClick={() => openForm(null)}>
+          <Plus aria-hidden />
+          新增投遞
+        </Button>
+      </div>
 
       {form.open ? (
         <AppForm key={form.id ?? 'new'} initial={editing} prefill={form.prefill} resumeOptions={resumeOptions} onSave={saveApp} onDelete={deleteApp} onClose={closeForm} />
