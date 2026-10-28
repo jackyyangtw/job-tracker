@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Textarea } from '@/components/ui/textarea';
 import { extractUrl } from '@/lib/data/mapping';
+import type { Prefill } from '@/lib/data/prefill';
 import { SOURCES, STATUS_LIST, type Application, type Source, type Status } from '@/lib/types';
 import DiscardConfirm from './DiscardConfirm';
 import Field from './Field';
@@ -14,14 +15,16 @@ import { useAppFormState } from './useAppFormState';
 
 interface Props {
   initial: Application | null;
+  /** 新增時預先帶入的欄位（來自網址參數）。 */
+  prefill?: Prefill | null;
   resumeOptions: string[];
   onSave: (app: Application) => Promise<boolean>;
   onDelete: (id: string) => Promise<boolean>;
   onClose: () => void;
 }
 
-export default function AppForm({ initial, resumeOptions, onSave, onDelete, onClose }: Props) {
-  const { values: v, set, setUrl, setSource, dirty, toApplication } = useAppFormState(initial);
+export default function AppForm({ initial, prefill, resumeOptions, onSave, onDelete, onClose }: Props) {
+  const { values: v, set, setUrl, setSource, dirty, toApplication } = useAppFormState(initial, prefill);
   const [error, setError] = useState('');
   // 正在進行的操作，用來停用按鈕並在對應的按鈕上顯示進度
   const [busy, setBusy] = useState<'save' | 'delete' | null>(null);
