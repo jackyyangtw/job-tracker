@@ -11,9 +11,11 @@ import { Button } from '@/components/ui/button';
 import { monthOf, monthsOf } from '@/lib/applications/applicationList';
 import { addDays, todayStr } from '@/lib/dates';
 import { copyText, followUpMessage } from '@/lib/data/exporters';
+import type { Prefill } from '@/lib/data/prefill';
 import { STATUS_LABEL, type Application, type Status } from '@/lib/types';
 import { useTrackerStore } from '@/store/useTrackerStore';
 import Filters from './Filters';
+import { usePrefillFromUrl } from './usePrefillFromUrl';
 import { useUrlFilters } from './useUrlFilters';
 
 /** 投遞頁：該跟進的清單、篩選、看板／列表，以及新增與編輯。 */
@@ -27,7 +29,9 @@ export default function ApplicationsPage() {
   const month = useTrackerStore((s) => s.month);
   const store = useTrackerStore.getState;
 
-  const [form, setForm] = useState<{ open: boolean; id: string | null }>({ open: false, id: null });
+  const [form, setForm] = useState<{ open: boolean; id: string | null; prefill?: Prefill }>({ open: false, id: null });
+  // 放在 useUrlFilters 之後：它同步網址時會保留不認得的參數，這裡再把預填參數拿掉。
+  usePrefillFromUrl((prefill) => setForm({ open: true, id: null, prefill }));
 
   const q = query.trim().toLowerCase();
   const visible = shown.filter((a) => {
@@ -129,7 +133,7 @@ export default function ApplicationsPage() {
       </Button>
 
       {form.open ? (
-        <AppForm key={form.id ?? 'new'} initial={editing} resumeOptions={resumeOptions} onSave={saveApp} onDelete={deleteApp} onClose={closeForm} />
+        <AppForm key={form.id ?? 'new'} initial={editing} prefill={form.prefill} resumeOptions={resumeOptions} onSave={saveApp} onDelete={deleteApp} onClose={closeForm} />
       ) : null}
     </main>
   );
