@@ -1,4 +1,5 @@
 import { Input } from '@/components/ui/input';
+import DateInput from './DateInput';
 import Field from './Field';
 
 interface Props {
@@ -12,7 +13,7 @@ export default function InterviewFields({ interviewAt, interviewLocation, onChan
   return (
     <>
       <Field label="面試時間" id="f-interview-at">
-        <Input
+        <DateInput
           id="f-interview-at"
           name="interviewAt"
           type="datetime-local"
