@@ -25,7 +25,8 @@
 
 - **路由**：`/applications`（投遞）、`/statistics`（統計）、`/settings`（設定）放在 `src/app/(dashboard)/`，共用 `AppShell`（登入檢查、資料、Realtime、提醒天數同步、導覽列），頁面用 `useShell()` 取得資料；`/` 會導到 `/applications`。新增需要登入的頁面時放進 `(dashboard)`，並加進 `public/sw.js` 的 `SHELL_PAGES`。
 - **伺服器狀態**用 TanStack Query，相關 hook 放在 `src/queries/`（`useApplications`、`useUpsertApplication` 等），query key 統一定義在 `src/queries/keys.ts`；寫入採樂觀更新，失敗要回復並 toast。
-- **UI 狀態**用 Zustand（`src/store/useTrackerStore.ts`），只放檢視模式、篩選等；不要把投遞資料放進去。
+- **UI 偏好**用 Zustand（`src/store/useTrackerStore.ts`，存在 localStorage），只放要記住的偏好（上次的看板／列表、提醒天數、主題等）；不要把投遞資料放進去。
+- **篩選條件**（搜尋、來源、月份、手機版的狀態、看板／列表）只存在網址，用 nuqs 讀寫（`src/hooks/useApplicationFilters.ts`），不要再複製一份到 store。用到它的元件要在 `<Suspense>` 裡（投遞頁已包好）。
 - **離線**：IndexedDB（Dexie）先顯示快取，Supabase 回應後覆蓋（`src/lib/data/cache.ts`）。
 - 資料存取由瀏覽器直接用 `supabase-js`，**沒有自己的後端／ORM**；權限完全靠 Row Level Security（`supabase/migrations/`）。唯一的伺服器端 API 是 `/api/cake-job-preview`（查 Cake 職缺的公司與職稱，不碰資料庫）。
 - `src/lib/data/mapping.ts` 負責資料庫列（snake_case）與前端型別（camelCase）互轉。

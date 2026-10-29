@@ -55,6 +55,8 @@ describe('isMonth / monthLabel', () => {
     expect(isMonth('2026-1')).toBe(false);
     expect(isMonth('2026-10-01')).toBe(false);
     expect(isMonth('')).toBe(false);
+    expect(isMonth('2026-13')).toBe(false);
+    expect(isMonth('2026-00')).toBe(false);
   });
 
   it('顯示成中文月份，不補零', () => {
