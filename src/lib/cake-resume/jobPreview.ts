@@ -1,5 +1,5 @@
-// 貼上 Cake 職缺連結時自動帶入公司與職稱：解析職缺頁，以及表單呼叫自己的 API。連結的解析在 jobUrl.ts。
-// 由 /api/cake-job-preview 路由（伺服器端）與表單（瀏覽器端）共用，這裡不能引入只能在伺服器執行的模組。
+// 貼上 Cake 職缺連結時自動帶入公司與職稱：/api/cake-job-preview 用這裡解析職缺頁。
+// 連結的解析在 jobUrl.ts；表單呼叫 API 的部分在 components/AppForm/useCakeJobPreview.ts。
 // 104 會封鎖雲端主機 IP，伺服器端查不到，所以只支援 Cake；104 改用 iOS 捷徑（docs/ios-shortcut.md）。
 
 export interface CakeJobPreview {
@@ -56,22 +56,4 @@ export function parseCakeJobPage(html: string): CakeJobPreview | null {
   if (!parts) return null;
   const company = clean(parts[2], 120);
   return company ? { company, title: clean(parts[1], 160) } : null;
-}
-
-export type CakePreviewFailure = 'unauthorized' | 'blocked' | 'failed';
-
-/** 請自己的 API 查詢職缺。失敗時回傳原因：登入過期、Cake 拒絕（或無法連線），或其他。 */
-export async function fetchCakeJobPreview(url: string): Promise<{ preview: CakeJobPreview } | { failure: CakePreviewFailure }> {
-  try {
-    const res = await fetch(`/api/cake-job-preview?url=${encodeURIComponent(url)}`, { signal: AbortSignal.timeout(10_000) });
-    if (res.status === 401) return { failure: 'unauthorized' };
-    if (res.status === 502) return { failure: 'blocked' };
-    if (!res.ok) return { failure: 'failed' };
-    const data = (await res.json()) as Partial<CakeJobPreview> | null;
-    const company = clean(data?.company, 120);
-    if (!company) return { failure: 'failed' };
-    return { preview: { company, title: clean(data?.title, 160) } };
-  } catch {
-    return { failure: 'failed' };
-  }
 }

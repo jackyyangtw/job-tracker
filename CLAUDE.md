@@ -34,7 +34,7 @@
   - `applications/`：投遞的業務規則（列表排序、提醒、統計、範例與試用資料）
   - `data/`：資料進出（資料庫列轉換與驗證、離線快取、匯出／複製、給使用者看的錯誤）
   - `104/`：104 的網域判斷與職缺連結清理（`jobUrl.ts`），以及 iOS 捷徑傳來的職缺 JSON（`h104`）解析（`jobHeader.ts`）
-  - `cake-resume/`：Cake（CakeResume）的網域判斷與職缺連結解析（`jobUrl.ts`），以及職缺頁辨識（`jobPreview.ts`，`/api/cake-job-preview` 與表單共用）
+  - `cake-resume/`：Cake（CakeResume）的網域判斷與職缺連結解析（`jobUrl.ts`），以及職缺頁辨識（`jobPreview.ts`，給 `/api/cake-job-preview` 用）
   - `supabase/`：Supabase client 與登出
   - `ui/`：畫面樣式相關的邏輯（深淺色主題、各狀態的 Tailwind class）
 
