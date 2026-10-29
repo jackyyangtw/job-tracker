@@ -33,6 +33,10 @@ export interface Application {
   appliedAt: string;
   followUpAt: string;
   lastContact: string;
+  /** 面試時間，當地時間的 `YYYY-MM-DDTHH:mm`（和 `<input type="datetime-local">` 相同），未設定時是 ''。 */
+  interviewAt: string;
+  /** 面試地點：地址、地圖連結或視訊會議連結，可以混在一起寫。 */
+  interviewLocation: string;
   resume: string;
   note: string;
   createdAt: string;
@@ -53,6 +57,9 @@ export interface ApplicationRow {
   applied_at: string | null;
   follow_up_at: string | null;
   last_contact: string | null;
+  /** 0004_interview.sql 之後才有；資料庫回傳 `YYYY-MM-DDTHH:mm:ss`。 */
+  interview_at?: string | null;
+  interview_location?: string;
   resume: string;
   note: string;
   created_at: string;

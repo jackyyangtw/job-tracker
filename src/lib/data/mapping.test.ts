@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { detectSource, extractUrl, fromRow, normalizeApp, safeUrl, toRow } from './mapping';
+import { dateTime, detectSource, extractUrl, fromRow, normalizeApp, safeUrl, toRow } from './mapping';
 import { makeApp } from '../testUtils';
 
 const SHARE_TEXT = '我在104工作快找上發現了一個超適合你的內容，分享給你希望會喜歡~~';
@@ -116,11 +116,43 @@ describe('normalizeApp', () => {
     expect(app?.url).toBe('');
     expect(app?.note).toHaveLength(2000);
   });
+
+  it('匯入面試時間與地點，並驗證格式與長度', () => {
+    const app = normalizeApp({ company: 'A', interviewAt: '2026-11-02T15:00', interviewLocation: 'x'.repeat(400) });
+    expect(app?.interviewAt).toBe('2026-11-02T15:00');
+    expect(app?.interviewLocation).toHaveLength(300);
+    expect(normalizeApp({ company: 'A', interviewAt: '明天下午' })?.interviewAt).toBe('');
+    expect(normalizeApp({ company: 'A' })).toMatchObject({ interviewAt: '', interviewLocation: '' });
+  });
+});
+
+describe('dateTime', () => {
+  it('取到分鐘，捨去秒數與時區', () => {
+    expect(dateTime('2026-11-02T15:00')).toBe('2026-11-02T15:00');
+    expect(dateTime('2026-11-02T15:00:00')).toBe('2026-11-02T15:00');
+    expect(dateTime('2026-11-02T15:00:00+08:00')).toBe('2026-11-02T15:00');
+  });
+
+  it('不存在的日期或時間回傳空字串', () => {
+    expect(dateTime('2026-02-30T15:00')).toBe('');
+    expect(dateTime('2026-11-02T24:00')).toBe('');
+    expect(dateTime('2026-11-02T15:60')).toBe('');
+    expect(dateTime('2026-11-02')).toBe('');
+    expect(dateTime(null)).toBe('');
+  });
 });
 
 describe('toRow / fromRow', () => {
   it('來回轉換後內容不變', () => {
-    const app = makeApp({ title: '前端工程師', source: '104', status: 'interview', appliedAt: '2026-10-20', followUpAt: '2026-10-27' });
+    const app = makeApp({
+      title: '前端工程師',
+      source: '104',
+      status: 'interview',
+      appliedAt: '2026-10-20',
+      followUpAt: '2026-10-27',
+      interviewAt: '2026-11-02T15:00',
+      interviewLocation: '台北市 https://maps.apple/p/abc',
+    });
     const row = { ...toRow(app), created_at: app.createdAt, updated_at: app.updatedAt };
     expect(fromRow(row)).toEqual(app);
   });
@@ -135,6 +167,14 @@ describe('toRow / fromRow', () => {
     expect(row.applied_at).toBeNull();
     expect(row.follow_up_at).toBeNull();
     expect(row.last_contact).toBeNull();
+    expect(row.interview_at).toBeNull();
+  });
+
+  it('資料庫回傳的面試時間帶秒數時會去掉；還沒執行 0004 的舊資料列也能讀', () => {
+    const row = { ...toRow(makeApp()), interview_at: '2026-11-02T15:00:00', created_at: '', updated_at: '' };
+    expect(fromRow(row).interviewAt).toBe('2026-11-02T15:00');
+    // 0004 之前的資料列沒有這兩個欄位
+    expect(fromRow({ ...row, interview_at: undefined, interview_location: undefined })).toMatchObject({ interviewAt: '', interviewLocation: '' });
   });
 
   it('不寫入由資料庫負責的欄位', () => {

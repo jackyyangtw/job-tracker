@@ -48,7 +48,7 @@ corepack enable
 ### 1. 建立 Supabase 專案並建立資料表
 
 1. 到 [supabase.com](https://supabase.com) 建立專案。
-2. 開啟 **SQL Editor**，依序把 `supabase/migrations/` 裡的 `0001_init.sql`、`0002_harden.sql`、`0003_user_settings.sql` 各自整份貼上執行（依編號順序）。
+2. 開啟 **SQL Editor**，依序把 `supabase/migrations/` 裡的 `0001_init.sql`、`0002_harden.sql`、`0003_user_settings.sql`、`0004_interview.sql` 各自整份貼上執行（依編號順序）。
    它會建立 `applications` 表、四條 RLS 政策（只能存取自己的資料）、`updated_at` 觸發器，並開啟 Realtime。
 3. 在 **Table Editor** 確認 `applications` 旁邊顯示 RLS 已啟用。
 

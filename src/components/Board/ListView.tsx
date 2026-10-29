@@ -6,6 +6,7 @@ import { shortDate } from '@/lib/dates';
 import { STATUS_STYLE } from '@/lib/ui/statusStyle';
 import { STATUS_LABEL, type Application } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import InterviewInfo from './InterviewInfo';
 import type { Common } from './types';
 
 /** 只在手機上顯示的小標籤，因為手機上表格會變成堆疊的卡片。 */
@@ -66,6 +67,7 @@ export default function ListView({ apps, staleDays, onEdit }: Pick<Common, 'stal
                   <span aria-hidden className={cn('size-[7px] rounded-full', STATUS_STYLE[a.status].dot)} />
                   {STATUS_LABEL[a.status]}
                 </Badge>
+                <InterviewInfo app={a} className="mt-1.5 max-md:mt-2 md:max-w-56" />
               </td>
               <td className={cn(td, 'font-mono tabular-nums md:whitespace-nowrap', !a.appliedAt && 'max-md:hidden')}>
                 <MobileLabel>投遞日</MobileLabel>

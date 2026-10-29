@@ -13,6 +13,8 @@ interface Values {
   status: Status;
   appliedAt: string;
   followUpAt: string;
+  interviewAt: string;
+  interviewLocation: string;
   resume: string;
   note: string;
 }
@@ -26,6 +28,8 @@ function initialValues(initial: Application | null): Values {
     status: initial?.status ?? 'applied',
     appliedAt: initial ? initial.appliedAt : todayStr(),
     followUpAt: initial ? initial.followUpAt : addDays(7),
+    interviewAt: initial?.interviewAt ?? '',
+    interviewLocation: initial?.interviewLocation ?? '',
     resume: initial?.resume ?? '',
     note: initial?.note ?? '',
   };
@@ -78,6 +82,8 @@ export function useAppFormState(initial: Application | null, prefill?: Prefill |
       appliedAt: values.status !== 'wishlist' && !values.appliedAt ? todayStr() : values.appliedAt,
       followUpAt: values.followUpAt,
       lastContact: initial?.lastContact ?? '',
+      interviewAt: values.interviewAt,
+      interviewLocation: values.interviewLocation.trim(),
       resume: values.resume.trim(),
       note: values.note.trim(),
       createdAt: initial?.createdAt ?? now,

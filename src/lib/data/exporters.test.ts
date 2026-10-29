@@ -11,12 +11,17 @@ describe('toCsv', () => {
 
   it('第一列是中文標題，列與列之間用 CRLF', () => {
     const csv = toCsv([makeApp()]);
-    expect(csv.slice(1).split('\r\n')[0]).toBe('"公司","職位","來源","狀態","投遞日","履歷版本","下次跟進","連結","備註"');
+    expect(csv.slice(1).split('\r\n')[0]).toBe('"公司","職位","來源","狀態","投遞日","履歷版本","下次跟進","面試時間","面試地點","連結","備註"');
     expect(csv.split('\r\n')).toHaveLength(2);
   });
 
   it('狀態輸出成中文', () => {
     expect(dataRow(toCsv([makeApp({ status: 'interview' })]))).toContain('"面試中"');
+  });
+
+  it('面試時間以「日期 時間」輸出', () => {
+    const row = dataRow(toCsv([makeApp({ status: 'interview', interviewAt: '2026-11-02T15:00', interviewLocation: '台北市' })]));
+    expect(row).toContain('"2026-11-02 15:00","台北市"');
   });
 
   it('雙引號會被跳脫，逗號與換行包在引號內', () => {

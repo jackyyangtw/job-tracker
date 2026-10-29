@@ -12,6 +12,8 @@ export function makeApp(overrides: Partial<Application> = {}): Application {
     appliedAt: '',
     followUpAt: '',
     lastContact: '',
+    interviewAt: '',
+    interviewLocation: '',
     resume: '',
     note: '',
     createdAt: '2026-10-01T00:00:00.000Z',

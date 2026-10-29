@@ -20,9 +20,9 @@ function csvCell(v: unknown): string {
 
 /** 帶 BOM 的 UTF-8，Excel 開啟時中文才不會亂碼。 */
 export function toCsv(apps: Application[]): string {
-  const head = ['公司', '職位', '來源', '狀態', '投遞日', '履歷版本', '下次跟進', '連結', '備註'];
+  const head = ['公司', '職位', '來源', '狀態', '投遞日', '履歷版本', '下次跟進', '面試時間', '面試地點', '連結', '備註'];
   const rows = apps.map((a) =>
-    [a.company, a.title, a.source, STATUS_LABEL[a.status], a.appliedAt, a.resume, a.followUpAt, a.url, a.note]
+    [a.company, a.title, a.source, STATUS_LABEL[a.status], a.appliedAt, a.resume, a.followUpAt, a.interviewAt.replace('T', ' '), a.interviewLocation, a.url, a.note]
       .map(csvCell)
       .join(','),
   );
