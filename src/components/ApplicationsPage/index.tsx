@@ -110,12 +110,15 @@ export default function ApplicationsPage() {
       <Filters
         months={monthsOf(shown)}
         action={
-          // 桌機版的新增按鈕放在篩選列尾端；手機版改用右下角的浮動按鈕
+          // 桌機版的新增按鈕放在篩選列尾端；手機版改用右下角的浮動按鈕。
+          // 「從剪貼簿新增」是給 iOS 捷徑用的，試用的訪客用不到，試用模式不顯示。
           <>
-            <Button type="button" variant="outline" className="max-md:hidden" onClick={() => void addFromClipboard()}>
-              <ClipboardPaste aria-hidden />
-              從剪貼簿新增
-            </Button>
+            {isDemo ? null : (
+              <Button type="button" variant="outline" className="max-md:hidden" onClick={() => void addFromClipboard()}>
+                <ClipboardPaste aria-hidden />
+                從剪貼簿新增
+              </Button>
+            )}
             <Button type="button" className="max-md:hidden" onClick={() => openForm(null)}>
               <Plus aria-hidden />
               新增投遞
@@ -143,17 +146,19 @@ export default function ApplicationsPage() {
       )}
 
       <div className="fixed right-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 flex items-center gap-2 md:hidden">
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          className="size-12 rounded-full bg-background shadow-lg pointer-coarse:size-12"
-          aria-label="從剪貼簿新增"
-          title="從剪貼簿新增"
-          onClick={() => void addFromClipboard()}
-        >
-          <ClipboardPaste aria-hidden />
-        </Button>
+        {isDemo ? null : (
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="size-12 rounded-full bg-background shadow-lg pointer-coarse:size-12"
+            aria-label="從剪貼簿新增"
+            title="從剪貼簿新增"
+            onClick={() => void addFromClipboard()}
+          >
+            <ClipboardPaste aria-hidden />
+          </Button>
+        )}
         <Button type="button" className="h-12 rounded-full px-5 shadow-lg pointer-coarse:h-12" onClick={() => openForm(null)}>
           <Plus aria-hidden />
           新增投遞
