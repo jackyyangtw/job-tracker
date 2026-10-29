@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { STATUS_STYLE } from '@/lib/ui/statusStyle';
 import { STATUS_LIST, type Application, type Status } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { useTrackerStore } from '@/store/useTrackerStore';
+import { useApplicationFilters } from '@/hooks/useApplicationFilters';
 import AppCard from './AppCard';
 import { DRAG_TYPE, type Common } from './types';
 
@@ -15,8 +15,7 @@ export { default as ListView } from './ListView';
  * 「全部」時依狀態分段列出，選了某個狀態就只列那個狀態（存在 tracker store，會同步到網址）。
  */
 export default function Board({ apps, ...common }: Common & { apps: Application[] }) {
-  const active = useTrackerStore((s) => s.status);
-  const setActive = useTrackerStore((s) => s.setStatus);
+  const { status: active, setStatus: setActive } = useApplicationFilters();
   // 拖曳中游標所在的欄位，用來顯示放置提示
   const [dropTarget, setDropTarget] = useState<Status | null>(null);
   const chips: { key: Status | 'all'; label: string; count: number }[] = [

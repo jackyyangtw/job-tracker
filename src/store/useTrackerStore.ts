@@ -1,35 +1,24 @@
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
-import type { Status } from '@/lib/types';
 import type { ThemePref } from '@/lib/ui/theme';
 import { PREFS_KEY } from './prefsKey';
 
 export type View = 'board' | 'list';
 
-// 只放前端／UI 狀態。伺服器狀態（投遞資料）放在 TanStack Query，見 src/queries/。
+// 只放要記住的前端偏好。伺服器狀態（投遞資料）放在 TanStack Query，見 src/queries/；
+// 投遞頁的篩選條件放在網址，見 src/hooks/useApplicationFilters.ts。
 interface UiState {
   // 會持久化的偏好設定。
+  /** 上次選的看板／列表；網址沒有 `?view=` 時用它。 */
   view: View;
   staleDays: number;
   samplesDismissed: boolean;
   theme: ThemePref;
-  // 暫時性的篩選條件。
-  source: string;
-  query: string;
-  /** `YYYY-MM`，空字串代表所有月份。 */
-  month: string;
-  /** 手機版看板只顯示的狀態；桌機版每個狀態各一欄，不受影響。 */
-  status: Status | 'all';
 
   setView: (v: View) => void;
   setStaleDays: (n: number) => void;
   setTheme: (t: ThemePref) => void;
-  setSource: (s: string) => void;
-  setQuery: (q: string) => void;
-  setMonth: (m: string) => void;
-  setStatus: (s: Status | 'all') => void;
   dismissSamples: () => void;
-  resetFilters: () => void;
 }
 
 export const useTrackerStore = create<UiState>()(
@@ -40,20 +29,11 @@ export const useTrackerStore = create<UiState>()(
         staleDays: 14,
         samplesDismissed: false,
         theme: 'system',
-        source: '',
-        query: '',
-        month: '',
-        status: 'all',
 
         setView: (view) => set({ view }, false, 'setView'),
         setStaleDays: (staleDays) => set({ staleDays }, false, 'setStaleDays'),
         setTheme: (theme) => set({ theme }, false, 'setTheme'),
-        setSource: (source) => set({ source }, false, 'setSource'),
-        setQuery: (query) => set({ query }, false, 'setQuery'),
-        setMonth: (month) => set({ month }, false, 'setMonth'),
-        setStatus: (status) => set({ status }, false, 'setStatus'),
         dismissSamples: () => set({ samplesDismissed: true }, false, 'dismissSamples'),
-        resetFilters: () => set({ source: '', query: '', month: '', status: 'all' }, false, 'resetFilters'),
       }),
       {
         name: PREFS_KEY,

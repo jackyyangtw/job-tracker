@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { ClipboardPaste, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import AppForm from '@/components/AppForm';
@@ -8,6 +8,7 @@ import { useShell } from '@/components/AppShell';
 import Board, { ListView } from '@/components/Board';
 import { Reminders } from '@/components/Panels';
 import { Button } from '@/components/ui/button';
+import { useApplicationFilters } from '@/hooks/useApplicationFilters';
 import { useHydrated } from '@/hooks/useHydrated';
 import { monthOf, monthsOf } from '@/lib/applications/applicationList';
 import { addDays, todayStr } from '@/lib/dates';
@@ -17,23 +18,35 @@ import { STATUS_LABEL, type Application, type Status } from '@/lib/types';
 import { useTrackerStore } from '@/store/useTrackerStore';
 import Filters from './Filters';
 import { usePrefillFromUrl } from './usePrefillFromUrl';
-import { useUrlFilters } from './useUrlFilters';
+
+/**
+ * 篩選條件來自網址（nuqs 底層是 useSearchParams），靜態預先渲染時要包在 Suspense 裡，
+ * 伺服器端先輸出 fallback，由瀏覽器依網址畫出內容。
+ */
+export default function ApplicationsPage() {
+  return (
+    <Suspense
+      fallback={
+        <p role="status" className="py-7 text-center text-muted-foreground">
+          載入中…
+        </p>
+      }
+    >
+      <ApplicationsContent />
+    </Suspense>
+  );
+}
 
 /** 投遞頁：該跟進的清單、篩選、看板／列表，以及新增與編輯。 */
-export default function ApplicationsPage() {
+function ApplicationsContent() {
   const { isDemo, apps, shown, samplesOn, loaded, upsert, remove } = useShell();
-  useUrlFilters();
-  const view = useTrackerStore((s) => s.view);
+  const { view, query, source, month } = useApplicationFilters();
   const staleDays = useTrackerStore((s) => s.staleDays);
-  const source = useTrackerStore((s) => s.source);
-  const query = useTrackerStore((s) => s.query);
-  const month = useTrackerStore((s) => s.month);
   const store = useTrackerStore.getState;
   // 看板／列表取決於網址與 localStorage，伺服器端不知道；hydration 前先不畫，免得從看板跳成列表。
   const hydrated = useHydrated();
 
   const [form, setForm] = useState<{ open: boolean; id: string | null; prefill?: Prefill }>({ open: false, id: null });
-  // 放在 useUrlFilters 之後：它同步網址時會保留不認得的參數，這裡再把預填參數拿掉。
   usePrefillFromUrl((prefill) => setForm({ open: true, id: null, prefill }));
 
   const q = query.trim().toLowerCase();

@@ -63,7 +63,6 @@ function SignedInShell({ session, children }: { session: Session; children: Reac
   useAppBadge(pending, loaded);
 
   function signOut() {
-    useTrackerStore.getState().resetFilters();
     void signOutAndClear(queryClient);
   }
 

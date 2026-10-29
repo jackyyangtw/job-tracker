@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { CalendarDays, Columns3, Globe, List, Search, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useApplicationFilters } from '@/hooks/useApplicationFilters';
 import { useHydrated } from '@/hooks/useHydrated';
 import { NativeSelect } from '@/components/ui/native-select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { monthLabel } from '@/lib/dates';
 import { SOURCES } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { useTrackerStore } from '@/store/useTrackerStore';
 
 interface Props {
   /** 資料裡出現過的月份，新的在前。 */
@@ -18,17 +18,13 @@ interface Props {
 }
 
 /**
- * 篩選列：檢視切換、搜尋框，以及月份與來源的下拉選單。狀態存在 tracker store。
+ * 篩選列：檢視切換、搜尋框，以及月份與來源的下拉選單。篩選條件存在網址（useApplicationFilters）。
  * 手機版只顯示搜尋框，月份與來源收在「篩選」按鈕裡；看板／列表切換只在桌機版顯示。
  */
 export default function Filters({ months, action }: Props) {
-  const view = useTrackerStore((s) => s.view);
+  const { view, query, source, month, setView, setQuery, setSource, setMonth } = useApplicationFilters();
   // hydration 前不知道使用者選的檢視，先都不標示選取，免得從「看板」跳到「列表」。
   const hydrated = useHydrated();
-  const source = useTrackerStore((s) => s.source);
-  const query = useTrackerStore((s) => s.query);
-  const month = useTrackerStore((s) => s.month);
-  const { setView, setQuery, setSource, setMonth } = useTrackerStore.getState();
   const [open, setOpen] = useState(false);
   const activeCount = (month ? 1 : 0) + (source ? 1 : 0);
 

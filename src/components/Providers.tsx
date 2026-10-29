@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import ThemeSync from '@/components/ThemeSync';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -18,7 +19,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={client}>
       <ThemeSync />
-      {children}
+      {/* 篩選條件存在網址，由 nuqs 讀寫（見 src/hooks/useApplicationFilters.ts） */}
+      <NuqsAdapter>{children}</NuqsAdapter>
       {/* 正式環境的建置不會渲染任何東西。 */}
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
