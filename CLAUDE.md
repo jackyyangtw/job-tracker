@@ -27,12 +27,14 @@
 - **伺服器狀態**用 TanStack Query，相關 hook 放在 `src/queries/`（`useApplications`、`useUpsertApplication` 等），query key 統一定義在 `src/queries/keys.ts`；寫入採樂觀更新，失敗要回復並 toast。
 - **UI 狀態**用 Zustand（`src/store/useTrackerStore.ts`），只放檢視模式、篩選等；不要把投遞資料放進去。
 - **離線**：IndexedDB（Dexie）先顯示快取，Supabase 回應後覆蓋（`src/lib/data/cache.ts`）。
-- 資料存取由瀏覽器直接用 `supabase-js`，**沒有自己的後端／ORM**；權限完全靠 Row Level Security（`supabase/migrations/`）。
+- 資料存取由瀏覽器直接用 `supabase-js`，**沒有自己的後端／ORM**；權限完全靠 Row Level Security（`supabase/migrations/`）。唯一的伺服器端 API 是 `/api/cake-job-preview`（查 Cake 職缺的公司與職稱，不碰資料庫）。
 - `src/lib/data/mapping.ts` 負責資料庫列（snake_case）與前端型別（camelCase）互轉。
 - `src/lib/` 依職責分資料夾（不用 index.ts 彙整，直接 import 檔案路徑）：
   - 根目錄：`types.ts`（共用型別）、`dates.ts`、`utils.ts`（shadcn 的 `cn()`，位置由 `components.json` 指定）、`testUtils.ts`、`securityHeaders.ts`（next.config.ts 用的 HTTP 安全標頭）
   - `applications/`：投遞的業務規則（列表排序、提醒、統計、範例與試用資料）
   - `data/`：資料進出（資料庫列轉換與驗證、離線快取、匯出／複製、給使用者看的錯誤）
+  - `104/`：104 職缺連結清理（移除追蹤參數）與 iOS 捷徑傳來的職缺 JSON（`h104`）解析
+  - `cake-resume/`：Cake（CakeResume）職缺連結解析與職缺頁辨識，`/api/cake-job-preview` 與表單共用
   - `supabase/`：Supabase client 與登出
   - `ui/`：畫面樣式相關的邏輯（深淺色主題、各狀態的 Tailwind class）
 

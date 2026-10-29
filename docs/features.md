@@ -29,6 +29,11 @@
 1. **擷取連結**：只保留訊息中的網址，例如 104 App 分享的「我在104工作快找上發現了…」整段文字，只會留下 `https://www.104.com.tw/job/xxxxx`。104 連結後面的追蹤參數（`?jobsource=ios_share`）會一併移除。
    - iOS 上從 104 App「分享 → 拷貝」時，說明文字和網址會存成剪貼簿裡的不同項目，Safari 給網頁的純文字只有說明文字。因此貼上時會一併從網址格式（`text/uri-list`）尋找連結。
 2. **判斷來源**：104、Cake、LinkedIn 會自動選好「來源」；手動選過來源後，不會再被自動覆蓋。
+3. **辨識 Cake 職缺**：貼上或離開欄位時，若是 Cake 職缺連結（`https://www.cake.me/companies/{公司}/jobs/{職缺}`，舊網域 cakeresume.com 也可）且公司或職位還沒填，會透過 `/api/cake-job-preview` 查出公司與職稱，只填入仍是空白的欄位。
+   - 伺服器端讀 Cake 職缺頁的 JSON-LD（JobPosting），沒有的話用 og:title。
+   - 只有登入的使用者能呼叫；試用模式不會呼叫 API，貼上 Cake 連結時改顯示「登入後貼上 Cake 連結，可自動帶入公司與職稱」；查詢網址由伺服器用驗證過的公司與職缺代碼自己組出，轉址只跟隨到 www.cake.me。
+   - 查詢中、成功、失敗都會在欄位下方顯示提示；失敗時手動填寫即可。Cake 也在 Cloudflare 後面，若日後像 104 一樣封鎖雲端主機，Vercel Logs 會看到 `cake-job-preview: Cake 回應 403`。
+   - 104 不支援：104 會封鎖雲端主機 IP（見下方），請改用 iOS 捷徑。
 
 ## 用網址開啟新增表單（預填）
 

@@ -11,20 +11,25 @@ import type { Prefill } from '@/lib/data/prefill';
 import { SOURCES, STATUS_LIST, type Application, type Source, type Status } from '@/lib/types';
 import DiscardConfirm from './DiscardConfirm';
 import Field from './Field';
+import CakePreviewHint from './CakePreviewHint';
 import { useAppFormState } from './useAppFormState';
+import { useCakeJobPreview } from './useCakeJobPreview';
 
 interface Props {
   initial: Application | null;
   /** 新增時預先帶入的欄位（來自網址參數）。 */
   prefill?: Prefill | null;
+  /** 試用模式：沒有登入，不查詢 Cake 職缺。 */
+  isDemo?: boolean;
   resumeOptions: string[];
   onSave: (app: Application) => Promise<boolean>;
   onDelete: (id: string) => Promise<boolean>;
   onClose: () => void;
 }
 
-export default function AppForm({ initial, prefill, resumeOptions, onSave, onDelete, onClose }: Props) {
-  const { values: v, set, setUrl, setSource, dirty, toApplication } = useAppFormState(initial, prefill);
+export default function AppForm({ initial, prefill, isDemo = false, resumeOptions, onSave, onDelete, onClose }: Props) {
+  const { values: v, set, setUrl, setSource, applyCakePreview, dirty, toApplication } = useAppFormState(initial, prefill);
+  const cakePreview = useCakeJobPreview(applyCakePreview, !isDemo);
   const [error, setError] = useState('');
   // 正在進行的操作，用來停用按鈕並在對應的按鈕上顯示進度
   const [busy, setBusy] = useState<'save' | 'delete' | null>(null);
@@ -42,6 +47,11 @@ export default function AppForm({ initial, prefill, resumeOptions, onSave, onDel
     if (busy) return;
     if (dirty) setConfirmDiscard(true);
     else onClose();
+  }
+
+  // 公司或職位還是空的才去查 Cake 職缺，所以編輯已填好的資料時不會呼叫 API。
+  function lookUpCake(url: string) {
+    if (!v.company.trim() || !v.title.trim()) cakePreview.request(url);
   }
 
   async function submit() {
@@ -105,7 +115,7 @@ export default function AppForm({ initial, prefill, resumeOptions, onSave, onDel
             <Field label="職位" id="f-title">
               <Input id="f-title" name="title" value={v.title} onChange={(e) => set('title', e.target.value)} autoComplete="off" maxLength={160} />
             </Field>
-            <Field label="職缺連結" id="f-url" hint="貼上 104、Cake 或 LinkedIn 網址，來源會自動判斷" full>
+            <Field label="職缺連結" id="f-url" hint="貼上 104、Cake 或 LinkedIn 網址，來源會自動判斷；Cake 連結會帶入公司與職稱" full>
               <Input
                 id="f-url"
                 name="url"
@@ -116,6 +126,7 @@ export default function AppForm({ initial, prefill, resumeOptions, onSave, onDel
                 placeholder="https://www.104.com.tw/job/…"
                 aria-describedby="f-url-hint"
                 onChange={(e) => setUrl(e.target.value)}
+                onBlur={() => lookUpCake(v.url)}
                 // 直接讀剪貼簿，不依賴 onChange。104 App「分享 → 拷貝」會把說明文字和網址存成剪貼簿裡的
                 // 不同項目，Safari 的純文字可能只有說明文字，所以網址格式（text/uri-list）也要一起找。
                 onPaste={(e) => {
@@ -128,8 +139,11 @@ export default function AppForm({ initial, prefill, resumeOptions, onSave, onDel
                     e.preventDefault();
                     setUrl(found);
                   }
+                  // 清理貼上的內容之後才查詢職缺，查詢出任何問題都不會影響貼上。
+                  lookUpCake(found ?? extractUrl(text));
                 }}
               />
+              <CakePreviewHint status={cakePreview.status} />
             </Field>
             <Field label="來源" id="f-source">
               <NativeSelect id="f-source" name="source" wrapperClassName="w-full" value={v.source} onChange={(e) => setSource(e.target.value as Source)}>
