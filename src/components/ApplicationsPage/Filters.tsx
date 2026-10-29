@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { CalendarDays, Columns3, Globe, List, Search, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useHydrated } from '@/hooks/useHydrated';
 import { NativeSelect } from '@/components/ui/native-select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { monthLabel } from '@/lib/dates';
@@ -22,6 +23,8 @@ interface Props {
  */
 export default function Filters({ months, action }: Props) {
   const view = useTrackerStore((s) => s.view);
+  // hydration 前不知道使用者選的檢視，先都不標示選取，免得從「看板」跳到「列表」。
+  const hydrated = useHydrated();
   const source = useTrackerStore((s) => s.source);
   const query = useTrackerStore((s) => s.query);
   const month = useTrackerStore((s) => s.month);
@@ -35,7 +38,7 @@ export default function Filters({ months, action }: Props) {
         type="single"
         aria-label="檢視方式"
         className="max-md:hidden"
-        value={view}
+        value={hydrated ? view : ''}
         // 再次點擊已選中的項目時 Radix 會回報空字串；這時維持目前的檢視。
         onValueChange={(v) => v && setView(v as 'board' | 'list')}
       >
