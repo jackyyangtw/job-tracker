@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { clean104JobUrl } from './jobUrl';
+import { clean104JobUrl, is104Host } from './jobUrl';
 
 describe('clean104JobUrl', () => {
   it('移除 104 職缺連結的追蹤參數與 # 片段', () => {
@@ -15,5 +15,15 @@ describe('clean104JobUrl', () => {
 
   it('不是完整網址時原樣回傳', () => {
     expect(clean104JobUrl('www.104.com.tw/job/abc?x=1')).toBe('www.104.com.tw/job/abc?x=1');
+  });
+});
+
+describe('is104Host', () => {
+  it('104.com.tw 與其子網域才算', () => {
+    expect(is104Host('www.104.com.tw')).toBe(true);
+    expect(is104Host('m.104.com.tw')).toBe(true);
+    expect(is104Host('104.com.tw')).toBe(true);
+    expect(is104Host('evil104.com.tw')).toBe(false);
+    expect(is104Host('www.104.com.tw.evil.example')).toBe(false);
   });
 });

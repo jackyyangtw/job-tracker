@@ -1,4 +1,4 @@
-// 貼上 Cake 職缺連結時自動帶入公司與職稱。
+// 貼上 Cake 職缺連結時自動帶入公司與職稱：解析職缺頁，以及表單呼叫自己的 API。連結的解析在 jobUrl.ts。
 // 由 /api/cake-job-preview 路由（伺服器端）與表單（瀏覽器端）共用，這裡不能引入只能在伺服器執行的模組。
 // 104 會封鎖雲端主機 IP，伺服器端查不到，所以只支援 Cake；104 改用 iOS 捷徑（docs/ios-shortcut.md）。
 
@@ -6,37 +6,6 @@ export interface CakeJobPreview {
   company: string;
   title: string;
 }
-
-/** Cake 職缺連結中的公司與職缺代碼，用來在伺服器端自己組出查詢網址。 */
-export interface CakeJob {
-  company: string;
-  job: string;
-}
-
-const CAKE_HOST_RE = /^(?:www\.)?(?:cake\.me|cakeresume\.com)$/i;
-// 網址路徑裡的一段：開頭必須是英數字，不允許 `..` 這類路徑。
-const SLUG_RE = /^[A-Za-z0-9][A-Za-z0-9_.~%-]{0,199}$/;
-
-/**
- * 解析 Cake 職缺連結（`https://www.cake.me/companies/{公司}/jobs/{職缺}`，舊網域 cakeresume.com 也接受）。
- * 其他連結回傳 null。
- */
-export function parseCakeJobUrl(url: string): CakeJob | null {
-  let u: URL;
-  try {
-    u = new URL(url.trim());
-  } catch {
-    return null;
-  }
-  if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
-  if (!CAKE_HOST_RE.test(u.hostname)) return null;
-  const m = u.pathname.match(/^\/companies\/([^/]+)\/jobs\/([^/]+)\/?$/);
-  if (!m || !SLUG_RE.test(m[1]) || !SLUG_RE.test(m[2])) return null;
-  return { company: m[1], job: m[2] };
-}
-
-/** 由驗證過的公司與職缺代碼組出 Cake 職缺頁網址；不使用使用者提供的網址（避免 SSRF）。 */
-export const cakeJobPageUrl = ({ company, job }: CakeJob) => `https://www.cake.me/companies/${company}/jobs/${job}`;
 
 const clean = (v: unknown, n: number) => (typeof v === 'string' ? v.replace(/\s+/g, ' ').trim().slice(0, n) : '');
 

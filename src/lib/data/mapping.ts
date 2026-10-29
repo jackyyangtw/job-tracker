@@ -1,4 +1,5 @@
-import { clean104JobUrl } from '../104/jobUrl';
+import { clean104JobUrl, is104Host } from '../104/jobUrl';
+import { isCakeHost } from '../cake-resume/jobUrl';
 import { isStatus, SOURCES, type Application, type ApplicationRow, type Source, type Status } from '../types';
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -28,10 +29,8 @@ export function safeUrl(input: unknown): string {
 }
 
 /**
- * 從貼上的分享文字裡取出第一個 http(s) 連結，例如 104 App 複製出來的訊息：
- * 「我在104工作快找上發現了一個超適合你的內容…（換行）https://www.104.com.tw/job/8wgp3?jobsource=ios_share」。
- * 文字裡沒有連結就原樣回傳，所以手動輸入網址仍然可以。
- * 104 職缺連結會一併拿掉追蹤參數（見 clean104JobUrl）。
+ * 從貼上的分享文字裡取出第一個 http(s) 連結（求職 App 分享出來的常是一段說明文字加連結）。
+ * 文字裡沒有連結就原樣回傳，所以手動輸入網址仍然可以。各網站的連結清理（例如追蹤參數）交給該網站的模組。
  */
 export function extractUrl(text: string): string {
   const m = text.match(/https?:\/\/[!-~]+/i);
@@ -46,8 +45,8 @@ export function detectSource(url: string): Source {
   } catch {
     return '';
   }
-  if (host.includes('104.com.tw')) return '104';
-  if (host.includes('cake.me') || host.includes('cakeresume.com')) return 'Cake';
+  if (is104Host(host)) return '104';
+  if (isCakeHost(host)) return 'Cake';
   if (host.includes('linkedin.com')) return 'LinkedIn';
   return '';
 }

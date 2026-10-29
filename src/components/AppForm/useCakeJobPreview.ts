@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
-import { fetchCakeJobPreview, parseCakeJobUrl, type CakeJobPreview, type CakePreviewFailure } from '@/lib/cake-resume/jobPreview';
+import { fetchCakeJobPreview, type CakeJobPreview, type CakePreviewFailure } from '@/lib/cake-resume/jobPreview';
+import { parseCakeJobUrl } from '@/lib/cake-resume/jobUrl';
 
 /** `signedOut`：試用模式沒有登入，不呼叫 API（API 只給登入的使用者用）。 */
 export type CakePreviewStatus = 'idle' | 'loading' | 'done' | 'signedOut' | CakePreviewFailure;

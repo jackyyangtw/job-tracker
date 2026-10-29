@@ -1,4 +1,4 @@
-import { parse104JobHeader } from '../104/jobHeader';
+import { H104_PARAM, job104FromParams } from '../104/jobHeader';
 import type { Source } from '../types';
 import { detectSource, extractUrl, safeUrl } from './mapping';
 
@@ -11,7 +11,7 @@ export interface Prefill {
 }
 
 /** 讀完要從網址上拿掉的參數，重新整理時才不會又跳出新增表單。 */
-export const PREFILL_KEYS = ['new', 'company', 'title', 'url', 'h104'] as const;
+export const PREFILL_KEYS = ['new', 'company', 'title', 'url', H104_PARAM] as const;
 
 // 長度上限和新增表單的 maxLength 一致。
 const text = (v: unknown, n: number) => (typeof v === 'string' ? v : '').replace(/\s+/g, ' ').trim().slice(0, n);
@@ -19,25 +19,24 @@ const text = (v: unknown, n: number) => (typeof v === 'string' ? v : '').replace
 /**
  * 解析 `/applications?new=1&company=…&title=…&url=…`，讓 iOS 捷徑、書籤小工具等外部工具
  * 開啟新增表單並帶入資料。沒有 `new` 參數時回傳 null（不開表單）；其他參數都可省略。
- * 也可以用 `h104`（104 職缺 JSON 的 header）代替 company／title，兩者都有時以 company／title 為準。
+ * 求職網站的捷徑也可以改傳該網站的原始資料（目前有 104，見 job104FromParams），兩者都有時以 company／title 為準。
  * 網址一律經過 extractUrl／safeUrl，只接受 http(s)，來源由網址判斷。
  */
 export function parsePrefill(search: string): Prefill | null {
   const p = new URLSearchParams(search);
   if (!p.has('new')) return null;
-  // 讓捷徑把 104 回傳的 header 原樣轉傳，不必自己拆欄位、逐一編碼。
-  const h104 = parse104JobHeader(p.get('h104'));
+  const fromSite = job104FromParams(p);
   const url = safeUrl(extractUrl(text(p.get('url'), 2000)));
   return {
-    company: text(p.get('company'), 120) || h104.company,
-    title: text(p.get('title'), 160) || h104.title,
+    company: text(p.get('company'), 120) || fromSite.company,
+    title: text(p.get('title'), 160) || fromSite.title,
     url,
     source: detectSource(url),
   };
 }
 
 /**
- * 「從剪貼簿新增」：剪貼簿是預填網址（iOS 捷徑拷貝的 `…?new=1&h104=…&url=…`）時照預填網址解析；
+ * 「從剪貼簿新增」：剪貼簿是預填網址（iOS 捷徑拷貝的 `…?new=1&…&url=…`）時照預填網址解析；
  * 是一般的職缺連結或分享訊息時只帶入連結。找不到 http(s) 連結時回傳 null。
  * 只讀網址參數，不管網址開頭，所以捷徑裡的網域填錯、還是「你的網域」這種中文佔位字，
  * 或沿用 Chrome 版的 `googlechromes://` 都沒關係。
@@ -45,7 +44,7 @@ export function parsePrefill(search: string): Prefill | null {
 export function parseClipboardPrefill(clip: string): Prefill | null {
   const text = clip.trim().slice(0, 50_000);
   // 預填網址：不用 extractUrl 找，因為它只認 http(s) 的 ASCII 網址，遇到 googlechromes:// 或中文網域時
-  // 會跳過整段、改抓到 url 參數裡的 104 連結，結果只帶入連結。
+  // 會跳過整段、改抓到 url 參數裡的職缺連結，結果只帶入連結。
   for (const token of text.split(/\s+/)) {
     const q = token.indexOf('?');
     if (q >= 0 && new URLSearchParams(token.slice(q)).has('new')) return parsePrefill(token.slice(q));

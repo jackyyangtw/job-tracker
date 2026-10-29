@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { cakeJobPageUrl, parseCakeJobPage, parseCakeJobUrl } from '@/lib/cake-resume/jobPreview';
+import { parseCakeJobPage } from '@/lib/cake-resume/jobPreview';
+import { cakeJobPageUrl, parseCakeJobUrl } from '@/lib/cake-resume/jobUrl';
 import { createClient } from '@/lib/supabase/server';
 
 // 查詢貼上的 Cake 職缺連結的公司與職稱，讓表單自動填入。

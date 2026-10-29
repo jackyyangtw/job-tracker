@@ -1,6 +1,9 @@
 // 104 職缺 JSON 的 `data.header`：iOS 捷徑查詢 `https://www.104.com.tw/job/ajax/content/{職缺代碼}` 後原樣轉傳（`h104` 參數）。
 // 104 會封鎖雲端主機 IP，伺服器端查不到，所以由使用者的手機查詢（見 docs/ios-shortcut.md）。
 
+/** 預填網址裡放 104 職缺 header 的參數名稱：`…?new=1&h104=…&url=…`。 */
+export const H104_PARAM = 'h104';
+
 export interface Job104 {
   company: string;
   title: string;
@@ -22,3 +25,6 @@ export function parse104JobHeader(raw: string | null): Job104 {
     return { company: '', title: '' };
   }
 }
+
+/** 從預填網址的參數取出捷徑轉傳的 104 職缺資料；捷徑不必自己拆欄位、逐一編碼。沒有時回傳空字串。 */
+export const job104FromParams = (p: URLSearchParams): Job104 => parse104JobHeader(p.get(H104_PARAM));
