@@ -54,18 +54,19 @@ export function parsePrefill(search: string): Prefill | null {
 /**
  * 「從剪貼簿新增」：剪貼簿是預填網址（iOS 捷徑拷貝的 `…?new=1&h104=…&url=…`）時照預填網址解析；
  * 是一般的職缺連結或分享訊息時只帶入連結。找不到 http(s) 連結時回傳 null。
- * 只讀網址參數，不管網域，所以捷徑裡的網域填錯也沒關係。
+ * 只讀網址參數，不管網址開頭，所以捷徑裡的網域填錯、還是「你的網域」這種中文佔位字，
+ * 或沿用 Chrome 版的 `googlechromes://` 都沒關係。
  */
 export function parseClipboardPrefill(clip: string): Prefill | null {
-  const found = extractUrl(clip.trim().slice(0, 50_000));
-  if (!/^https?:\/\//i.test(found)) return null;
-  let u: URL;
-  try {
-    u = new URL(found);
-  } catch {
-    return null;
+  const text = clip.trim().slice(0, 50_000);
+  // 預填網址：不用 extractUrl 找，因為它只認 http(s) 的 ASCII 網址，遇到 googlechromes:// 或中文網域時
+  // 會跳過整段、改抓到 url 參數裡的 104 連結，結果只帶入連結。
+  for (const token of text.split(/\s+/)) {
+    const q = token.indexOf('?');
+    if (q >= 0 && new URLSearchParams(token.slice(q)).has('new')) return parsePrefill(token.slice(q));
   }
-  if (u.searchParams.has('new')) return parsePrefill(u.search);
+  const found = extractUrl(text);
+  if (!/^https?:\/\//i.test(found)) return null;
   const url = safeUrl(found);
   return url ? { company: '', title: '', url, source: detectSource(url) } : null;
 }

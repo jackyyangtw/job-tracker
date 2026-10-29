@@ -68,6 +68,18 @@ describe('parseClipboardPrefill', () => {
     expect(parseClipboardPrefill(clip)).toEqual({ company: '測試公司', title: '前端工程師', url: 'https://www.104.com.tw/job/8wgp3', source: '104' });
   });
 
+  it('捷徑網域還是中文佔位字時也照預填網址解析', () => {
+    const h104 = encodeURIComponent(JSON.stringify({ jobName: '前端工程師', custName: '測試公司' }));
+    const clip = `https://你的網域/applications?new=1&h104=${h104}&url=https://www.104.com.tw/job/8wgp3?jobsource=ios_share`;
+    expect(parseClipboardPrefill(clip)).toEqual({ company: '測試公司', title: '前端工程師', url: 'https://www.104.com.tw/job/8wgp3', source: '104' });
+  });
+
+  it('捷徑用 googlechromes:// 開頭時也照預填網址解析', () => {
+    const h104 = encodeURIComponent(JSON.stringify({ jobName: '前端工程師', custName: '測試公司' }));
+    const clip = `googlechromes://example.com/applications?new=1&h104=${h104}&url=https://www.104.com.tw/job/8wgp3`;
+    expect(parseClipboardPrefill(clip)).toMatchObject({ company: '測試公司', title: '前端工程師', source: '104' });
+  });
+
   it('剪貼簿是一般職缺連結或分享訊息時只帶入連結', () => {
     expect(parseClipboardPrefill('我在104工作快找上發現了一個超適合你的內容\nhttps://www.104.com.tw/job/8wgp3?jobsource=ios_share')).toEqual({
       company: '',
