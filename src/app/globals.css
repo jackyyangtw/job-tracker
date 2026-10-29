@@ -120,11 +120,17 @@
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
   }
-  /* iOS Safari 的日期欄位有固有寬度，可能把表單撐得比螢幕寬。 */
-  input[type='date'] {
+  /* iOS 的日期欄位（WebKit，iPhone 上的 Chrome 也是）有固有寬度與高度，會把表單撐寬、撐高；
+     datetime-local 比 date 更寬，一樣要處理。值預設置中，改成靠左和其他欄位對齊。 */
+  input[type='date'],
+  input[type='datetime-local'] {
     appearance: none;
     min-width: 0;
     max-width: 100%;
+  }
+  input[type='date']::-webkit-date-and-time-value,
+  input[type='datetime-local']::-webkit-date-and-time-value {
+    text-align: left;
   }
   button:not(:disabled),
   [role='button']:not(:disabled) {

@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { extractUrl } from '@/lib/data/mapping';
 import type { Prefill } from '@/lib/data/prefill';
 import { SOURCES, STATUS_LIST, type Application, type Source, type Status } from '@/lib/types';
+import DateInput from './DateInput';
 import DiscardConfirm from './DiscardConfirm';
 import Field from './Field';
 import InterviewFields from './InterviewFields';
@@ -166,10 +167,10 @@ export default function AppForm({ initial, prefill, isDemo = false, resumeOption
               </NativeSelect>
             </Field>
             <Field label="投遞日" id="f-applied">
-              <Input id="f-applied" name="appliedAt" type="date" value={v.appliedAt} onChange={(e) => set('appliedAt', e.target.value)} />
+              <DateInput id="f-applied" name="appliedAt" value={v.appliedAt} onChange={(e) => set('appliedAt', e.target.value)} />
             </Field>
             <Field label="下次跟進日" id="f-follow">
-              <Input id="f-follow" name="followUpAt" type="date" value={v.followUpAt} onChange={(e) => set('followUpAt', e.target.value)} />
+              <DateInput id="f-follow" name="followUpAt" value={v.followUpAt} onChange={(e) => set('followUpAt', e.target.value)} />
             </Field>
             {/* 面試時間與地點只在「面試中」時顯示；改成其他狀態時，已填的內容仍會顯示並保留 */}
             {v.status === 'interview' || v.interviewAt || v.interviewLocation ? (
