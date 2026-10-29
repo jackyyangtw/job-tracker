@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { addDays, todayStr } from '@/lib/dates';
 import { detectSource, extractUrl, safeUrl } from '@/lib/data/mapping';
+import type { CakeJobPreview } from '@/lib/cake-resume/jobPreview';
 import type { Prefill } from '@/lib/data/prefill';
 import type { Application, Source, Status } from '@/lib/types';
 
@@ -49,6 +50,15 @@ export function useAppFormState(initial: Application | null, prefill?: Prefill |
     setValues((v) => ({ ...v, url, source: detected && !sourceTouched.current ? detected : v.source }));
   }
 
+  /** 把從 Cake 查到的公司與職稱填進表單，但絕不覆蓋使用者已經輸入的內容。 */
+  function applyCakePreview(preview: CakeJobPreview) {
+    setValues((v) => ({
+      ...v,
+      company: v.company.trim() ? v.company : preview.company,
+      title: v.title.trim() ? v.title : preview.title,
+    }));
+  }
+
   function setSource(source: Source) {
     sourceTouched.current = true;
     set('source', source);
@@ -75,5 +85,5 @@ export function useAppFormState(initial: Application | null, prefill?: Prefill |
     };
   }
 
-  return { values, set, setUrl, setSource, dirty, toApplication };
+  return { values, set, setUrl, setSource, applyCakePreview, dirty, toApplication };
 }
