@@ -8,6 +8,7 @@ import { useShell } from '@/components/AppShell';
 import Board, { ListView } from '@/components/Board';
 import { Reminders } from '@/components/Panels';
 import { Button } from '@/components/ui/button';
+import { useHydrated } from '@/hooks/useHydrated';
 import { monthOf, monthsOf } from '@/lib/applications/applicationList';
 import { addDays, todayStr } from '@/lib/dates';
 import { copyText, followUpMessage } from '@/lib/data/exporters';
@@ -28,6 +29,8 @@ export default function ApplicationsPage() {
   const query = useTrackerStore((s) => s.query);
   const month = useTrackerStore((s) => s.month);
   const store = useTrackerStore.getState;
+  // 看板／列表取決於網址與 localStorage，伺服器端不知道；hydration 前先不畫，免得從看板跳成列表。
+  const hydrated = useHydrated();
 
   const [form, setForm] = useState<{ open: boolean; id: string | null; prefill?: Prefill }>({ open: false, id: null });
   // 放在 useUrlFilters 之後：它同步網址時會保留不認得的參數，這裡再把預填參數拿掉。
@@ -127,7 +130,7 @@ export default function ApplicationsPage() {
         }
       />
 
-      {!loaded ? (
+      {!loaded || !hydrated ? (
         <p role="status" className="py-7 text-center text-muted-foreground">
           載入中…
         </p>
