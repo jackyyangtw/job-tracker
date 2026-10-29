@@ -19,15 +19,17 @@ interface Props {
   initial: Application | null;
   /** 新增時預先帶入的欄位（來自網址參數）。 */
   prefill?: Prefill | null;
+  /** 試用模式：沒有登入，不查詢 Cake 職缺。 */
+  isDemo?: boolean;
   resumeOptions: string[];
   onSave: (app: Application) => Promise<boolean>;
   onDelete: (id: string) => Promise<boolean>;
   onClose: () => void;
 }
 
-export default function AppForm({ initial, prefill, resumeOptions, onSave, onDelete, onClose }: Props) {
+export default function AppForm({ initial, prefill, isDemo = false, resumeOptions, onSave, onDelete, onClose }: Props) {
   const { values: v, set, setUrl, setSource, applyCakePreview, dirty, toApplication } = useAppFormState(initial, prefill);
-  const cakePreview = useCakeJobPreview(applyCakePreview);
+  const cakePreview = useCakeJobPreview(applyCakePreview, !isDemo);
   const [error, setError] = useState('');
   // 正在進行的操作，用來停用按鈕並在對應的按鈕上顯示進度
   const [busy, setBusy] = useState<'save' | 'delete' | null>(null);

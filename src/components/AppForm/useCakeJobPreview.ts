@@ -1,15 +1,20 @@
 import { useRef, useState } from 'react';
 import { fetchCakeJobPreview, parseCakeJobUrl, type CakeJobPreview, type CakePreviewFailure } from '@/lib/cake-resume/jobPreview';
 
-export type CakePreviewStatus = 'idle' | 'loading' | 'done' | CakePreviewFailure;
+/** `signedOut`：試用模式沒有登入，不呼叫 API（API 只給登入的使用者用）。 */
+export type CakePreviewStatus = 'idle' | 'loading' | 'done' | 'signedOut' | CakePreviewFailure;
 
-/** 在貼上或離開欄位時才查詢 Cake 連結，不是每打一個字就查。 */
-export function useCakeJobPreview(onResult: (preview: CakeJobPreview) => void) {
+/** 在貼上或離開欄位時才查詢 Cake 連結，不是每打一個字就查。`enabled` 為 false 時（試用模式）只顯示說明。 */
+export function useCakeJobPreview(onResult: (preview: CakeJobPreview) => void, enabled: boolean) {
   const [status, setStatus] = useState<CakePreviewStatus>('idle');
   const lastUrl = useRef<string | null>(null);
 
   function request(url: string) {
     if (!parseCakeJobUrl(url) || url === lastUrl.current) return;
+    if (!enabled) {
+      setStatus('signedOut');
+      return;
+    }
     lastUrl.current = url;
     setStatus('loading');
     void fetchCakeJobPreview(url).then((result) => {

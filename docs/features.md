@@ -31,7 +31,7 @@
 2. **判斷來源**：104、Cake、LinkedIn 會自動選好「來源」；手動選過來源後，不會再被自動覆蓋。
 3. **辨識 Cake 職缺**：貼上或離開欄位時，若是 Cake 職缺連結（`https://www.cake.me/companies/{公司}/jobs/{職缺}`，舊網域 cakeresume.com 也可）且公司或職位還沒填，會透過 `/api/cake-job-preview` 查出公司與職稱，只填入仍是空白的欄位。
    - 伺服器端讀 Cake 職缺頁的 JSON-LD（JobPosting），沒有的話用 og:title。
-   - 只有登入的使用者能呼叫（試用模式不會帶入）；查詢網址由伺服器用驗證過的公司與職缺代碼自己組出，轉址只跟隨到 www.cake.me。
+   - 只有登入的使用者能呼叫；試用模式不會呼叫 API，貼上 Cake 連結時改顯示「登入後貼上 Cake 連結，可自動帶入公司與職稱」；查詢網址由伺服器用驗證過的公司與職缺代碼自己組出，轉址只跟隨到 www.cake.me。
    - 查詢中、成功、失敗都會在欄位下方顯示提示；失敗時手動填寫即可。Cake 也在 Cloudflare 後面，若日後像 104 一樣封鎖雲端主機，Vercel Logs 會看到 `cake-job-preview: Cake 回應 403`。
    - 104 不支援：104 會封鎖雲端主機 IP（見下方），請改用 iOS 捷徑。
 
