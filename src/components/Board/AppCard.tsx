@@ -9,6 +9,7 @@ import { shortDate } from '@/lib/dates';
 import { flagsOf } from '@/lib/applications/flags';
 import { STATUS_LIST, type Application, type Status } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import InterviewInfo from './InterviewInfo';
 import { DRAG_TYPE, type Common } from './types';
 
 /** 圖示＋值的小資訊。圖示只是裝飾，螢幕閱讀器會唸 `label`。 */
@@ -126,6 +127,8 @@ export default function AppCard({ app, staleDays, onEdit, onStatus }: Common & {
           ) : null}
         </div>
       ) : null}
+
+      <InterviewInfo app={app} />
 
       {app.resume ? (
         <div className="flex text-xs text-muted-foreground">

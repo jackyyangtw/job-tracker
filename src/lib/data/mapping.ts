@@ -15,6 +15,14 @@ function date(v: unknown): string {
   return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d ? s : '';
 }
 
+const DATETIME_RE = /^(\d{4}-\d{2}-\d{2})T([01]\d|2[0-3]):([0-5]\d)/;
+/** 只有真的存在的日期時間才回傳 `YYYY-MM-DDTHH:mm`（秒數與時區會捨去）。 */
+export function dateTime(v: unknown): string {
+  if (typeof v !== 'string') return '';
+  const m = v.match(DATETIME_RE);
+  return m && date(m[1]) ? `${m[1]}T${m[2]}:${m[3]}` : '';
+}
+
 /** 只接受 http(s) 連結；缺少協定時補上 https://。其他一律回傳 ''。 */
 export function safeUrl(input: unknown): string {
   let u = String(input ?? '').trim();
@@ -72,6 +80,8 @@ export function normalizeApp(raw: unknown): Application | null {
     appliedAt: date(r.appliedAt),
     followUpAt: date(r.followUpAt),
     lastContact: date(r.lastContact),
+    interviewAt: dateTime(r.interviewAt),
+    interviewLocation: clip(r.interviewLocation, 300),
     resume: clip(r.resume, 80),
     note: clip(r.note, 2000),
     createdAt: clip(r.createdAt, 40) || now,
@@ -91,6 +101,8 @@ export function fromRow(row: ApplicationRow): Application {
     appliedAt: row.applied_at ?? '',
     followUpAt: row.follow_up_at ?? '',
     lastContact: row.last_contact ?? '',
+    interviewAt: dateTime(row.interview_at),
+    interviewLocation: row.interview_location ?? '',
     resume: row.resume ?? '',
     note: row.note ?? '',
     createdAt: row.created_at,
@@ -110,6 +122,8 @@ export function toRow(a: Application) {
     applied_at: a.appliedAt || null,
     follow_up_at: a.followUpAt || null,
     last_contact: a.lastContact || null,
+    interview_at: a.interviewAt || null,
+    interview_location: a.interviewLocation,
     resume: a.resume,
     note: a.note,
   };
