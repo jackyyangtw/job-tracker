@@ -1,3 +1,4 @@
+import { parse104JobHeader } from '../104/jobHeader';
 import type { Source } from '../types';
 import { detectSource, extractUrl, safeUrl } from './mapping';
 
@@ -12,25 +13,8 @@ export interface Prefill {
 /** 讀完要從網址上拿掉的參數，重新整理時才不會又跳出新增表單。 */
 export const PREFILL_KEYS = ['new', 'company', 'title', 'url', 'h104'] as const;
 
-// 104 職缺 JSON 的 header 只有幾百字元；超過這個長度就不解析。
-const MAX_H104 = 20_000;
-
 // 長度上限和新增表單的 maxLength 一致。
 const text = (v: unknown, n: number) => (typeof v === 'string' ? v : '').replace(/\s+/g, ' ').trim().slice(0, n);
-
-/**
- * 104 職缺 JSON 的 `data.header`（iOS 捷徑原樣轉傳），取出公司（custName）與職稱（jobName）。
- * 讓捷徑不必自己拆欄位、逐一編碼。格式不對時回傳空字串。
- */
-function from104Header(raw: string | null): { company: string; title: string } {
-  if (!raw || raw.length > MAX_H104) return { company: '', title: '' };
-  try {
-    const h = JSON.parse(raw) as { custName?: unknown; jobName?: unknown } | null;
-    return { company: text(h?.custName, 120), title: text(h?.jobName, 160) };
-  } catch {
-    return { company: '', title: '' };
-  }
-}
 
 /**
  * 解析 `/applications?new=1&company=…&title=…&url=…`，讓 iOS 捷徑、書籤小工具等外部工具
@@ -41,7 +25,8 @@ function from104Header(raw: string | null): { company: string; title: string } {
 export function parsePrefill(search: string): Prefill | null {
   const p = new URLSearchParams(search);
   if (!p.has('new')) return null;
-  const h104 = from104Header(p.get('h104'));
+  // 讓捷徑把 104 回傳的 header 原樣轉傳，不必自己拆欄位、逐一編碼。
+  const h104 = parse104JobHeader(p.get('h104'));
   const url = safeUrl(extractUrl(text(p.get('url'), 2000)));
   return {
     company: text(p.get('company'), 120) || h104.company,

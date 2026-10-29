@@ -33,6 +33,7 @@
   - 根目錄：`types.ts`（共用型別）、`dates.ts`、`utils.ts`（shadcn 的 `cn()`，位置由 `components.json` 指定）、`testUtils.ts`、`securityHeaders.ts`（next.config.ts 用的 HTTP 安全標頭）
   - `applications/`：投遞的業務規則（列表排序、提醒、統計、範例與試用資料）
   - `data/`：資料進出（資料庫列轉換與驗證、離線快取、匯出／複製、給使用者看的錯誤）
+  - `104/`：104 職缺連結清理（移除追蹤參數）與 iOS 捷徑傳來的職缺 JSON（`h104`）解析
   - `cake-resume/`：Cake（CakeResume）職缺連結解析與職缺頁辨識，`/api/cake-job-preview` 與表單共用
   - `supabase/`：Supabase client 與登出
   - `ui/`：畫面樣式相關的邏輯（深淺色主題、各狀態的 Tailwind class）

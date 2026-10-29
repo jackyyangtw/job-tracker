@@ -1,3 +1,4 @@
+import { clean104JobUrl } from '../104/jobUrl';
 import { isStatus, SOURCES, type Application, type ApplicationRow, type Source, type Status } from '../types';
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -30,19 +31,12 @@ export function safeUrl(input: unknown): string {
  * 從貼上的分享文字裡取出第一個 http(s) 連結，例如 104 App 複製出來的訊息：
  * 「我在104工作快找上發現了一個超適合你的內容…（換行）https://www.104.com.tw/job/8wgp3?jobsource=ios_share」。
  * 文字裡沒有連結就原樣回傳，所以手動輸入網址仍然可以。
+ * 104 職缺連結會一併拿掉追蹤參數（見 clean104JobUrl）。
  */
 export function extractUrl(text: string): string {
   const m = text.match(/https?:\/\/[!-~]+/i);
   if (!m) return text;
-  const url = m[0].replace(/[.,;:!?)\]}'"]+$/, '');
-  try {
-    const { hostname, pathname } = new URL(url);
-    // 104 分享連結帶有追蹤參數（?jobsource=ios_share），拿掉之後職缺頁面照樣能開。
-    if (/(^|\.)104\.com\.tw$/.test(hostname) && pathname.startsWith('/job/')) return url.split(/[?#]/)[0];
-  } catch {
-    // 還沒打完的網址：維持原樣。
-  }
-  return url;
+  return clean104JobUrl(m[0].replace(/[.,;:!?)\]}'"]+$/, ''));
 }
 
 export function detectSource(url: string): Source {
