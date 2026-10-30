@@ -16,11 +16,11 @@ export default function ShellFrame({ shell, banner, children }: { shell: Shell; 
       </a>
       {/* 手機版底部有固定的分頁列，內容要多留底部空間 */}
       <div className="mx-auto flex max-w-[1240px] flex-col gap-[18px] max-md:pb-20">
-        <TopBar />
+        <TopBar basePath={shell.basePath} />
         {banner}
         {children}
       </div>
-      <MobileTabBar />
+      <MobileTabBar basePath={shell.basePath} />
     </ShellContext>
   );
 }

@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { BarChart3, LayoutGrid, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useShell } from './ShellContext';
 
 const ITEMS = [
   { href: '/applications', label: '投遞', icon: LayoutGrid },
@@ -12,10 +11,11 @@ const ITEMS = [
   { href: '/settings', label: '設定', icon: Settings },
 ] as const;
 
+// basePath 由外面傳入而不是讀 ShellContext：確認登入前（還沒有 shell）也要能畫出導覽列。
+
 /** 頁首：品牌名稱；桌機版在右側顯示主要導覽。 */
-export function TopBar() {
+export function TopBar({ basePath }: { basePath: string }) {
   const pathname = usePathname();
-  const { basePath } = useShell();
   return (
     <header className="flex items-center justify-between gap-4">
       <Link href={`${basePath}/applications`} className="text-lg leading-tight font-medium tracking-[0.01em] sm:text-xl">
@@ -45,9 +45,8 @@ export function TopBar() {
 }
 
 /** 手機版底部分頁列，避開 iPhone 底部的 Home 指示條。 */
-export function MobileTabBar() {
+export function MobileTabBar({ basePath }: { basePath: string }) {
   const pathname = usePathname();
-  const { basePath } = useShell();
   return (
     <nav
       aria-label="主要導覽"
