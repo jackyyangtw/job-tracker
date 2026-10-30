@@ -17,6 +17,7 @@ import { useUpsertApplication } from '@/queries/useUpsertApplication';
 import { useTrackerStore } from '@/store/useTrackerStore';
 import type { Shell } from './ShellContext';
 import ShellFrame from './ShellFrame';
+import ShellSkeleton from './ShellSkeleton';
 import { useAppBadge } from './useAppBadge';
 
 export { useShell } from './ShellContext';
@@ -34,13 +35,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     if (!checking && !session) router.replace('/login');
   }, [checking, session, router]);
 
-  if (!session) {
-    return (
-      <p role="status" className="py-7 text-center text-muted-foreground">
-        載入中…
-      </p>
-    );
-  }
+  if (!session) return <ShellSkeleton />;
   return <SignedInShell session={session}>{children}</SignedInShell>;
 }
 

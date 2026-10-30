@@ -16,6 +16,7 @@ import { copyText, followUpMessage } from '@/lib/data/exporters';
 import { parseClipboardPrefill, type Prefill } from '@/lib/data/prefill';
 import { STATUS_LABEL, type Application, type Status } from '@/lib/types';
 import { useTrackerStore } from '@/store/useTrackerStore';
+import BoardSkeleton from './BoardSkeleton';
 import Filters from './Filters';
 import { usePrefillFromUrl } from './usePrefillFromUrl';
 
@@ -25,13 +26,7 @@ import { usePrefillFromUrl } from './usePrefillFromUrl';
  */
 export default function ApplicationsPage() {
   return (
-    <Suspense
-      fallback={
-        <p role="status" className="py-7 text-center text-muted-foreground">
-          載入中…
-        </p>
-      }
-    >
+    <Suspense fallback={<BoardSkeleton withFilters />}>
       <ApplicationsContent />
     </Suspense>
   );
@@ -144,21 +139,24 @@ function ApplicationsContent() {
       />
 
       {!loaded || !hydrated ? (
-        <p role="status" className="py-7 text-center text-muted-foreground">
-          載入中…
-        </p>
-      ) : view === 'board' ? (
-        <Board apps={visible} staleDays={staleDays} onEdit={openForm} onStatus={changeStatus} />
+        <BoardSkeleton />
       ) : (
-        // 手機版沒有看板／列表切換，一律用看板（狀態切換＋卡片）；列表只在桌機版顯示。
-        <>
-          <div className="md:hidden">
+        // 外層只在載入完成時掛載一次，淡入只播第一次；之後篩選、切換檢視都不會重播。
+        <div className="animate-in fade-in slide-in-from-bottom-1 duration-300">
+          {view === 'board' ? (
             <Board apps={visible} staleDays={staleDays} onEdit={openForm} onStatus={changeStatus} />
-          </div>
-          <div className="max-md:hidden">
-            <ListView apps={visible} staleDays={staleDays} onEdit={openForm} />
-          </div>
-        </>
+          ) : (
+            // 手機版沒有看板／列表切換，一律用看板（狀態切換＋卡片）；列表只在桌機版顯示。
+            <>
+              <div className="md:hidden">
+                <Board apps={visible} staleDays={staleDays} onEdit={openForm} onStatus={changeStatus} />
+              </div>
+              <div className="max-md:hidden">
+                <ListView apps={visible} staleDays={staleDays} onEdit={openForm} />
+              </div>
+            </>
+          )}
+        </div>
       )}
 
       <div className="fixed right-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 flex items-center gap-2 md:hidden">

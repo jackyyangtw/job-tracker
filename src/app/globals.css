@@ -146,6 +146,23 @@
   }
 }
 
+/* 載入中的骨架灰塊：一道淡色光帶由左往右掃過；減少動態效果時只剩靜態灰塊 */
+@utility skeleton {
+  background-color: var(--muted);
+  background-image: linear-gradient(90deg, transparent 30%, color-mix(in oklab, var(--background) 60%, transparent) 50%, transparent 70%);
+  background-size: 300% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
 /* 橫向捲動列：右緣淡出提示還有內容；觸控裝置隱藏捲軸，滑鼠裝置留細捲軸才拖得動 */
 @utility scroll-fade-x {
   mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
