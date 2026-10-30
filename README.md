@@ -6,16 +6,27 @@
 
 ## 功能
 
-- 看板／列表兩種檢視，搜尋與依來源篩選
-- 貼上 104、Cake、LinkedIn 連結會自動判斷來源；貼上整段分享訊息時只會留下連結
-- 貼上 Cake 職缺連結會自動帶入公司與職稱（104 請用 [iOS 捷徑](docs/ios-shortcut.md)）
-- 用網址參數開啟並預填新增表單（`/applications?new=1&company=…&title=…&url=…`）；搭配 [iOS 捷徑](docs/ios-shortcut.md)，從 104 分享就能自動帶入公司與職稱
-- 提醒：超過 N 天沒消息（設定跨裝置同步）、或跟進日到了；一鍵複製跟進訊息、一鍵「已跟進」
+不登入也能從登入頁進入**試用模式**（`/demo/applications`），用範例資料體驗主要功能；資料只存在當下的分頁，重新整理就會重設。
+
+### 試用模式也能用
+
+- 看板／列表兩種檢視，搜尋與依來源、月份篩選；狀態分為想投、已投遞、面試中、Offer、未錄取、已撤回
+- 新增、編輯、刪除投遞；貼上 104、Cake、LinkedIn 連結會自動判斷來源，貼上整段分享訊息時只會留下連結
+- 提醒：超過 N 天沒消息、或跟進日到了；一鍵複製跟進訊息、一鍵「已跟進」
 - 回應率統計（各來源、各履歷版本）
-- Google 登入；每個帳號只能讀寫自己的資料（Row Level Security）
-- 跨裝置即時同步（Supabase Realtime），回到前景或恢復連線時自動補抓
-- PWA：可安裝、離線可看、App 圖示角標顯示待處理數量（瀏覽器支援時）
 - 匯出 JSON／CSV，匯入 JSON（可匯入先前 HTML 版本匯出的檔案）
+
+### 登入後才有
+
+> 想試試登入後的功能，請[聯絡作者](https://github.com/jackyyangtw)。
+
+- Google 登入；資料存在 Supabase，每個帳號只能讀寫自己的資料（Row Level Security）
+- 跨裝置即時同步（Supabase Realtime），回到前景或恢復連線時自動補抓；提醒天數的設定也會跨裝置同步
+- 貼上 Cake 職缺連結會自動帶入公司與職稱（104 請用 [iOS 捷徑](docs/ios-shortcut.md)）
+- 用網址參數開啟並預填新增表單（`/applications?new=1&company=…&title=…&url=…`），以及「從剪貼簿新增」；搭配 [iOS 捷徑](docs/ios-shortcut.md)，從 104 分享就能自動帶入公司與職稱
+- PWA：可安裝、離線可看最近一次同步的資料、App 圖示角標顯示待處理數量（瀏覽器支援時）
+
+完整說明見 [docs/features.md](docs/features.md)。
 
 ## 快速開始
 
