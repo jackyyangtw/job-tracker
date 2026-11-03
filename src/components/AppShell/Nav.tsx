@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { BarChart3, LayoutGrid, Settings } from 'lucide-react';
@@ -13,13 +14,16 @@ const ITEMS = [
 
 // basePath 由外面傳入而不是讀 ShellContext：確認登入前（還沒有 shell）也要能畫出導覽列。
 
-/** 頁首：品牌名稱；桌機版在右側顯示主要導覽。 */
+/** 頁首：品牌 logo；桌機版在右側顯示主要導覽。 */
 export function TopBar({ basePath }: { basePath: string }) {
   const pathname = usePathname();
   return (
-    <header className="flex items-center justify-between gap-4">
-      <Link href={`${basePath}/applications`} className="text-lg leading-tight font-medium tracking-[0.01em] sm:text-xl">
-        投遞追蹤看板
+    <header className="flex items-center gap-4 md:gap-6">
+      <Link
+        href={`${basePath}/applications`}
+        className="rounded-[10px] outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <Image src="/icons/icon-192.png" alt="投遞追蹤看板" width={40} height={40} preload className="size-9 rounded-[10px] sm:size-10" />
       </Link>
       <nav aria-label="主要導覽" className="hidden items-center gap-1 md:flex">
         {ITEMS.map(({ href, label, icon: Icon }) => {

@@ -10,7 +10,7 @@
 
 ### 試用模式也能用
 
-- 看板／列表兩種檢視，搜尋與依來源、月份篩選；狀態分為想投、已投遞、面試中、Offer、未錄取、已撤回
+- 看板／列表兩種檢視，搜尋與依來源、月份篩選；狀態分為想投、已投遞、面試中、等待中、Offer、未錄取、已撤回
 - 新增、編輯、刪除投遞；貼上 104、Cake、LinkedIn 連結會自動判斷來源，貼上整段分享訊息時只會留下連結
 - 提醒：超過 N 天沒消息、或跟進日到了；一鍵複製跟進訊息、一鍵「已跟進」
 - 回應率統計（各來源、各履歷版本）
@@ -59,7 +59,7 @@ corepack enable
 ### 1. 建立 Supabase 專案並建立資料表
 
 1. 到 [supabase.com](https://supabase.com) 建立專案。
-2. 開啟 **SQL Editor**，依序把 `supabase/migrations/` 裡的 `0001_init.sql`、`0002_harden.sql`、`0003_user_settings.sql`、`0004_interview.sql` 各自整份貼上執行（依編號順序）。
+2. 開啟 **SQL Editor**，依序把 `supabase/migrations/` 裡的 `0001_init.sql`、`0002_harden.sql`、`0003_user_settings.sql`、`0004_interview.sql`、`0005_awaiting_status.sql` 各自整份貼上執行（依編號順序）。
    它會建立 `applications` 表、四條 RLS 政策（只能存取自己的資料）、`updated_at` 觸發器，並開啟 Realtime。
 3. 在 **Table Editor** 確認 `applications` 旁邊顯示 RLS 已啟用。
 

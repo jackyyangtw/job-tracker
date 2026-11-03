@@ -26,7 +26,7 @@ describe('flagsOf：N 天沒消息', () => {
   });
 
   it('只有「已投遞」會提醒沒消息', () => {
-    for (const status of ['wishlist', 'interview', 'offer', 'rejected', 'withdrawn'] as const) {
+    for (const status of ['wishlist', 'interview', 'awaiting', 'offer', 'rejected', 'withdrawn'] as const) {
       expect(kinds(makeApp({ status, appliedAt: '2026-01-01' }))).not.toContain('stale');
     }
   });
@@ -50,8 +50,9 @@ describe('flagsOf：跟進日', () => {
     expect(kinds(makeApp({ followUpAt: '2026-10-22' }))).toEqual([]);
   });
 
-  it('面試中也會提醒跟進，已結束的狀態不會', () => {
+  it('面試中與等待中也會提醒跟進，已結束的狀態不會', () => {
     expect(kinds(makeApp({ status: 'interview', followUpAt: TODAY }))).toEqual(['due']);
+    expect(kinds(makeApp({ status: 'awaiting', followUpAt: TODAY }))).toEqual(['due']);
     for (const status of ['wishlist', 'offer', 'rejected', 'withdrawn'] as const) {
       expect(kinds(makeApp({ status, followUpAt: TODAY }))).toEqual([]);
     }
