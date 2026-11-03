@@ -1,9 +1,10 @@
-export type Status = 'wishlist' | 'applied' | 'interview' | 'offer' | 'rejected' | 'withdrawn';
+export type Status = 'wishlist' | 'applied' | 'interview' | 'awaiting' | 'offer' | 'rejected' | 'withdrawn';
 
 export const STATUS_LIST: { key: Status; label: string }[] = [
   { key: 'wishlist', label: '想投' },
   { key: 'applied', label: '已投遞' },
   { key: 'interview', label: '面試中' },
+  { key: 'awaiting', label: '等待中' },
   { key: 'offer', label: 'Offer' },
   { key: 'rejected', label: '未錄取' },
   { key: 'withdrawn', label: '已撤回' },
@@ -19,8 +20,8 @@ export const isStatus = (v: unknown): v is Status => typeof v === 'string' && Ob
 export const SOURCES = ['104', 'Cake', 'LinkedIn', '內推', '公司官網', '其他'] as const;
 export type Source = (typeof SOURCES)[number] | '';
 
-/** 「有回應」：面試、Offer 或收到婉拒。已撤回與想投不算。 */
-export const REPLIED: Status[] = ['interview', 'offer', 'rejected'];
+/** 「有回應」：面試、等待面試結果、Offer 或收到婉拒。已撤回與想投不算。 */
+export const REPLIED: Status[] = ['interview', 'awaiting', 'offer', 'rejected'];
 
 /** 日期是單純的 `YYYY-MM-DD` 字串（不含時區），未設定時是 ''。 */
 export interface Application {

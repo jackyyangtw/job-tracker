@@ -4,7 +4,7 @@
 /* 深淺色由 <html data-theme> 決定（見 src/lib/ui/theme.ts），dark: 工具類別也跟著使用者的選擇。 */
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
-/* 配色：石墨綠的中性色、一個深青色強調色，以及只用來表示狀態的六種色相。
+/* 配色：石墨綠的中性色、一個深青色強調色，以及只用來表示狀態的七種色相。
    變數名稱沿用 shadcn/ui，元件才能直接套用。 */
 :root {
   --background: #f2f5f4;
@@ -31,6 +31,7 @@
   --c-wishlist: #55668a;
   --c-applied: #2563a8;
   --c-interview: #9a5600;
+  --c-awaiting: #7a4fb5;
   --c-offer: #16794c;
   --c-rejected: #a8353f;
   --c-withdrawn: #66726d;
@@ -62,6 +63,7 @@
   --c-wishlist: #8fa3c7;
   --c-applied: #6fa8ee;
   --c-interview: #e0a458;
+  --c-awaiting: #b99aee;
   --c-offer: #58c98f;
   --c-rejected: #ea8a96;
   --c-withdrawn: #9aa6a1;
@@ -91,6 +93,7 @@
   --color-status-wishlist: var(--c-wishlist);
   --color-status-applied: var(--c-applied);
   --color-status-interview: var(--c-interview);
+  --color-status-awaiting: var(--c-awaiting);
   --color-status-offer: var(--c-offer);
   --color-status-rejected: var(--c-rejected);
   --color-status-withdrawn: var(--c-withdrawn);

@@ -23,7 +23,7 @@ export function flagsOf(a: Application, staleDays: number, today: string = today
     }
   }
 
-  if (a.followUpAt && (a.status === 'applied' || a.status === 'interview') && a.followUpAt <= today) {
+  if (a.followUpAt && (a.status === 'applied' || a.status === 'interview' || a.status === 'awaiting') && a.followUpAt <= today) {
     flags.push({ kind: 'due', text: a.followUpAt === today ? '今天要跟進' : '跟進已逾期' });
   }
 

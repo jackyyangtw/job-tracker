@@ -3,16 +3,17 @@ import { groupTally, overall } from './stats';
 import { makeApp } from '../testUtils';
 
 describe('overall', () => {
-  it('「想投」不算已投遞；面試、Offer、未錄取算有回應，已撤回不算', () => {
+  it('「想投」不算已投遞；面試、等待中、Offer、未錄取算有回應，已撤回不算', () => {
     const apps = [
       makeApp({ status: 'wishlist' }),
       makeApp({ status: 'applied' }),
       makeApp({ status: 'interview' }),
+      makeApp({ status: 'awaiting' }),
       makeApp({ status: 'offer' }),
       makeApp({ status: 'rejected' }),
       makeApp({ status: 'withdrawn' }),
     ];
-    expect(overall(apps)).toEqual({ n: 5, replied: 3, pct: 60 });
+    expect(overall(apps)).toEqual({ n: 6, replied: 4, pct: 67 });
   });
 
   it('回應率四捨五入到整數', () => {
