@@ -7,7 +7,7 @@ import { MobileTabBar, TopBar } from './Nav';
 export default function ShellSkeleton() {
   return (
     <>
-      <div className="mx-auto flex max-w-[1240px] flex-col gap-[18px] max-md:pb-20">
+      <div className="mx-auto flex max-w-[1400px] flex-col gap-[18px] max-md:pb-20">
         <TopBar basePath="" />
         <div role="status" className="flex flex-col gap-[18px] animate-in fade-in delay-200 duration-300 fill-mode-backwards">
           <span className="sr-only">載入中…</span>
