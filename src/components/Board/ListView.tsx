@@ -6,7 +6,7 @@ import { shortDate } from '@/lib/dates';
 import { STATUS_STYLE } from '@/lib/ui/statusStyle';
 import { STATUS_LABEL, type Application } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import InterviewInfo from './InterviewInfo';
+import InterviewInfo from '@/components/InterviewInfo';
 import type { Common } from './types';
 
 /** 只在手機上顯示的小標籤，因為手機上表格會變成堆疊的卡片。 */
@@ -14,7 +14,7 @@ function MobileLabel({ children }: { children: React.ReactNode }) {
   return <span className="mr-1.5 text-xs text-muted-foreground md:hidden">{children}</span>;
 }
 
-export default function ListView({ apps, staleDays, onEdit }: Pick<Common, 'staleDays' | 'onEdit'> & { apps: Application[] }) {
+export default function ListView({ apps, staleDays, onView, onEdit }: Pick<Common, 'staleDays' | 'onView' | 'onEdit'> & { apps: Application[] }) {
   if (!apps.length) return <p className="text-muted-foreground">沒有符合的項目。</p>;
   const th = 'px-3 py-2 text-left text-xs font-medium tracking-wide whitespace-nowrap text-muted-foreground';
   // 手機：每一列變成一張卡片（不需橫向捲動）。md 以上：一般表格。
@@ -41,7 +41,15 @@ export default function ListView({ apps, staleDays, onEdit }: Pick<Common, 'stal
             <tr key={a.id} className="max-md:block max-md:border-t max-md:p-3 max-md:first:border-t-0">
               <td className={td}>
                 <div className="font-bold wrap-anywhere">
-                  {a.company} {a.sample && <SampleTag />}
+                  <button
+                    type="button"
+                    onClick={() => onView(a.id)}
+                    aria-label={`查看 ${a.company} 的詳細內容`}
+                    className="cursor-pointer text-left underline-offset-2 outline-none hover:underline focus-visible:underline"
+                  >
+                    {a.company}
+                  </button>{' '}
+                  {a.sample && <SampleTag />}
                 </div>
                 <div className="text-muted-foreground wrap-anywhere">
                   {a.title}

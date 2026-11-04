@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 
 /**
  * 面試中的時間與地點；地點裡的連結（地圖、視訊會議）做成按鈕。
- * 只在「面試中」且有填資料時顯示。連結疊在卡片的「點整張卡片編輯」之上（relative z-10）。
+ * 只在「面試中」且有填資料時顯示。連結疊在卡片的「點整張卡片看詳細內容」之上（relative z-10）。
  */
 export default function InterviewInfo({ app, className }: { app: Application; className?: string }) {
   if (app.status !== 'interview' || (!app.interviewAt && !app.interviewLocation)) return null;
