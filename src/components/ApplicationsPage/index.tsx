@@ -3,6 +3,7 @@
 import { Suspense, useState } from 'react';
 import { ClipboardPaste, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import AppDetail from '@/components/AppDetail';
 import AppForm from '@/components/AppForm';
 import { useShell } from '@/components/AppShell';
 import Board, { ListView } from '@/components/Board';
@@ -42,6 +43,9 @@ function ApplicationsContent() {
   const hydrated = useHydrated();
 
   const [form, setForm] = useState<{ open: boolean; id: string | null; prefill?: Prefill }>({ open: false, id: null });
+  // 正在查看詳細內容的投遞；從 apps 即時取值，Realtime 更新或變更狀態後畫面會跟著變。
+  const [detailId, setDetailId] = useState<string | null>(null);
+  const detail = detailId ? apps.find((a) => a.id === detailId) ?? null : null;
   usePrefillFromUrl((prefill) => setForm({ open: true, id: null, prefill }));
 
   const q = query.trim().toLowerCase();
@@ -54,7 +58,10 @@ function ApplicationsContent() {
 
   const resumeOptions = [...new Set(apps.map((a) => a.resume).filter(Boolean))];
   const editing = form.id ? apps.find((a) => a.id === form.id) ?? null : null;
-  const openForm = (id: string | null) => setForm({ open: true, id });
+  const openForm = (id: string | null) => {
+    setDetailId(null);
+    setForm({ open: true, id });
+  };
   const closeForm = () => setForm({ open: false, id: null });
   const byId = (id: string) => apps.find((a) => a.id === id);
 
@@ -144,15 +151,15 @@ function ApplicationsContent() {
         // 外層只在載入完成時掛載一次，淡入只播第一次；之後篩選、切換檢視都不會重播。
         <div className="animate-in fade-in slide-in-from-bottom-1 duration-300">
           {view === 'board' ? (
-            <Board apps={visible} staleDays={staleDays} onEdit={openForm} onStatus={changeStatus} />
+            <Board apps={visible} staleDays={staleDays} onView={setDetailId} onEdit={openForm} onStatus={changeStatus} />
           ) : (
             // 手機版沒有看板／列表切換，一律用看板（狀態切換＋卡片）；列表只在桌機版顯示。
             <>
               <div className="md:hidden">
-                <Board apps={visible} staleDays={staleDays} onEdit={openForm} onStatus={changeStatus} />
+                <Board apps={visible} staleDays={staleDays} onView={setDetailId} onEdit={openForm} onStatus={changeStatus} />
               </div>
               <div className="max-md:hidden">
-                <ListView apps={visible} staleDays={staleDays} onEdit={openForm} />
+                <ListView apps={visible} staleDays={staleDays} onView={setDetailId} onEdit={openForm} />
               </div>
             </>
           )}
@@ -178,6 +185,10 @@ function ApplicationsContent() {
           新增投遞
         </Button>
       </div>
+
+      {detail ? (
+        <AppDetail key={detail.id} app={detail} staleDays={staleDays} onEdit={openForm} onStatus={changeStatus} onClose={() => setDetailId(null)} />
+      ) : null}
 
       {form.open ? (
         <AppForm key={form.id ?? 'new'} initial={editing} prefill={form.prefill} isDemo={isDemo} resumeOptions={resumeOptions} onSave={saveApp} onDelete={deleteApp} onClose={closeForm} />
