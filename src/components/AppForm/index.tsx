@@ -6,11 +6,13 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/compone
 import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Textarea } from '@/components/ui/textarea';
+import { findDuplicate } from '@/lib/applications/duplicate';
 import { extractUrl } from '@/lib/data/mapping';
 import type { Prefill } from '@/lib/data/prefill';
 import { SOURCES, STATUS_LIST, type Application, type Source, type Status } from '@/lib/types';
 import DateInput from './DateInput';
 import DiscardConfirm from './DiscardConfirm';
+import DuplicateConfirm from './DuplicateConfirm';
 import Field from './Field';
 import InterviewFields from './InterviewFields';
 import CakePreviewHint from './CakePreviewHint';
@@ -24,12 +26,14 @@ interface Props {
   /** 試用模式：沒有登入，不查詢 Cake 職缺。 */
   isDemo?: boolean;
   resumeOptions: string[];
+  /** 既有的投遞，新增時用來檢查是否投過同一個職缺。 */
+  existing: readonly Application[];
   onSave: (app: Application) => Promise<boolean>;
   onDelete: (id: string) => Promise<boolean>;
   onClose: () => void;
 }
 
-export default function AppForm({ initial, prefill, isDemo = false, resumeOptions, onSave, onDelete, onClose }: Props) {
+export default function AppForm({ initial, prefill, isDemo = false, resumeOptions, existing, onSave, onDelete, onClose }: Props) {
   const { values: v, set, setUrl, setSource, applyCakePreview, dirty, toApplication } = useAppFormState(initial, prefill);
   const cakePreview = useCakeJobPreview(applyCakePreview, !isDemo);
   const [error, setError] = useState('');
@@ -37,6 +41,8 @@ export default function AppForm({ initial, prefill, isDemo = false, resumeOption
   const [busy, setBusy] = useState<'save' | 'delete' | null>(null);
   const [armed, setArmed] = useState(false);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
+  // 新增時找到的同一個職缺，不為 null 時顯示確認對話框
+  const [duplicate, setDuplicate] = useState<Application | null>(null);
   const companyRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -56,14 +62,22 @@ export default function AppForm({ initial, prefill, isDemo = false, resumeOption
     if (!v.company.trim() || !v.title.trim()) cakePreview.request(url);
   }
 
-  async function submit() {
+  function submit() {
     if (!v.company.trim()) {
       setError('請填公司名稱');
       companyRef.current?.focus();
       return;
     }
+    const app = toApplication();
+    // 只有新增時才檢查是否投過同一個職缺；編輯既有投遞時直接儲存。
+    const dup = initial ? null : findDuplicate(app, existing);
+    if (dup) setDuplicate(dup);
+    else void save(app);
+  }
+
+  async function save(app: Application) {
     setBusy('save');
-    const ok = await onSave(toApplication());
+    const ok = await onSave(app);
     setBusy(null);
     if (ok) onClose();
   }
@@ -95,7 +109,7 @@ export default function AppForm({ initial, prefill, isDemo = false, resumeOption
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            void submit();
+            submit();
           }}
           noValidate
         >
@@ -221,6 +235,14 @@ export default function AppForm({ initial, prefill, isDemo = false, resumeOption
           </div>
         </form>
         <DiscardConfirm open={confirmDiscard} onOpenChange={setConfirmDiscard} onDiscard={onClose} />
+        <DuplicateConfirm
+          duplicate={duplicate}
+          onCancel={() => setDuplicate(null)}
+          onConfirm={() => {
+            setDuplicate(null);
+            void save(toApplication());
+          }}
+        />
       </DialogContent>
     </Dialog>
   );

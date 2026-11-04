@@ -191,7 +191,7 @@ function ApplicationsContent() {
       ) : null}
 
       {form.open ? (
-        <AppForm key={form.id ?? 'new'} initial={editing} prefill={form.prefill} isDemo={isDemo} resumeOptions={resumeOptions} onSave={saveApp} onDelete={deleteApp} onClose={closeForm} />
+        <AppForm key={form.id ?? 'new'} initial={editing} prefill={form.prefill} isDemo={isDemo} resumeOptions={resumeOptions} existing={apps} onSave={saveApp} onDelete={deleteApp} onClose={closeForm} />
       ) : null}
     </main>
   );
