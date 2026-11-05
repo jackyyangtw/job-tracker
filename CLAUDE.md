@@ -44,7 +44,7 @@
 ## 元件拆分
 
 - 元件超過約 200 行就考慮拆分；這是警訊而不是硬上限，**以職責為準，不為湊行數而拆**。
-- 要拆時開一個與元件同名的資料夾：主元件放 `index.tsx` 並 `export default function 元件名`，子元件、專屬 hook 放在同一個資料夾（例如 `components/ApplicationsPage/`、`components/AppShell/`；只有單一頁面用到的子元件也放進該頁面的資料夾，例如 `ApplicationsPage/AppForm/`）。
+- 要拆時開一個與元件同名的資料夾：主元件放 `index.tsx` 並 `export default function 元件名`，子元件、專屬 hook 放在同一個資料夾（例如 `components/ApplicationsPage/`、`components/AppShell/`；只有單一頁面用到的子元件也放進該頁面的資料夾，例如 `ApplicationsPage/ApplicationForm/`）。
 - 專屬 hook 以 `use` 開頭，放在同一資料夾；跨元件共用的才放 `src/hooks/`（用到 TanStack Query 的放 `src/queries/`）。
 - 外部以資料夾名稱 import（`@/components/ApplicationsPage`），不要直接 import 資料夾內的子檔案。
 

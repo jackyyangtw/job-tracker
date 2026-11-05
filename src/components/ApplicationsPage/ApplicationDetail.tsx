@@ -40,7 +40,7 @@ function Row({ icon, label, children }: { icon: React.ReactNode; label: string; 
 }
 
 /** 點卡片時顯示的投遞詳細內容（唯讀）；要修改請按「編輯」開表單。 */
-export default function AppDetail({ app, resume, resumeHref, staleDays, onEdit, onStatus, onClose }: Props) {
+export default function ApplicationDetail({ app, resume, resumeHref, staleDays, onEdit, onStatus, onClose }: Props) {
   const style = STATUS_STYLE[app.status];
 
   return (

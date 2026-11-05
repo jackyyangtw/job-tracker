@@ -17,7 +17,7 @@ import DuplicateConfirm from './DuplicateConfirm';
 import Field from './Field';
 import InterviewFields from './InterviewFields';
 import CakePreviewHint from './CakePreviewHint';
-import { useAppFormState } from './useAppFormState';
+import { useApplicationFormState } from './useApplicationFormState';
 import { useCakeJobPreview } from './useCakeJobPreview';
 
 /** 選單裡代表「舊紀錄」的值；不會和 uuid 撞名。 */
@@ -39,8 +39,8 @@ interface Props {
   onClose: () => void;
 }
 
-export default function AppForm({ initial, prefill, isDemo = false, resumes, resumeHref, existing, onSave, onDelete, onClose }: Props) {
-  const { values: v, set, setUrl, setSource, setResume, applyCakePreview, dirty, toApplication } = useAppFormState(initial, prefill);
+export default function ApplicationForm({ initial, prefill, isDemo = false, resumes, resumeHref, existing, onSave, onDelete, onClose }: Props) {
+  const { values: v, set, setUrl, setSource, setResume, applyCakePreview, dirty, toApplication } = useApplicationFormState(initial, prefill);
   const cakePreview = useCakeJobPreview(applyCakePreview, !isDemo);
   const [error, setError] = useState('');
   // 正在進行的操作，用來停用按鈕並在對應的按鈕上顯示進度

@@ -14,8 +14,8 @@ import { copyText, followUpMessage } from '@/lib/data/exporters';
 import { parseClipboardPrefill, type Prefill } from '@/lib/data/prefill';
 import { STATUS_LABEL, type Application, type Status } from '@/lib/types';
 import { useTrackerStore } from '@/store/useTrackerStore';
-import AppDetail from './AppDetail';
-import AppForm from './AppForm';
+import ApplicationDetail from './ApplicationDetail';
+import ApplicationForm from './ApplicationForm';
 import Board, { ListView } from './Board';
 import BoardSkeleton from './BoardSkeleton';
 import Filters from './Filters';
@@ -186,11 +186,11 @@ function ApplicationsContent() {
       </div>
 
       {detail ? (
-        <AppDetail key={detail.id} app={detail} resume={resumes.find((r) => r.id === detail.resumeId) ?? null} resumeHref={resumeHref} staleDays={staleDays} onEdit={openForm} onStatus={changeStatus} onClose={() => setDetailId(null)} />
+        <ApplicationDetail key={detail.id} app={detail} resume={resumes.find((r) => r.id === detail.resumeId) ?? null} resumeHref={resumeHref} staleDays={staleDays} onEdit={openForm} onStatus={changeStatus} onClose={() => setDetailId(null)} />
       ) : null}
 
       {form.open ? (
-        <AppForm key={form.id ?? 'new'} initial={editing} prefill={form.prefill} isDemo={isDemo} resumes={resumes} resumeHref={resumeHref} existing={apps} onSave={saveApp} onDelete={deleteApp} onClose={closeForm} />
+        <ApplicationForm key={form.id ?? 'new'} initial={editing} prefill={form.prefill} isDemo={isDemo} resumes={resumes} resumeHref={resumeHref} existing={apps} onSave={saveApp} onDelete={deleteApp} onClose={closeForm} />
       ) : null}
     </main>
   );

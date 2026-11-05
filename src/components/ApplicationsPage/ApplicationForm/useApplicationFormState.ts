@@ -41,7 +41,7 @@ function initialValues(initial: Application | null): Values {
  * 欄位值、是否有未儲存的修改，以及由欄位組出的最終 Application。
  * `prefill`（從網址參數帶入）只填進欄位、不算進起始值，所以沒儲存就關閉時會詢問是否放棄。
  */
-export function useAppFormState(initial: Application | null, prefill?: Prefill | null) {
+export function useApplicationFormState(initial: Application | null, prefill?: Prefill | null) {
   const [start] = useState(() => initialValues(initial));
   const [values, setValues] = useState(() => (prefill ? { ...start, ...prefill } : start));
   // 手動選過來源之後，貼上網址就不再自動覆蓋它。

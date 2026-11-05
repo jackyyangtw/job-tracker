@@ -1,5 +1,5 @@
 // 貼上 Cake 職缺連結時自動帶入公司與職稱：/api/cake-job-preview 用這裡解析職缺頁。
-// 連結的解析在 jobUrl.ts；表單呼叫 API 的部分在 components/ApplicationsPage/AppForm/useCakeJobPreview.ts。
+// 連結的解析在 jobUrl.ts；表單呼叫 API 的部分在 components/ApplicationsPage/ApplicationForm/useCakeJobPreview.ts。
 // 104 會封鎖雲端主機 IP，伺服器端查不到，所以只支援 Cake；104 改用 iOS 捷徑（docs/ios-shortcut.md）。
 
 export interface CakeJobPreview {

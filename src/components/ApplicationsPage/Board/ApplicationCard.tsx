@@ -54,7 +54,7 @@ function StatusIconSelect({ app, onStatus }: { app: Application; onStatus: Commo
  * 看板卡片：只放公司、職位、來源與日期、面試資訊與提醒，其餘（履歷、完整備註…）在詳細內容裡。
  * 點卡片開詳細內容；底部是職缺連結、變更狀態與編輯。
  */
-export default function AppCard({ app, staleDays, onView, onEdit, onStatus }: Common & { app: Application }) {
+export default function ApplicationCard({ app, staleDays, onView, onEdit, onStatus }: Common & { app: Application }) {
   const hasFlags = flagsOf(app, staleDays).length > 0;
   const hasMeta = app.source || app.appliedAt || app.followUpAt || app.note;
   const [dragging, setDragging] = useState(false);

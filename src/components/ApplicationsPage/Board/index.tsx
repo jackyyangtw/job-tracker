@@ -5,7 +5,7 @@ import { STATUS_STYLE } from '@/lib/ui/statusStyle';
 import { STATUS_LIST, type Application, type Status } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useApplicationFilters } from '@/hooks/useApplicationFilters';
-import AppCard from './AppCard';
+import ApplicationCard from './ApplicationCard';
 import { DRAG_TYPE, type Common } from './types';
 
 export { default as ListView } from './ListView';
@@ -89,7 +89,7 @@ export default function Board({ apps, ...common }: Common & { apps: Application[
                 <span className="font-mono text-xs text-muted-foreground">{items.length}</span>
               </div>
               {items.length ? (
-                items.map((a) => <AppCard key={a.id} app={a} {...common} />)
+                items.map((a) => <ApplicationCard key={a.id} app={a} {...common} />)
               ) : (
                 <div className="px-1.5 py-3.5 text-center text-xs text-muted-foreground">沒有項目</div>
               )}
