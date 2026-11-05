@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import ResumeLink from '@/components/ResumeLink';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -9,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { findDuplicate } from '@/lib/applications/duplicate';
 import { extractUrl } from '@/lib/data/mapping';
 import type { Prefill } from '@/lib/data/prefill';
-import { SOURCES, STATUS_LIST, type Application, type Source, type Status } from '@/lib/types';
+import { SOURCES, STATUS_LIST, type Application, type Resume, type Source, type Status } from '@/lib/types';
 import DateInput from './DateInput';
 import DiscardConfirm from './DiscardConfirm';
 import DuplicateConfirm from './DuplicateConfirm';
@@ -19,13 +20,18 @@ import CakePreviewHint from './CakePreviewHint';
 import { useAppFormState } from './useAppFormState';
 import { useCakeJobPreview } from './useCakeJobPreview';
 
+/** 選單裡代表「舊紀錄」的值；不會和 uuid 撞名。 */
+const LEGACY_RESUME = '__legacy__';
+
 interface Props {
   initial: Application | null;
   /** 新增時預先帶入的欄位（來自網址參數）。 */
   prefill?: Prefill | null;
   /** 試用模式：沒有登入，不查詢 Cake 職缺。 */
   isDemo?: boolean;
-  resumeOptions: string[];
+  /** 履歷頁建立的版本，給「履歷版本」選單用。 */
+  resumes: readonly Resume[];
+  resumeHref: (resume: Resume) => string;
   /** 既有的投遞，新增時用來檢查是否投過同一個職缺。 */
   existing: readonly Application[];
   onSave: (app: Application) => Promise<boolean>;
@@ -33,8 +39,8 @@ interface Props {
   onClose: () => void;
 }
 
-export default function AppForm({ initial, prefill, isDemo = false, resumeOptions, existing, onSave, onDelete, onClose }: Props) {
-  const { values: v, set, setUrl, setSource, applyCakePreview, dirty, toApplication } = useAppFormState(initial, prefill);
+export default function AppForm({ initial, prefill, isDemo = false, resumes, resumeHref, existing, onSave, onDelete, onClose }: Props) {
+  const { values: v, set, setUrl, setSource, setResume, applyCakePreview, dirty, toApplication } = useAppFormState(initial, prefill);
   const cakePreview = useCakeJobPreview(applyCakePreview, !isDemo);
   const [error, setError] = useState('');
   // 正在進行的操作，用來停用按鈕並在對應的按鈕上顯示進度
@@ -50,6 +56,11 @@ export default function AppForm({ initial, prefill, isDemo = false, resumeOption
     const t = setTimeout(() => setArmed(false), 3500);
     return () => clearTimeout(t);
   }, [armed]);
+
+  const selectedResume = resumes.find((r) => r.id === v.resumeId) ?? null;
+  // 舊紀錄：投遞上只有手填的版本名稱（或版本已刪除），履歷頁找不到對應的版本。
+  const legacyResume = initial?.resume && !resumes.some((r) => r.id === initial.resumeId) ? initial.resume : '';
+  const resumeValue = selectedResume ? selectedResume.id : v.resume ? LEGACY_RESUME : '';
 
   function requestClose() {
     if (busy) return;
@@ -191,21 +202,36 @@ export default function AppForm({ initial, prefill, isDemo = false, resumeOption
               <InterviewFields interviewAt={v.interviewAt} interviewLocation={v.interviewLocation} onChange={set} />
             ) : null}
             <Field label="履歷版本" id="f-resume" full>
-              <Input
-                id="f-resume"
-                name="resume"
-                list="resume-options"
-                value={v.resume}
-                onChange={(e) => set('resume', e.target.value)}
-                autoComplete="off"
-                placeholder="例如 v2-強調 Next.js"
-                maxLength={80}
-              />
-              <datalist id="resume-options">
-                {resumeOptions.map((r) => (
-                  <option key={r} value={r} />
-                ))}
-              </datalist>
+              <div className="flex min-w-0 items-center gap-3">
+                <NativeSelect
+                  id="f-resume"
+                  name="resumeId"
+                  wrapperClassName="min-w-0 flex-1"
+                  value={resumeValue}
+                  aria-describedby="f-resume-hint"
+                  onChange={(e) => {
+                    const id = e.target.value;
+                    if (id === LEGACY_RESUME) setResume(null, true);
+                    else setResume(resumes.find((r) => r.id === id) ?? null);
+                  }}
+                >
+                  <option value="">（不指定）</option>
+                  {resumes.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.name}（{r.kind === 'pdf' ? 'PDF' : '網址'}）
+                    </option>
+                  ))}
+                  {legacyResume ? <option value={LEGACY_RESUME}>{legacyResume}（舊紀錄）</option> : null}
+                </NativeSelect>
+                {selectedResume ? (
+                  <ResumeLink resume={selectedResume} href={resumeHref(selectedResume)} className="shrink-0 text-sm">
+                    {selectedResume.kind === 'pdf' ? '預覽' : '開啟'}
+                  </ResumeLink>
+                ) : null}
+              </div>
+              <p id="f-resume-hint" className="text-xs text-muted-foreground">
+                {resumes.length ? '版本在「履歷」頁管理。' : '還沒有履歷版本，可以到「履歷」頁新增網址或 PDF。'}
+              </p>
             </Field>
             <Field label="備註" id="f-note" full>
               <Textarea id="f-note" name="note" value={v.note} onChange={(e) => set('note', e.target.value)} placeholder="面試時間、聯絡人、薪資範圍…" maxLength={2000} />

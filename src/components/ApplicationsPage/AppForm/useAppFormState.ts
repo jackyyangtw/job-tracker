@@ -3,7 +3,7 @@ import { addDays, todayStr } from '@/lib/dates';
 import { detectSource, extractUrl, safeUrl } from '@/lib/data/mapping';
 import type { CakeJobPreview } from '@/lib/cake-resume/jobPreview';
 import type { Prefill } from '@/lib/data/prefill';
-import type { Application, Source, Status } from '@/lib/types';
+import type { Application, Resume, Source, Status } from '@/lib/types';
 
 interface Values {
   company: string;
@@ -16,6 +16,7 @@ interface Values {
   interviewAt: string;
   interviewLocation: string;
   resume: string;
+  resumeId: string;
   note: string;
 }
 
@@ -31,6 +32,7 @@ function initialValues(initial: Application | null): Values {
     interviewAt: initial?.interviewAt ?? '',
     interviewLocation: initial?.interviewLocation ?? '',
     resume: initial?.resume ?? '',
+    resumeId: initial?.resumeId ?? '',
     note: initial?.note ?? '',
   };
 }
@@ -63,6 +65,18 @@ export function useAppFormState(initial: Application | null, prefill?: Prefill |
     }));
   }
 
+  /**
+   * 選擇履歷版本：名稱跟著版本走（統計依名稱分組）。選「不指定」時兩者都清空；
+   * 選回舊紀錄（沒有對應版本、只有文字）時還原成原本的文字。
+   */
+  function setResume(resume: Resume | null, legacy = false) {
+    setValues((v) => ({
+      ...v,
+      resumeId: resume?.id ?? '',
+      resume: resume ? resume.name : legacy ? (initial?.resume ?? '') : '',
+    }));
+  }
+
   function setSource(source: Source) {
     sourceTouched.current = true;
     set('source', source);
@@ -85,11 +99,12 @@ export function useAppFormState(initial: Application | null, prefill?: Prefill |
       interviewAt: values.interviewAt,
       interviewLocation: values.interviewLocation.trim(),
       resume: values.resume.trim(),
+      resumeId: values.resumeId,
       note: values.note.trim(),
       createdAt: initial?.createdAt ?? now,
       updatedAt: now,
     };
   }
 
-  return { values, set, setUrl, setSource, applyCakePreview, dirty, toApplication };
+  return { values, set, setUrl, setSource, setResume, applyCakePreview, dirty, toApplication };
 }

@@ -3,11 +3,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, LayoutGrid, Settings } from 'lucide-react';
+import { BarChart3, FileText, LayoutGrid, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const ITEMS = [
   { href: '/applications', label: '投遞', icon: LayoutGrid },
+  { href: '/resumes', label: '履歷', icon: FileText },
   { href: '/statistics', label: '統計', icon: BarChart3 },
   { href: '/settings', label: '設定', icon: Settings },
 ] as const;
@@ -56,7 +57,7 @@ export function MobileTabBar({ basePath }: { basePath: string }) {
       aria-label="主要導覽"
       className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
     >
-      <ul className="m-0 grid list-none grid-cols-3 p-0">
+      <ul className="m-0 grid list-none grid-cols-4 p-0">
         {ITEMS.map(({ href, label, icon: Icon }) => {
           const active = pathname === basePath + href;
           return (

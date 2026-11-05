@@ -38,7 +38,10 @@ export interface Application {
   interviewAt: string;
   /** 面試地點：地址、地圖連結或視訊會議連結，可以混在一起寫。 */
   interviewLocation: string;
+  /** 投遞時用的履歷版本名稱；選了履歷頁的版本時是該版本的名稱，也可能是舊紀錄留下的文字。 */
   resume: string;
+  /** 選用的履歷版本 id（見 Resume），沒選或版本已刪除時是 ''。 */
+  resumeId: string;
   note: string;
   createdAt: string;
   updatedAt: string;
@@ -62,7 +65,39 @@ export interface ApplicationRow {
   interview_at?: string | null;
   interview_location?: string;
   resume: string;
+  /** 0006_resumes.sql 之後才有。 */
+  resume_id?: string | null;
   note: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export type ResumeKind = 'url' | 'pdf';
+
+/** 一個履歷版本：網址（例如 Cake 履歷、Google Drive）或上傳的 PDF。 */
+export interface Resume {
+  id: string;
+  name: string;
+  kind: ResumeKind;
+  /** kind 為 'url' 時的連結，否則是 ''。 */
+  url: string;
+  /** kind 為 'pdf' 時在 Storage 的路徑，否則是 ''。 */
+  filePath: string;
+  /** 上傳時的原始檔名，只用來顯示。 */
+  fileName: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** public.resumes 的資料列格式（見 supabase/migrations/0006_resumes.sql）。 */
+export interface ResumeRow {
+  id: string;
+  user_id?: string;
+  name: string;
+  kind: string;
+  url: string;
+  file_path: string;
+  file_name: string;
   created_at: string;
   updated_at: string;
 }

@@ -8,10 +8,14 @@ import { useSession } from '@/hooks/useSession';
 import { flagsOf } from '@/lib/applications/flags';
 import { sampleApps } from '@/lib/applications/sample';
 import { signOutAndClear } from '@/lib/supabase/signOut';
+import type { Resume } from '@/lib/types';
 import { useApplications } from '@/queries/useApplications';
 import { useApplicationsRealtime } from '@/queries/useApplicationsRealtime';
 import { useImportApplications } from '@/queries/useImportApplications';
 import { useRemoveApplication } from '@/queries/useRemoveApplication';
+import { useRemoveResume } from '@/queries/useRemoveResume';
+import { useResumes } from '@/queries/useResumes';
+import { useSaveResume } from '@/queries/useSaveResume';
 import { useStaleDaysSync } from '@/queries/useStaleDaysSync';
 import { useUpsertApplication } from '@/queries/useUpsertApplication';
 import { useTrackerStore } from '@/store/useTrackerStore';
@@ -24,7 +28,7 @@ export { useShell } from './ShellContext';
 export { default as DemoShell } from './DemoShell';
 
 /**
- * 登入後三個頁面（投遞、統計、設定）共用的外殼：登入檢查、資料、Realtime、提醒天數同步、
+ * 登入後各頁面（投遞、統計、履歷、設定）共用的外殼：登入檢查、資料、Realtime、提醒天數同步、
  * 圖示角標與導覽列。放在 layout 裡，切換頁面時不會重新掛載，訂閱也只建立一次。
  */
 export default function AppShell({ children }: { children: React.ReactNode }) {
@@ -48,6 +52,9 @@ function SignedInShell({ session, children }: { session: Session; children: Reac
   const upsert = useUpsertApplication(userId);
   const remove = useRemoveApplication(userId);
   const importMany = useImportApplications(userId);
+  const { resumes, loaded: resumesLoaded, links } = useResumes(userId);
+  const saveResume = useSaveResume(userId);
+  const removeResume = useRemoveResume(userId);
   const staleDays = useTrackerStore((s) => s.staleDays);
   const samplesDismissed = useTrackerStore((s) => s.samplesDismissed);
 
@@ -56,6 +63,8 @@ function SignedInShell({ session, children }: { session: Session; children: Reac
 
   const pending = shown.filter((a) => flagsOf(a, staleDays).length > 0).length;
   useAppBadge(pending, loaded);
+
+  const resumeHref = (r: Resume) => (r.kind === 'url' ? r.url : (links.get(r.filePath) ?? ''));
 
   function signOut() {
     void signOutAndClear(queryClient);
@@ -74,6 +83,11 @@ function SignedInShell({ session, children }: { session: Session; children: Reac
     upsert,
     remove,
     importMany,
+    resumes,
+    resumesLoaded,
+    resumeHref,
+    saveResume,
+    removeResume,
     signOut,
   };
 

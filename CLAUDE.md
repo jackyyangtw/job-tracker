@@ -23,11 +23,12 @@
 
 ## 架構
 
-- **路由**：`/applications`（投遞）、`/statistics`（統計）、`/settings`（設定）放在 `src/app/(dashboard)/`，共用 `AppShell`（登入檢查、資料、Realtime、提醒天數同步、導覽列），頁面用 `useShell()` 取得資料；`/` 會導到 `/applications`。新增需要登入的頁面時放進 `(dashboard)`，並加進 `public/sw.js` 的 `SHELL_PAGES`。
+- **路由**：`/applications`（投遞）、`/statistics`（統計）、`/resumes`（履歷版本）、`/settings`（設定）放在 `src/app/(dashboard)/`，共用 `AppShell`（登入檢查、資料、Realtime、提醒天數同步、導覽列），頁面用 `useShell()` 取得資料；`/` 會導到 `/applications`。新增需要登入的頁面時放進 `(dashboard)`，並加進 `public/sw.js` 的 `SHELL_PAGES`。
 - **伺服器狀態**用 TanStack Query，相關 hook 放在 `src/queries/`（`useApplications`、`useUpsertApplication` 等），query key 統一定義在 `src/queries/keys.ts`；寫入採樂觀更新，失敗要回復並 toast。
 - **UI 偏好**用 Zustand（`src/store/useTrackerStore.ts`，存在 localStorage），只放要記住的偏好（上次的看板／列表、提醒天數、主題等）；不要把投遞資料放進去。
 - **篩選條件**（搜尋、來源、月份、手機版的狀態、看板／列表）只存在網址，用 nuqs 讀寫（`src/hooks/useApplicationFilters.ts`），不要再複製一份到 store。用到它的元件要在 `<Suspense>` 裡（投遞頁已包好）。
 - **離線**：IndexedDB（Dexie）先顯示快取，Supabase 回應後覆蓋（`src/lib/data/cache.ts`）。
+- **履歷 PDF** 放在 Supabase Storage 的私有 bucket `resumes`（路徑 `<user_id>/<resume_id>.pdf`，Storage RLS 依第一層資料夾判斷擁有者），開啟時用簽章網址在新分頁預覽（`src/queries/useResumes.ts`）。
 - 資料存取由瀏覽器直接用 `supabase-js`，**沒有自己的後端／ORM**；權限完全靠 Row Level Security（`supabase/migrations/`）。唯一的伺服器端 API 是 `/api/cake-job-preview`（查 Cake 職缺的公司與職稱，不碰資料庫）。
 - `src/lib/data/mapping.ts` 負責資料庫列（snake_case）與前端型別（camelCase）互轉。
 - `src/lib/` 依職責分資料夾（不用 index.ts 彙整，直接 import 檔案路徑）：
@@ -35,6 +36,7 @@
   - `applications/`：投遞的業務規則（列表排序、提醒、統計、範例與試用資料）
   - `data/`：資料進出（資料庫列轉換與驗證、離線快取、匯出／複製、給使用者看的錯誤）
   - `104/`：104 的網域判斷與職缺連結清理（`jobUrl.ts`），以及 iOS 捷徑傳來的職缺 JSON（`h104`）解析（`jobHeader.ts`）
+  - `resumes/`：履歷版本的表單驗證、Storage 路徑，以及投遞與版本的關聯（改名、刪除、使用次數）
   - `cake-resume/`：Cake（CakeResume）的網域判斷與職缺連結解析（`jobUrl.ts`），以及職缺頁辨識（`jobPreview.ts`，給 `/api/cake-job-preview` 用）
   - `supabase/`：Supabase client 與登出
   - `ui/`：畫面樣式相關的邏輯（深淺色主題、各狀態的 Tailwind class）
@@ -42,9 +44,9 @@
 ## 元件拆分
 
 - 元件超過約 200 行就考慮拆分；這是警訊而不是硬上限，**以職責為準，不為湊行數而拆**。
-- 要拆時開一個與元件同名的資料夾：主元件放 `index.tsx` 並 `export default function 元件名`，子元件、專屬 hook 放在同一個資料夾（例如 `components/AppForm/`、`components/Dashboard/`）。
+- 要拆時開一個與元件同名的資料夾：主元件放 `index.tsx` 並 `export default function 元件名`，子元件、專屬 hook 放在同一個資料夾（例如 `components/ApplicationsPage/`、`components/AppShell/`；只有單一頁面用到的子元件也放進該頁面的資料夾，例如 `ApplicationsPage/AppForm/`）。
 - 專屬 hook 以 `use` 開頭，放在同一資料夾；跨元件共用的才放 `src/hooks/`（用到 TanStack Query 的放 `src/queries/`）。
-- 外部以資料夾名稱 import（`@/components/AppForm`），不要直接 import 資料夾內的子檔案。
+- 外部以資料夾名稱 import（`@/components/ApplicationsPage`），不要直接 import 資料夾內的子檔案。
 
 ## 安全
 

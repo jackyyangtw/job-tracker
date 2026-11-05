@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { dateTime, detectSource, extractUrl, fromRow, normalizeApp, safeUrl, toRow } from './mapping';
-import { makeApp } from '../testUtils';
+import { dateTime, detectSource, extractUrl, fromRow, normalizeApp, resumeFromRow, resumeToRow, safeUrl, toRow } from './mapping';
+import { makeApp, makeResume } from '../testUtils';
 
 const SHARE_TEXT = '我在104工作快找上發現了一個超適合你的內容，分享給你希望會喜歡~~';
 const JOB_URL = 'https://www.104.com.tw/job/8wgp3';
@@ -189,5 +189,33 @@ describe('toRow / fromRow', () => {
     const app = fromRow(row);
     expect(app.status).toBe('applied');
     expect(app.source).toBe('');
+  });
+});
+
+describe('履歷版本欄位', () => {
+  it('投遞的 resume_id 與 resumeId 互轉，沒選時寫入 null', () => {
+    const row = { ...toRow(makeApp({ resumeId: 'r1' })), source: '', user_id: 'u', created_at: 'c', updated_at: 'u' };
+    expect(row.resume_id).toBe('r1');
+    expect(fromRow(row).resumeId).toBe('r1');
+    expect(toRow(makeApp()).resume_id).toBeNull();
+    expect(fromRow({ ...row, resume_id: null }).resumeId).toBe('');
+  });
+
+  it('匯入時丟掉 resumeId（可能來自別的帳號），保留名稱', () => {
+    const app = normalizeApp({ company: 'A', resume: 'v2', resumeId: '00000000-0000-4000-8000-000000000001' });
+    expect(app?.resumeId).toBe('');
+    expect(app?.resume).toBe('v2');
+  });
+
+  it('履歷資料列依種類只保留對應的欄位', () => {
+    const base = { id: 'r', name: 'v1', url: 'https://example.com', file_path: 'u/r.pdf', file_name: 'cv.pdf', created_at: 'c', updated_at: 'u' };
+    expect(resumeFromRow({ ...base, kind: 'url' })).toMatchObject({ kind: 'url', url: 'https://example.com/', filePath: '' });
+    expect(resumeFromRow({ ...base, kind: 'pdf' })).toMatchObject({ kind: 'pdf', url: '', filePath: 'u/r.pdf', fileName: 'cv.pdf' });
+    expect(resumeFromRow({ ...base, kind: 'url', url: 'javascript:alert(1)' }).url).toBe('');
+  });
+
+  it('寫回資料庫時清掉另一種類的欄位', () => {
+    expect(resumeToRow(makeResume({ filePath: 'x', fileName: 'y' }))).toMatchObject({ kind: 'url', file_path: '', file_name: '' });
+    expect(resumeToRow(makeResume({ kind: 'pdf', filePath: 'u/r.pdf', fileName: 'cv.pdf' }))).toMatchObject({ url: '', file_path: 'u/r.pdf' });
   });
 });
