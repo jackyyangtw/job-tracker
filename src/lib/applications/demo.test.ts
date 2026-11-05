@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { demoApps } from './demo';
+import { demoApps, demoResumes } from './demo';
 import { dstr } from '../dates';
 import { flagsOf } from './flags';
 import { STATUS_LIST } from '../types';
@@ -29,5 +29,16 @@ describe('試用模式範例資料', () => {
   it('日期以傳入的今天為基準計算', () => {
     const due = apps.find((a) => a.id === 'demo-2');
     expect(due?.followUpAt).toBe('2026-10-22');
+  });
+});
+
+describe('試用模式履歷版本', () => {
+  it('投遞上寫的版本名稱都對應到一個履歷版本', () => {
+    const ids = new Set(demoResumes(today).map((r) => r.id));
+    for (const a of apps.filter((x) => x.resume)) expect(ids).toContain(a.resumeId);
+  });
+
+  it('沒填版本的投遞不連到任何履歷', () => {
+    expect(apps.filter((a) => !a.resume).every((a) => a.resumeId === '')).toBe(true);
   });
 });

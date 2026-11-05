@@ -3,16 +3,21 @@
 import { CalendarClock, ExternalLink, FileText, MessageCircle, Pencil, Send, Tag } from 'lucide-react';
 import { FlagBadges, SampleTag } from '@/components/FlagBadges';
 import InterviewInfo from '@/components/InterviewInfo';
+import ResumeLink from '@/components/ResumeLink';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { NativeSelect } from '@/components/ui/native-select';
+import { hostOf } from '@/lib/resumes/resume';
 import { STATUS_STYLE } from '@/lib/ui/statusStyle';
-import { STATUS_LABEL, STATUS_LIST, type Application, type Status } from '@/lib/types';
+import { STATUS_LABEL, STATUS_LIST, type Application, type Resume, type Status } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 interface Props {
   app: Application;
+  /** 投遞選用的履歷版本（履歷頁找得到時）。 */
+  resume: Resume | null;
+  resumeHref: (resume: Resume) => string;
   staleDays: number;
   onEdit: (id: string) => void;
   onStatus: (id: string, status: Status) => void;
@@ -21,15 +26,6 @@ interface Props {
 
 /** `2026-10-27` -> `2026/10/27` */
 const fullDate = (s: string) => s.replaceAll('-', '/');
-
-/** 職缺連結只顯示網域，完整網址放在 title。 */
-function hostOf(url: string): string {
-  try {
-    return new URL(url).hostname.replace(/^www\./, '');
-  } catch {
-    return url;
-  }
-}
 
 function Row({ icon, label, children }: { icon: React.ReactNode; label: string; children: React.ReactNode }) {
   return (
@@ -44,7 +40,7 @@ function Row({ icon, label, children }: { icon: React.ReactNode; label: string; 
 }
 
 /** 點卡片時顯示的投遞詳細內容（唯讀）；要修改請按「編輯」開表單。 */
-export default function AppDetail({ app, staleDays, onEdit, onStatus, onClose }: Props) {
+export default function AppDetail({ app, resume, resumeHref, staleDays, onEdit, onStatus, onClose }: Props) {
   const style = STATUS_STYLE[app.status];
 
   return (
@@ -105,7 +101,7 @@ export default function AppDetail({ app, staleDays, onEdit, onStatus, onClose }:
             </Row>
           ) : null}
           <Row icon={<FileText />} label="履歷版本">
-            {app.resume || <Empty />}
+            {resume ? <ResumeLink resume={resume} href={resumeHref(resume)} /> : app.resume || <Empty />}
           </Row>
         </dl>
 

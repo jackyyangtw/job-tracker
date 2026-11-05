@@ -1,4 +1,4 @@
-import type { Application } from '../types';
+import type { Application, Resume } from '../types';
 import { addDays } from '../dates';
 
 /**
@@ -10,7 +10,7 @@ import { addDays } from '../dates';
 export function demoApps(today: Date = new Date()): Application[] {
   const day = (n: number) => addDays(n, today);
   const base = { url: '', followUpAt: '', lastContact: '', interviewAt: '', interviewLocation: '', note: '', createdAt: today.toISOString(), updatedAt: today.toISOString() } as const;
-  return [
+  const list: Omit<Application, 'resumeId'>[] = [
     { ...base, id: 'demo-1', company: '範例科技', title: '前端工程師', source: 'Cake', status: 'applied', appliedAt: day(-20), resume: 'v1 通用版', note: '投出後一直沒有回音' },
     { ...base, id: 'demo-2', company: '範例金融', title: '資深前端工程師', source: '104', status: 'applied', appliedAt: day(-9), followUpAt: day(0), resume: 'v2 強調 Next.js' },
     { ...base, id: 'demo-3', company: '範例數位', title: 'React 工程師', source: 'LinkedIn', status: 'applied', appliedAt: day(-3), resume: 'v2 強調 Next.js' },
@@ -21,5 +21,18 @@ export function demoApps(today: Date = new Date()): Application[] {
     { ...base, id: 'demo-7', company: '範例電商', title: '前端工程師', source: '104', status: 'rejected', appliedAt: day(-25), resume: 'v1 通用版' },
     { ...base, id: 'demo-8', company: '範例媒體', title: 'Web 工程師', source: '104', status: 'withdrawn', appliedAt: day(-15), resume: 'v1 通用版', note: '職缺內容和面談說的不同' },
     { ...base, id: 'demo-9', company: '範例遊戲', title: '前端工程師', source: 'Cake', status: 'wishlist', appliedAt: '', resume: '' },
+  ];
+  const ids = new Map(demoResumes(today).map((r) => [r.name, r.id]));
+  return list.map((a) => ({ ...a, resumeId: ids.get(a.resume) ?? '' }));
+}
+
+/** 試用模式的履歷版本，名稱和上面投遞用到的版本相同。PDF 要訪客自己上傳（只存在分頁裡）。 */
+export function demoResumes(today: Date = new Date()): Resume[] {
+  const at = today.toISOString();
+  const base = { kind: 'url', filePath: '', fileName: '', createdAt: at, updatedAt: at } as const;
+  return [
+    { ...base, id: 'demo-resume-1', name: 'v1 通用版', url: 'https://example.com/resume-v1' },
+    { ...base, id: 'demo-resume-2', name: 'v2 強調 Next.js', url: 'https://example.com/resume-v2' },
+    { ...base, id: 'demo-resume-3', name: 'v3 英文版', url: 'https://example.com/resume-en' },
   ];
 }

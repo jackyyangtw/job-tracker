@@ -1,6 +1,6 @@
 import { clean104JobUrl, is104Host } from '../104/jobUrl';
 import { isCakeHost } from '../cake-resume/jobUrl';
-import { isStatus, SOURCES, type Application, type ApplicationRow, type Source, type Status } from '../types';
+import { isStatus, SOURCES, type Application, type ApplicationRow, type Resume, type ResumeRow, type Source, type Status } from '../types';
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -83,6 +83,8 @@ export function normalizeApp(raw: unknown): Application | null {
     interviewAt: dateTime(r.interviewAt),
     interviewLocation: clip(r.interviewLocation, 300),
     resume: clip(r.resume, 80),
+    // 匯入檔裡的履歷版本 id 可能來自別的帳號或已刪除的版本，外鍵會讓整批寫入失敗；只保留名稱。
+    resumeId: '',
     note: clip(r.note, 2000),
     createdAt: clip(r.createdAt, 40) || now,
     updatedAt: clip(r.updatedAt, 40) || now,
@@ -104,6 +106,7 @@ export function fromRow(row: ApplicationRow): Application {
     interviewAt: dateTime(row.interview_at),
     interviewLocation: row.interview_location ?? '',
     resume: row.resume ?? '',
+    resumeId: row.resume_id ?? '',
     note: row.note ?? '',
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -125,6 +128,33 @@ export function toRow(a: Application) {
     interview_at: a.interviewAt || null,
     interview_location: a.interviewLocation,
     resume: a.resume,
+    resume_id: a.resumeId || null,
     note: a.note,
+  };
+}
+
+export function resumeFromRow(row: ResumeRow): Resume {
+  const kind = row.kind === 'pdf' ? 'pdf' : 'url';
+  return {
+    id: row.id,
+    name: row.name,
+    kind,
+    url: kind === 'url' ? safeUrl(row.url) : '',
+    filePath: kind === 'pdf' ? (row.file_path ?? '') : '',
+    fileName: row.file_name ?? '',
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+/** 前端可以寫入的欄位。user_id、created_at、updated_at 由資料庫設定。 */
+export function resumeToRow(r: Resume) {
+  return {
+    id: r.id,
+    name: r.name,
+    kind: r.kind,
+    url: r.kind === 'url' ? r.url : '',
+    file_path: r.kind === 'pdf' ? r.filePath : '',
+    file_name: r.kind === 'pdf' ? r.fileName : '',
   };
 }

@@ -3,10 +3,7 @@
 import { Suspense, useState } from 'react';
 import { ClipboardPaste, Plus } from 'lucide-react';
 import { toast } from 'sonner';
-import AppDetail from '@/components/AppDetail';
-import AppForm from '@/components/AppForm';
 import { useShell } from '@/components/AppShell';
-import Board, { ListView } from '@/components/Board';
 import { Reminders } from '@/components/Panels';
 import { Button } from '@/components/ui/button';
 import { useApplicationFilters } from '@/hooks/useApplicationFilters';
@@ -17,6 +14,9 @@ import { copyText, followUpMessage } from '@/lib/data/exporters';
 import { parseClipboardPrefill, type Prefill } from '@/lib/data/prefill';
 import { STATUS_LABEL, type Application, type Status } from '@/lib/types';
 import { useTrackerStore } from '@/store/useTrackerStore';
+import AppDetail from './AppDetail';
+import AppForm from './AppForm';
+import Board, { ListView } from './Board';
 import BoardSkeleton from './BoardSkeleton';
 import Filters from './Filters';
 import { usePrefillFromUrl } from './usePrefillFromUrl';
@@ -35,7 +35,7 @@ export default function ApplicationsPage() {
 
 /** 投遞頁：該跟進的清單、篩選、看板／列表，以及新增與編輯。 */
 function ApplicationsContent() {
-  const { isDemo, apps, shown, samplesOn, loaded, upsert, remove } = useShell();
+  const { isDemo, apps, shown, samplesOn, loaded, upsert, remove, resumes, resumeHref } = useShell();
   const { view, query, source, month } = useApplicationFilters();
   const staleDays = useTrackerStore((s) => s.staleDays);
   const store = useTrackerStore.getState;
@@ -56,7 +56,6 @@ function ApplicationsContent() {
     return `${a.company} ${a.title} ${a.note} ${a.resume}`.toLowerCase().includes(q);
   });
 
-  const resumeOptions = [...new Set(apps.map((a) => a.resume).filter(Boolean))];
   const editing = form.id ? apps.find((a) => a.id === form.id) ?? null : null;
   const openForm = (id: string | null) => {
     setDetailId(null);
@@ -187,11 +186,11 @@ function ApplicationsContent() {
       </div>
 
       {detail ? (
-        <AppDetail key={detail.id} app={detail} staleDays={staleDays} onEdit={openForm} onStatus={changeStatus} onClose={() => setDetailId(null)} />
+        <AppDetail key={detail.id} app={detail} resume={resumes.find((r) => r.id === detail.resumeId) ?? null} resumeHref={resumeHref} staleDays={staleDays} onEdit={openForm} onStatus={changeStatus} onClose={() => setDetailId(null)} />
       ) : null}
 
       {form.open ? (
-        <AppForm key={form.id ?? 'new'} initial={editing} prefill={form.prefill} isDemo={isDemo} resumeOptions={resumeOptions} existing={apps} onSave={saveApp} onDelete={deleteApp} onClose={closeForm} />
+        <AppForm key={form.id ?? 'new'} initial={editing} prefill={form.prefill} isDemo={isDemo} resumes={resumes} resumeHref={resumeHref} existing={apps} onSave={saveApp} onDelete={deleteApp} onClose={closeForm} />
       ) : null}
     </main>
   );

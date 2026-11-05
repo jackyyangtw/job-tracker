@@ -1,7 +1,8 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import type { Application } from '@/lib/types';
+import type { ResumeDraft } from '@/lib/resumes/resume';
+import type { Application, Resume } from '@/lib/types';
 
 /**
  * 三個頁面共用的資料與動作。正式模式由 AppShell 接 Supabase 提供；
@@ -29,6 +30,16 @@ export interface Shell {
   remove: (id: string) => Promise<boolean>;
   /** 大量匯入，回傳實際儲存的筆數。 */
   importMany: (apps: Application[]) => Promise<number>;
+  /** 履歷版本，依建立時間排序。 */
+  resumes: Resume[];
+  /** 履歷版本已經從伺服器載入（或載入失敗）。 */
+  resumesLoaded: boolean;
+  /** 開啟履歷版本的連結：網址版本是原本的網址，PDF 是簽章網址（還沒簽好時是 ''）。 */
+  resumeHref: (resume: Resume) => string;
+  /** 新增（current 為 null）或修改履歷版本。成功回傳 `true`。 */
+  saveResume: (draft: ResumeDraft, current: Resume | null) => Promise<boolean>;
+  /** 刪除履歷版本；用到它的投遞只清掉關聯、保留名稱。成功回傳 `true`。 */
+  removeResume: (resume: Resume) => Promise<boolean>;
   /** 正式模式是登出；試用模式是離開試用。 */
   signOut: () => void;
 }
