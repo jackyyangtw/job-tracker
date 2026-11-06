@@ -141,6 +141,58 @@
   }
 }
 
+/* Windows 的原生下拉選單很陽春（白底、方角、不跟主題），改用 Chromium 的可自訂 select，
+   樣式比照 DropdownMenu。只在 Windows（data-os 由 theme.ts 的 script 設定）且瀏覽器支援時啟用；
+   Mac／iOS 保留系統選單，不支援的瀏覽器（Windows 上的 Firefox）維持原生樣式。
+   刻意不放進 @layer：元件上的 appearance-none 工具類別在 utilities layer，要蓋得過它。 */
+@supports (appearance: base-select) {
+  :root[data-os='windows'] select,
+  :root[data-os='windows'] ::picker(select) {
+    appearance: base-select;
+  }
+  :root[data-os='windows'] select {
+    /* NativeSelect 已有自己的箭頭圖示 */
+    &::picker-icon {
+      display: none;
+    }
+  }
+  :root[data-os='windows'] ::picker(select) {
+    margin-block: 4px;
+    min-width: anchor-size(width);
+    padding: 0.375rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: var(--popover);
+    color: var(--popover-foreground);
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+  :root[data-os='windows'] option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.625rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    white-space: nowrap;
+    cursor: pointer;
+    outline: none;
+    &:hover,
+    &:focus-visible {
+      background: var(--secondary);
+    }
+    &:checked {
+      font-weight: 500;
+      color: var(--primary);
+    }
+    &::checkmark {
+      order: 1;
+      margin-inline-start: auto;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     scroll-behavior: auto !important;
