@@ -15,9 +15,9 @@ export default function ShellFrame({ shell, banner, children }: { shell: Shell; 
         跳到主要內容
       </a>
       {/* 手機版底部有固定的分頁列，內容要多留底部空間。
-          桌機版的頁面標了 data-fill-viewport（投遞頁的看板）時，外殼固定為一個視窗高，讓看板填滿剩下的高度、在欄內捲動，
-          整頁不出現捲軸。底部留白和頂部一樣 20px：高度扣掉上下各 20px，再用負 margin 抵掉 body 底部 48px 留白中多的 28px */}
-      <div className="mx-auto flex max-w-[1400px] flex-col gap-[18px] max-md:pb-20 md:has-[main[data-fill-viewport]]:-mb-7 md:has-[main[data-fill-viewport]]:h-[calc(100dvh-40px)]">
+          桌機版的頁面標了 data-fill-viewport（投遞頁的看板，高度剛好填滿一個畫面）時，底部留白改成和頂部一樣 20px：
+          用負 margin 抵掉 body 底部 48px 留白中多的 28px，上方沒有其他內容時整頁就不會出現捲軸 */}
+      <div className="mx-auto flex max-w-[1400px] flex-col gap-[18px] max-md:pb-20 md:has-[main[data-fill-viewport]]:-mb-7">
         <TopBar basePath={shell.basePath} />
         {banner}
         {children}
