@@ -164,15 +164,15 @@ export default function ApplicationCard({ app, staleDays, onView, onEdit, onStat
           ) : null}
           {app.sample ? null : (
             <>
-              <span className="max-md:hidden">
-                <StatusIconSelect app={app} onStatus={onStatus} />
-              </span>
               <Button type="button" variant="outline" size="icon" className="md:hidden" aria-label={`編輯 ${app.company}`} onClick={() => onEdit(app.id)}>
                 <Pencil aria-hidden />
               </Button>
               <button type="button" aria-label={`編輯 ${app.company}`} title="編輯" className={cn(iconAction, 'max-md:hidden')} onClick={() => onEdit(app.id)}>
                 <Pencil aria-hidden />
               </button>
+              <span className="max-md:hidden">
+                <StatusIconSelect app={app} onStatus={onStatus} />
+              </span>
             </>
           )}
         </div>
