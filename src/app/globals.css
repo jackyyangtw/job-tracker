@@ -232,3 +232,21 @@
     scrollbar-color: color-mix(in oklab, var(--muted-foreground) 40%, transparent) transparent;
   }
 }
+
+/* 隱藏捲軸但仍可捲動（觸控板、Shift＋滾輪、程式捲動） */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* 細捲軸，平常透明，滑鼠移上或鍵盤聚焦時才顯示；仍保留捲軸寬度，出現時版面不會跳動 */
+@utility scrollbar-thin-hover {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  &:hover,
+  &:focus-within {
+    scrollbar-color: color-mix(in oklab, var(--muted-foreground) 40%, transparent) transparent;
+  }
+}

@@ -22,7 +22,7 @@ function CardSkeleton() {
  */
 export default function BoardSkeleton({ withFilters = false }: { withFilters?: boolean }) {
   return (
-    <div role="status" className="flex flex-col gap-[18px] animate-in fade-in delay-200 duration-300 fill-mode-backwards">
+    <div role="status" className="flex flex-col gap-[18px] md:min-h-0 md:flex-1 animate-in fade-in delay-200 duration-300 fill-mode-backwards">
       <span className="sr-only">載入中…</span>
 
       {withFilters ? (
@@ -33,7 +33,7 @@ export default function BoardSkeleton({ withFilters = false }: { withFilters?: b
         </div>
       ) : null}
 
-      <div aria-hidden className="flex flex-col gap-3">
+      <div aria-hidden className="flex flex-col gap-3 md:min-h-0 md:flex-1">
         {/* 手機版：狀態切換列與幾張卡片 */}
         <div className="-mx-4 flex gap-2 overflow-hidden px-4 md:hidden">
           {[56, 72, 64, 72, 56].map((w, i) => (
@@ -47,9 +47,9 @@ export default function BoardSkeleton({ withFilters = false }: { withFilters?: b
         </div>
 
         {/* 桌機版：每個狀態一欄，欄位標題用真的狀態名稱 */}
-        <div className="grid auto-cols-[minmax(188px,1fr)] grid-flow-col gap-3 overflow-hidden pb-2 max-md:hidden">
+        <div className="grid min-h-80 flex-1 auto-cols-[minmax(240px,1fr)] grid-flow-col grid-rows-[minmax(0,1fr)] gap-3 overflow-hidden max-md:hidden">
           {STATUS_LIST.map((s, i) => (
-            <div key={s.key} className="flex flex-col gap-2 rounded-xl bg-secondary p-2.5">
+            <div key={s.key} className="flex flex-col gap-2 overflow-hidden rounded-xl bg-secondary p-2.5">
               <div className="flex items-center gap-1.5 px-1 py-0.5 font-medium">
                 <span className={cn('size-[9px] rounded-full', STATUS_STYLE[s.key].dot)} />
                 {s.label}
