@@ -32,7 +32,10 @@ export function applyTheme(theme: ResolvedTheme) {
  * 在 <head> 執行的防閃爍 script：React 還沒載入前就先套用外觀。
  * 直接讀 Zustand persist 存的 JSON（key 見 store/prefsKey.ts，格式是 { state: { theme } }），
  * 讀不到就跟隨系統。
+ *
+ * 另外在 Windows 上設定 `data-os="windows"`：Windows 的原生下拉選單很陽春，
+ * globals.css 會依此只在 Windows 把 <select> 換成可自訂樣式的版本，Mac／iOS 仍用系統選單。
  */
 export function themeInitScript(prefsKey: string): string {
-  return `(function(){try{var p='system';try{p=JSON.parse(localStorage.getItem(${JSON.stringify(prefsKey)})).state.theme||'system'}catch(e){}var t=p==='system'?(matchMedia(${JSON.stringify(DARK_QUERY)}).matches?'dark':'light'):p;var r=document.documentElement;r.dataset.theme=t;r.style.colorScheme=t}catch(e){}})()`;
+  return `(function(){var r=document.documentElement;try{if(/Windows/.test(navigator.userAgent))r.dataset.os='windows'}catch(e){}try{var p='system';try{p=JSON.parse(localStorage.getItem(${JSON.stringify(prefsKey)})).state.theme||'system'}catch(e){}var t=p==='system'?(matchMedia(${JSON.stringify(DARK_QUERY)}).matches?'dark':'light'):p;r.dataset.theme=t;r.style.colorScheme=t}catch(e){}})()`;
 }
