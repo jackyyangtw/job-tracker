@@ -13,6 +13,7 @@ import { addDays, todayStr } from '@/lib/dates';
 import { copyText, followUpMessage } from '@/lib/data/exporters';
 import { parseClipboardPrefill, type Prefill } from '@/lib/data/prefill';
 import { STATUS_LABEL, type Application, type Status } from '@/lib/types';
+import { cn } from '@/lib/utils';
 import { useTrackerStore } from '@/store/useTrackerStore';
 import ApplicationDetail from './ApplicationDetail';
 import ApplicationForm from './ApplicationForm';
@@ -109,7 +110,7 @@ function ApplicationsContent() {
   }
 
   return (
-    <main id="main" className="flex flex-col gap-[18px]">
+    <main id="main" data-fill-viewport={view === 'board' || undefined} className={cn('flex flex-col gap-[18px]', view === 'board' && 'md:min-h-0 md:flex-1')}>
       {/* 導覽列已標示目前頁面，標題只留給螢幕閱讀器 */}
       <h1 className="sr-only">投遞</h1>
 
@@ -148,7 +149,7 @@ function ApplicationsContent() {
         <BoardSkeleton />
       ) : (
         // 外層只在載入完成時掛載一次，淡入只播第一次；之後篩選、切換檢視都不會重播。
-        <div className="animate-in fade-in slide-in-from-bottom-1 duration-300">
+        <div className={cn('animate-in fade-in slide-in-from-bottom-1 duration-300', view === 'board' && 'md:flex md:min-h-0 md:flex-1 md:flex-col')}>
           {view === 'board' ? (
             <Board apps={visible} staleDays={staleDays} onView={setDetailId} onEdit={openForm} onStatus={changeStatus} />
           ) : (
