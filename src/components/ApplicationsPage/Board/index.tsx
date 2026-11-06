@@ -30,7 +30,7 @@ export default function Board({ apps, ...common }: Common & { apps: Application[
   ];
 
   return (
-    <div className="flex flex-col gap-3 md:min-h-0 md:flex-1">
+    <div className="flex flex-col gap-3">
       <div role="group" aria-label="依狀態顯示" className="scroll-fade-x -mx-4 -my-1 flex gap-2 overflow-x-auto px-4 py-1 md:hidden">
         {chips.map((c) => {
           const on = c.key === active;
@@ -58,11 +58,12 @@ export default function Board({ apps, ...common }: Common & { apps: Application[
       <ul
         {...panHandlers}
         {...autoScrollHandlers}
-        // 桌機版填滿外層剩下的高度（太矮時至少 320px，改由整頁捲動），欄位撐滿這一列、在欄內捲動。
+        // 桌機版高度固定為一個畫面扣掉頁首與篩選列（20＋40＋18＋38＋18＋底部 20 = 154px），欄位撐滿這一列、在欄內捲動。
+        // 上方有試用橫幅或跟進提醒時看板不會被壓矮，改由整頁往下捲一段。
         // 觸控板橫滑到最左／最右時不觸發瀏覽器的上一頁／下一頁手勢；欄位只擋直向，橫滑才會傳到看板。
         // 拖曳卡片或平移中關掉捲動吸附，不然捲動的每一小步都會被吸回欄位邊界
         className={cn(
-          'm-0 flex list-none flex-col gap-4 p-0 md:grid md:snap-x md:snap-proximity md:min-h-80 md:flex-1 md:auto-cols-[minmax(240px,1fr)] md:grid-flow-col md:grid-rows-[minmax(0,1fr)] md:gap-3 md:overflow-x-auto md:scrollbar-none md:overscroll-x-contain md:cursor-grab',
+          'm-0 flex list-none flex-col gap-4 p-0 md:grid md:snap-x md:snap-proximity md:h-[calc(100dvh-154px)] md:auto-cols-[minmax(240px,1fr)] md:grid-flow-col md:grid-rows-[minmax(0,1fr)] md:gap-3 md:overflow-x-auto md:scrollbar-none md:overscroll-x-contain md:cursor-grab',
           (dragging || panning) && 'md:snap-none',
           panning && 'md:cursor-grabbing md:select-none',
         )}
