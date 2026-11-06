@@ -33,7 +33,8 @@
 - `src/lib/data/mapping.ts` 負責資料庫列（snake_case）與前端型別（camelCase）互轉。
 - `src/lib/` 依職責分資料夾（不用 index.ts 彙整，直接 import 檔案路徑）：
   - 根目錄：`types.ts`（共用型別）、`dates.ts`、`utils.ts`（shadcn 的 `cn()`，位置由 `components.json` 指定）、`testUtils.ts`、`securityHeaders.ts`（next.config.ts 用的 HTTP 安全標頭）
-  - `applications/`：投遞的業務規則（列表排序、提醒、統計、範例與試用資料）
+  - `applications/`：投遞的業務規則（列表排序、提醒、範例與試用資料）
+  - `stats/`：統計頁的計算，依圖表分檔：`tally.ts`（回應率）、`trend.ts`（投遞趨勢）、`funnel.ts`（轉換漏斗）、`resume.ts`（履歷版本成效），共用的單筆判斷（是否進過面試）放 `application.ts`
   - `data/`：資料進出（資料庫列轉換與驗證、離線快取、匯出／複製、給使用者看的錯誤）
   - `104/`：104 的網域判斷與職缺連結清理（`jobUrl.ts`），以及 iOS 捷徑傳來的職缺 JSON（`h104`）解析（`jobHeader.ts`）
   - `resumes/`：履歷版本的表單驗證、Storage 路徑，以及投遞與版本的關聯（改名、刪除、使用次數）

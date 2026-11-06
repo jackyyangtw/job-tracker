@@ -1,3 +1,4 @@
+/** 回應率：整體與依欄位（來源等）分組。 */
 import { REPLIED, type Application } from '../types';
 
 export interface Tally {

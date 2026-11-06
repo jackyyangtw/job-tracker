@@ -1,10 +1,13 @@
 'use client';
 
 import { useShell } from '@/components/AppShell';
-import { StatsPanels, Tiles } from '@/components/Panels';
+import { SourceTallyPanel, Tiles } from '@/components/Panels';
 import { useTrackerStore } from '@/store/useTrackerStore';
+import FunnelPanel from './FunnelPanel';
+import ResumePerformancePanel from './ResumePerformancePanel';
+import TrendPanel from './TrendPanel';
 
-/** 統計頁：摘要卡片與各來源、各履歷版本的回應率。 */
+/** 統計頁：摘要卡片、投遞趨勢、轉換漏斗、各來源回應率與履歷版本成效。 */
 export default function StatisticsPage() {
   const { shown, samplesOn, loaded } = useShell();
   const staleDays = useTrackerStore((s) => s.staleDays);
@@ -20,7 +23,12 @@ export default function StatisticsPage() {
       ) : (
         <>
           <Tiles apps={shown} staleDays={staleDays} />
-          <StatsPanels apps={shown} />
+          <TrendPanel apps={shown} />
+          <section className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-3" aria-label="轉換與回應率">
+            <FunnelPanel apps={shown} />
+            <SourceTallyPanel apps={shown} />
+          </section>
+          <ResumePerformancePanel apps={shown} />
         </>
       )}
     </main>

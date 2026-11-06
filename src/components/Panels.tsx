@@ -4,7 +4,7 @@ import { FlagBadges, SampleTag } from '@/components/FlagBadges';
 import { Button } from '@/components/ui/button';
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import { flagsOf, silenceDays } from '@/lib/applications/flags';
-import { groupTally, overall } from '@/lib/applications/stats';
+import { groupTally, overall } from '@/lib/stats/tally';
 import type { Application } from '@/lib/types';
 
 function Tile({ label, value, hint }: { label: string; value: string | number; hint: string }) {
@@ -84,15 +84,11 @@ export function Reminders({
   );
 }
 
-export function StatsPanels({ apps }: { apps: Application[] }) {
+/** 各來源回應率。履歷版本改由統計頁的「履歷版本比較」呈現。 */
+export function SourceTallyPanel({ apps }: { apps: Application[] }) {
   const sent = overall(apps).n;
   const cap = `「有回應」指面試、Offer 或收到婉拒${sent < 10 ? '。目前筆數少，僅供參考' : ''}`;
-  return (
-    <section className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-3" aria-label="回應率統計">
-      <TallyPanel title="各來源回應率" cap={cap} rows={groupTally(apps, (a) => a.source, '未填來源')} />
-      <TallyPanel title="各履歷版本回應率" cap={cap} rows={groupTally(apps, (a) => a.resume, '未填版本')} />
-    </section>
-  );
+  return <TallyPanel title="各來源回應率" cap={cap} rows={groupTally(apps, (a) => a.source, '未填來源')} />;
 }
 
 function TallyPanel({ title, cap, rows }: { title: string; cap: string; rows: ReturnType<typeof groupTally> }) {
