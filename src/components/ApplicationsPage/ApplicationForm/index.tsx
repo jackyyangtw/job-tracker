@@ -40,7 +40,7 @@ interface Props {
 }
 
 export default function ApplicationForm({ initial, prefill, isDemo = false, resumes, resumeHref, existing, onSave, onDelete, onClose }: Props) {
-  const { values: v, set, setUrl, setSource, setResume, applyCakePreview, dirty, toApplication } = useApplicationFormState(initial, prefill);
+  const { values: v, set, setUrl, setSource, setStatus, setDate, setResume, applyCakePreview, dirty, toApplication } = useApplicationFormState(initial, prefill);
   const cakePreview = useCakeJobPreview(applyCakePreview, !isDemo);
   const [error, setError] = useState('');
   // 正在進行的操作，用來停用按鈕並在對應的按鈕上顯示進度
@@ -183,7 +183,7 @@ export default function ApplicationForm({ initial, prefill, isDemo = false, resu
               </NativeSelect>
             </Field>
             <Field label="狀態" id="f-status">
-              <NativeSelect id="f-status" name="status" wrapperClassName="w-full" value={v.status} onChange={(e) => set('status', e.target.value as Status)}>
+              <NativeSelect id="f-status" name="status" wrapperClassName="w-full" value={v.status} onChange={(e) => setStatus(e.target.value as Status)}>
                 {STATUS_LIST.map((s) => (
                   <option key={s.key} value={s.key}>
                     {s.label}
@@ -192,10 +192,10 @@ export default function ApplicationForm({ initial, prefill, isDemo = false, resu
               </NativeSelect>
             </Field>
             <Field label="投遞日" id="f-applied">
-              <DateInput id="f-applied" name="appliedAt" value={v.appliedAt} onChange={(e) => set('appliedAt', e.target.value)} />
+              <DateInput id="f-applied" name="appliedAt" value={v.appliedAt} onChange={(e) => setDate('appliedAt', e.target.value)} />
             </Field>
             <Field label="下次跟進日" id="f-follow">
-              <DateInput id="f-follow" name="followUpAt" value={v.followUpAt} onChange={(e) => set('followUpAt', e.target.value)} />
+              <DateInput id="f-follow" name="followUpAt" value={v.followUpAt} onChange={(e) => setDate('followUpAt', e.target.value)} />
             </Field>
             {/* 面試時間與地點只在「面試中」時顯示；改成其他狀態時，已填的內容仍會顯示並保留 */}
             {v.status === 'interview' || v.interviewAt || v.interviewLocation ? (
