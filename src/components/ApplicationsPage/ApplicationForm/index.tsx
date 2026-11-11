@@ -11,7 +11,7 @@ import { findDuplicate } from '@/lib/applications/duplicate';
 import { extractUrl } from '@/lib/data/mapping';
 import type { Prefill } from '@/lib/data/prefill';
 import { SOURCES, STATUS_LIST, type Application, type Resume, type Source, type Status } from '@/lib/types';
-import DateInput from './DateInput';
+import DateFields from './DateFields';
 import DiscardConfirm from './DiscardConfirm';
 import DuplicateConfirm from './DuplicateConfirm';
 import Field from './Field';
@@ -191,12 +191,10 @@ export default function ApplicationForm({ initial, prefill, isDemo = false, resu
                 ))}
               </NativeSelect>
             </Field>
-            <Field label="投遞日" id="f-applied">
-              <DateInput id="f-applied" name="appliedAt" value={v.appliedAt} onChange={(e) => setDate('appliedAt', e.target.value)} />
-            </Field>
-            <Field label="下次跟進日" id="f-follow">
-              <DateInput id="f-follow" name="followUpAt" value={v.followUpAt} onChange={(e) => setDate('followUpAt', e.target.value)} />
-            </Field>
+            {/* 「想投」還沒投出去，不顯示投遞日與跟進日；已填過的日期仍會顯示並保留 */}
+            {v.status !== 'wishlist' || v.appliedAt || v.followUpAt ? (
+              <DateFields appliedAt={v.appliedAt} followUpAt={v.followUpAt} onChange={setDate} />
+            ) : null}
             {/* 面試時間與地點只在「面試中」時顯示；改成其他狀態時，已填的內容仍會顯示並保留 */}
             {v.status === 'interview' || v.interviewAt || v.interviewLocation ? (
               <InterviewFields interviewAt={v.interviewAt} interviewLocation={v.interviewLocation} onChange={set} />
