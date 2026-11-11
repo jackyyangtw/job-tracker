@@ -20,15 +20,22 @@ interface Values {
   note: string;
 }
 
+type DateKey = 'appliedAt' | 'followUpAt';
+
+/** 新增時兩個日期的預設值：「想投」還沒投出去，所以都留空；其他狀態填今天與一週後。 */
+function defaultDates(status: Status): Pick<Values, DateKey> {
+  return status === 'wishlist' ? { appliedAt: '', followUpAt: '' } : { appliedAt: todayStr(), followUpAt: addDays(7) };
+}
+
 function initialValues(initial: Application | null): Values {
+  const status = initial?.status ?? 'applied';
   return {
     company: initial?.company ?? '',
     title: initial?.title ?? '',
     url: initial?.url ?? '',
     source: initial?.source ?? '',
-    status: initial?.status ?? 'applied',
-    appliedAt: initial ? initial.appliedAt : todayStr(),
-    followUpAt: initial ? initial.followUpAt : addDays(7),
+    status,
+    ...(initial ? { appliedAt: initial.appliedAt, followUpAt: initial.followUpAt } : defaultDates(status)),
     interviewAt: initial?.interviewAt ?? '',
     interviewLocation: initial?.interviewLocation ?? '',
     resume: initial?.resume ?? '',
@@ -46,6 +53,7 @@ export function useApplicationFormState(initial: Application | null, prefill?: P
   const [values, setValues] = useState(() => (prefill ? { ...start, ...prefill } : start));
   // 手動選過來源之後，貼上網址就不再自動覆蓋它。
   const sourceTouched = useRef(!!initial?.source);
+  const datesTouched = useRef(new Set<DateKey>());
 
   const set = <K extends keyof Values>(key: K, value: Values[K]) => setValues((v) => ({ ...v, [key]: value }));
 
@@ -82,6 +90,28 @@ export function useApplicationFormState(initial: Application | null, prefill?: P
     set('source', source);
   }
 
+  /** 手動改過日期之後，切換狀態就不再自動覆蓋它。 */
+  function setDate(key: DateKey, value: string) {
+    datesTouched.current.add(key);
+    set(key, value);
+  }
+
+  /**
+   * 新增時切換狀態，沒手動改過的日期會跟著換成該狀態的預設值（例如改成「想投」就清空投遞日）。
+   * 編輯既有紀錄時只改狀態，不動原本的日期。
+   */
+  function setStatus(status: Status) {
+    setValues((v) => {
+      if (initial) return { ...v, status };
+      const defaults = defaultDates(status);
+      const next = { ...v, status };
+      for (const key of ['appliedAt', 'followUpAt'] as const) {
+        if (!datesTouched.current.has(key)) next[key] = defaults[key];
+      }
+      return next;
+    });
+  }
+
   const dirty = (Object.keys(start) as (keyof Values)[]).some((k) => values[k] !== start[k]);
 
   function toApplication(): Application {
@@ -106,5 +136,5 @@ export function useApplicationFormState(initial: Application | null, prefill?: P
     };
   }
 
-  return { values, set, setUrl, setSource, setResume, applyCakePreview, dirty, toApplication };
+  return { values, set, setUrl, setSource, setStatus, setDate, setResume, applyCakePreview, dirty, toApplication };
 }
