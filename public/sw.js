@@ -1,19 +1,19 @@
 /* 精簡的 Service Worker：讓 PWA 可安裝，並提供離線外殼。
  *
  * 策略
- *  - 安裝時：預先快取投遞、統計、履歷、設定與登入頁（靜態外殼），以及 /offline.html 和圖示。
+ *  - 安裝時：預先快取投遞、統計、履歷、面試題、設定與登入頁（靜態外殼），以及 /offline.html 和圖示。
  *  - 頁面導覽：網路優先，失敗時用最後快取的頁面，再不行就用 /offline.html。
  *  - /_next/static 與 /icons：快取優先（檔名含內容雜湊，所以安全）。
  *  - 所有跨網域請求（Supabase API、Google 登入）與 /auth/*：Service Worker 完全不處理。
  *
  * 修改這個檔案時要調高 CACHE_VERSION，舊的快取才會被清掉。
  */
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v6';
 const SHELL_CACHE = `jt-shell-${CACHE_VERSION}`;
 const STATIC_CACHE = `jt-static-${CACHE_VERSION}`;
 // 會為了離線使用而快取 HTML 的頁面（兩者都是薄的前端外殼）。
 // 不放 /：它在伺服器端會被導到 /applications，快取到的會是重新導向的回應，不能拿來回應頁面導覽。
-const SHELL_PAGES = ['/applications', '/statistics', '/resumes', '/settings', '/login'];
+const SHELL_PAGES = ['/applications', '/statistics', '/resumes', '/questions', '/settings', '/login'];
 const PRECACHE = ['/offline.html', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 self.addEventListener('install', (event) => {

@@ -11,7 +11,7 @@ describe('toCsv', () => {
 
   it('第一列是中文標題，列與列之間用 CRLF', () => {
     const csv = toCsv([makeApp()]);
-    expect(csv.slice(1).split('\r\n')[0]).toBe('"公司","職位","來源","狀態","投遞日","履歷版本","下次跟進","面試時間","面試地點","連結","備註"');
+    expect(csv.slice(1).split('\r\n')[0]).toBe('"公司","職位","來源","狀態","投遞日","履歷版本","下次跟進","面試時間","面試地點","面試問題","連結","備註"');
     expect(csv.split('\r\n')).toHaveLength(2);
   });
 

@@ -14,6 +14,7 @@ export function makeApp(overrides: Partial<Application> = {}): Application {
     lastContact: '',
     interviewAt: '',
     interviewLocation: '',
+    interviewQuestions: [],
     resume: '',
     resumeId: '',
     note: '',

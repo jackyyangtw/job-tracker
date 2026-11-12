@@ -23,6 +23,17 @@ export type Source = (typeof SOURCES)[number] | '';
 /** 「有回應」：面試、等待面試結果、Offer 或收到婉拒。已撤回與想投不算。 */
 export const REPLIED: Status[] = ['interview', 'awaiting', 'offer', 'rejected'];
 
+/** 進過面試流程、可以記錄面試問題的狀態：面試中、等待中、Offer、未錄取。 */
+export const INTERVIEWED: readonly Status[] = ['interview', 'awaiting', 'offer', 'rejected'];
+
+/** 一題面試問題；回答與分類是選填，沒填時是 ''。 */
+export interface InterviewQuestion {
+  question: string;
+  answer: string;
+  /** 一題一個分類，可以是預設分類或自訂（見 lib/applications/interviewQuestions.ts）。 */
+  category: string;
+}
+
 /** 日期是單純的 `YYYY-MM-DD` 字串（不含時區），未設定時是 ''。 */
 export interface Application {
   id: string;
@@ -38,6 +49,8 @@ export interface Application {
   interviewAt: string;
   /** 面試地點：地址、地圖連結或視訊會議連結，可以混在一起寫。 */
   interviewLocation: string;
+  /** 面試被問到的問題與選填的回答（見 lib/applications/interviewQuestions.ts）。 */
+  interviewQuestions: readonly InterviewQuestion[];
   /** 投遞時用的履歷版本名稱；選了履歷頁的版本時是該版本的名稱，也可能是舊紀錄留下的文字。 */
   resume: string;
   /** 選用的履歷版本 id（見 Resume），沒選或版本已刪除時是 ''。 */
@@ -64,6 +77,8 @@ export interface ApplicationRow {
   /** 0004_interview.sql 之後才有；資料庫回傳 `YYYY-MM-DDTHH:mm:ss`。 */
   interview_at?: string | null;
   interview_location?: string;
+  /** 0007_interview_questions.sql 之後才有。 */
+  interview_questions?: unknown;
   resume: string;
   /** 0006_resumes.sql 之後才有。 */
   resume_id?: string | null;
