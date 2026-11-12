@@ -124,6 +124,12 @@ describe('normalizeApp', () => {
     expect(normalizeApp({ company: 'A', interviewAt: '明天下午' })?.interviewAt).toBe('');
     expect(normalizeApp({ company: 'A' })).toMatchObject({ interviewAt: '', interviewLocation: '' });
   });
+
+  it('面試問題會經過驗證，沒有時是空陣列', () => {
+    const raw = [{ question: ' 自我介紹 ', answer: '' }, 'x'];
+    expect(normalizeApp({ company: 'A', interviewQuestions: raw })?.interviewQuestions).toEqual([{ question: '自我介紹', answer: '', category: '' }]);
+    expect(normalizeApp({ company: 'A' })?.interviewQuestions).toEqual([]);
+  });
 });
 
 describe('dateTime', () => {
@@ -152,6 +158,10 @@ describe('toRow / fromRow', () => {
       followUpAt: '2026-10-27',
       interviewAt: '2026-11-02T15:00',
       interviewLocation: '台北市 https://maps.apple/p/abc',
+      interviewQuestions: [
+        { question: '自我介紹', answer: '三年前端經驗', category: '自我介紹' },
+        { question: '期望薪資', answer: '', category: '' },
+      ],
     });
     const row = { ...toRow(app), created_at: app.createdAt, updated_at: app.updatedAt };
     expect(fromRow(row)).toEqual(app);
@@ -175,6 +185,8 @@ describe('toRow / fromRow', () => {
     expect(fromRow(row).interviewAt).toBe('2026-11-02T15:00');
     // 0004 之前的資料列沒有這兩個欄位
     expect(fromRow({ ...row, interview_at: undefined, interview_location: undefined })).toMatchObject({ interviewAt: '', interviewLocation: '' });
+    // 0007 之前的資料列沒有面試問題
+    expect(fromRow({ ...row, interview_questions: undefined }).interviewQuestions).toEqual([]);
   });
 
   it('不寫入由資料庫負責的欄位', () => {

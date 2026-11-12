@@ -1,9 +1,10 @@
 import { useRef, useState } from 'react';
+import { normalizeQuestions } from '@/lib/applications/interviewQuestions';
 import { addDays, todayStr } from '@/lib/dates';
 import { detectSource, extractUrl, safeUrl } from '@/lib/data/mapping';
 import type { CakeJobPreview } from '@/lib/cake-resume/jobPreview';
 import type { Prefill } from '@/lib/data/prefill';
-import type { Application, Resume, Source, Status } from '@/lib/types';
+import type { Application, InterviewQuestion, Resume, Source, Status } from '@/lib/types';
 
 interface Values {
   company: string;
@@ -15,6 +16,7 @@ interface Values {
   followUpAt: string;
   interviewAt: string;
   interviewLocation: string;
+  interviewQuestions: readonly InterviewQuestion[];
   resume: string;
   resumeId: string;
   note: string;
@@ -38,6 +40,7 @@ function initialValues(initial: Application | null): Values {
     ...(initial ? { appliedAt: initial.appliedAt, followUpAt: initial.followUpAt } : defaultDates(status)),
     interviewAt: initial?.interviewAt ?? '',
     interviewLocation: initial?.interviewLocation ?? '',
+    interviewQuestions: initial?.interviewQuestions ?? [],
     resume: initial?.resume ?? '',
     resumeId: initial?.resumeId ?? '',
     note: initial?.note ?? '',
@@ -128,6 +131,7 @@ export function useApplicationFormState(initial: Application | null, prefill?: P
       lastContact: initial?.lastContact ?? '',
       interviewAt: values.interviewAt,
       interviewLocation: values.interviewLocation.trim(),
+      interviewQuestions: normalizeQuestions(values.interviewQuestions),
       resume: values.resume.trim(),
       resumeId: values.resumeId,
       note: values.note.trim(),

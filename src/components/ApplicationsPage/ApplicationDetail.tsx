@@ -3,6 +3,7 @@
 import { CalendarClock, ExternalLink, FileText, MessageCircle, Pencil, Send, Tag } from 'lucide-react';
 import { FlagBadges, SampleTag } from '@/components/FlagBadges';
 import InterviewInfo from '@/components/InterviewInfo';
+import QuestionList from '@/components/QuestionList';
 import ResumeLink from '@/components/ResumeLink';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -42,6 +43,7 @@ function Row({ icon, label, children }: { icon: React.ReactNode; label: string; 
 /** 點卡片時顯示的投遞詳細內容（唯讀）；要修改請按「編輯」開表單。 */
 export default function ApplicationDetail({ app, resume, resumeHref, staleDays, onEdit, onStatus, onClose }: Props) {
   const style = STATUS_STYLE[app.status];
+  const questions = app.interviewQuestions;
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
@@ -104,6 +106,16 @@ export default function ApplicationDetail({ app, resume, resumeHref, staleDays, 
             {resume ? <ResumeLink resume={resume} href={resumeHref(resume)} /> : app.resume || <Empty />}
           </Row>
         </dl>
+
+        {questions.length ? (
+          <section aria-labelledby="detail-questions" className="flex flex-col gap-1.5">
+            <h3 id="detail-questions" className="text-sm font-medium text-muted-foreground">
+              面試問題（{questions.length}）
+            </h3>
+            {/* 單筆投遞的詳細內容直接展開回答；面試題頁才預設收合方便複習 */}
+            <QuestionList questions={questions} showAnswers className="rounded-lg border px-3 py-2.5" />
+          </section>
+        ) : null}
 
         <section aria-labelledby="detail-note" className="flex flex-col gap-1.5">
           <h3 id="detail-note" className="text-sm font-medium text-muted-foreground">

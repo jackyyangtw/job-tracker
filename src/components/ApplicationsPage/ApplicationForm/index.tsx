@@ -8,14 +8,16 @@ import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Textarea } from '@/components/ui/textarea';
 import { findDuplicate } from '@/lib/applications/duplicate';
+import { categoryOptions } from '@/lib/applications/interviewQuestions';
 import { extractUrl } from '@/lib/data/mapping';
 import type { Prefill } from '@/lib/data/prefill';
-import { SOURCES, STATUS_LIST, type Application, type Resume, type Source, type Status } from '@/lib/types';
+import { INTERVIEWED, SOURCES, STATUS_LIST, type Application, type Resume, type Source, type Status } from '@/lib/types';
 import DateFields from './DateFields';
 import DiscardConfirm from './DiscardConfirm';
 import DuplicateConfirm from './DuplicateConfirm';
 import Field from './Field';
 import InterviewFields from './InterviewFields';
+import QuestionsField from './QuestionsField';
 import CakePreviewHint from './CakePreviewHint';
 import { useApplicationFormState } from './useApplicationFormState';
 import { useCakeJobPreview } from './useCakeJobPreview';
@@ -198,6 +200,10 @@ export default function ApplicationForm({ initial, prefill, isDemo = false, resu
             {/* 面試時間與地點只在「面試中」時顯示；改成其他狀態時，已填的內容仍會顯示並保留 */}
             {v.status === 'interview' || v.interviewAt || v.interviewLocation ? (
               <InterviewFields interviewAt={v.interviewAt} interviewLocation={v.interviewLocation} onChange={set} />
+            ) : null}
+            {/* 面試問題在面試中、等待中、Offer、未錄取都能記錄；改成其他狀態時，已填的內容仍會顯示並保留 */}
+            {INTERVIEWED.includes(v.status) || v.interviewQuestions.length ? (
+              <QuestionsField value={v.interviewQuestions} onChange={(list) => set('interviewQuestions', list)} categories={categoryOptions(existing)} />
             ) : null}
             <Field label="履歷版本" id="f-resume" full>
               <div className="flex min-w-0 items-center gap-3">

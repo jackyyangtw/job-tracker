@@ -1,4 +1,5 @@
 import { clean104JobUrl, is104Host } from '../104/jobUrl';
+import { normalizeQuestions } from '../applications/interviewQuestions';
 import { isCakeHost } from '../cake-resume/jobUrl';
 import { isStatus, SOURCES, type Application, type ApplicationRow, type Resume, type ResumeRow, type Source, type Status } from '../types';
 
@@ -82,6 +83,7 @@ export function normalizeApp(raw: unknown): Application | null {
     lastContact: date(r.lastContact),
     interviewAt: dateTime(r.interviewAt),
     interviewLocation: clip(r.interviewLocation, 300),
+    interviewQuestions: normalizeQuestions(r.interviewQuestions),
     resume: clip(r.resume, 80),
     // 匯入檔裡的履歷版本 id 可能來自別的帳號或已刪除的版本，外鍵會讓整批寫入失敗；只保留名稱。
     resumeId: '',
@@ -105,6 +107,7 @@ export function fromRow(row: ApplicationRow): Application {
     lastContact: row.last_contact ?? '',
     interviewAt: dateTime(row.interview_at),
     interviewLocation: row.interview_location ?? '',
+    interviewQuestions: normalizeQuestions(row.interview_questions),
     resume: row.resume ?? '',
     resumeId: row.resume_id ?? '',
     note: row.note ?? '',
@@ -127,6 +130,7 @@ export function toRow(a: Application) {
     last_contact: a.lastContact || null,
     interview_at: a.interviewAt || null,
     interview_location: a.interviewLocation,
+    interview_questions: a.interviewQuestions,
     resume: a.resume,
     resume_id: a.resumeId || null,
     note: a.note,
